@@ -1,0 +1,14 @@
+# data — proprietary dataset, never in git
+data/
+
+# secrets
+.env
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# os / editor
+.DS_Store
+.vscode/
