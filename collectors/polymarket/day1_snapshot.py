@@ -38,6 +38,11 @@ try:  # optional; .env is a Day 2 nicety
 except ImportError:
     pass
 
+_dsn = os.getenv("SENTRY_DSN")
+if _dsn:
+    import sentry_sdk
+    sentry_sdk.init(dsn=_dsn)
+
 GAMMA = "https://gamma-api.polymarket.com"
 CLOB = "https://clob.polymarket.com"
 DATA_DIR = Path(os.getenv("DATA_DIR", "data/raw"))
