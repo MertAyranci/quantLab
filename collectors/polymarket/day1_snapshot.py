@@ -64,8 +64,13 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def paced_get(client: httpx.Client, url: str, params: dict | None = None):
-    """GET with client-side pacing, retries, and latency logging."""
+def paced_get(client: httpx.Client, url: str, params: dict | None = None,
+              context: str = ""):
+    """GET with pacing, retries for transient failures only, latency logging.
+
+    4xx (except 429) = permanent for this cycle: no retry, warn, return None.
+    5xx / network / 429 = transient: retry with backoff.
+    """
     global _last_request_ts
     for attempt in range(1, 4):
         wait = MIN_REQUEST_GAP_S - (time.monotonic() - _last_request_ts)
@@ -76,17 +81,24 @@ def paced_get(client: httpx.Client, url: str, params: dict | None = None):
             _last_request_ts = time.monotonic()
             resp = client.get(url, params=params, timeout=30)
             latency_ms = (time.monotonic() - t0) * 1000
-            # Latency is the early-warning signal for Cloudflare throttling.
             if latency_ms > 3000:
-                log.warning("SLOW %.0fms %s (possible throttling)", latency_ms, url)
-            else:
-                log.debug("%.0fms %s", latency_ms, url)
+                log.warning("SLOW %.0fms %s %s", latency_ms, url, context)
             resp.raise_for_status()
             return resp.json()
+        except httpx.HTTPStatusError as exc:
+            code = exc.response.status_code
+            if code == 404:
+                log.info("gone (404): %s %s", url, context)   # expected lifecycle event
+                return None
+            if 400 <= code < 500 and code != 429:
+                log.warning("client error %d: %s %s — not retrying", code, url, context)
+                return None
+            log.warning("attempt %d/3 got %d for %s %s", attempt, code, url, context)
+            time.sleep(2 ** attempt)
         except (httpx.HTTPError, json.JSONDecodeError) as exc:
-            log.warning("attempt %d/3 failed for %s: %s", attempt, url, exc)
-            time.sleep(2 ** attempt)  # 2s, 4s, 8s
-    log.error("giving up on %s", url)
+            log.warning("attempt %d/3 failed for %s %s: %s", attempt, url, context, exc)
+            time.sleep(2 ** attempt)
+    log.warning("giving up on %s %s", url, context)
     return None
 
 
@@ -139,7 +151,10 @@ def fetch_books(client: httpx.Client, markets: list[dict], watchlist_size: int) 
         if not tokens:
             continue
         token_id = tokens[0]  # YES side; NO book is its mirror (Day 3 decision)
-        book = paced_get(client, f"{CLOB}/book", params={"token_id": token_id})
+        book = paced_get(
+            client, f"{CLOB}/book", params={"token_id": token_id},
+            context=f"token={token_id[:16]}… q={str(market.get('question'))[:40]!r}",
+        )
         if book is not None:
             books[token_id] = {
                 "market_id": market.get("id"),
