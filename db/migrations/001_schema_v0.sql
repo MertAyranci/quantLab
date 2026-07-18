@@ -166,7 +166,7 @@ CREATE TABLE trades (                        -- data-api tape + WS last_trade_pr
     tx_hash         text,                    -- R9
     venue_trade_key text NOT NULL,           -- tx_hash+asset or WS synthetic key
     source          text NOT NULL,           -- 'data_api' | 'ws_last_trade'
-    UNIQUE (venue_id, venue_trade_key)
+    UNIQUE (venue_id, venue_trade_key, event_time)
 ) PARTITION BY RANGE (event_time);
 
 CREATE TABLE price_history (                 -- backfilled /prices-history
