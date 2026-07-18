@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: quantlab-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: quantlab
+      POSTGRES_USER: quantlab
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - /home/lab/pgdata:/var/lib/postgresql/data
+    shm_size: 256mb
