@@ -1,72 +1,115 @@
 -- ============================================================================
--- quant-lab schema v0
+-- quant-lab schema v0.2 — FROZEN for sample import (further changes = 002+)
 -- File: db/migrations/001_schema_v0.sql
--- Apply once:  docker exec -i quantlab-pg psql -U quantlab -d quantlab \
---                < db/migrations/001_schema_v0.sql
--- Implements docs/schema-design-rfc.md §6 with provisional decisions:
---   8.1 hybrid (jsonb full books + derived TOB table)
---   8.4 YES-token books only (mirror-check sampled later)
---   8.5 hot-in-PG + Parquet cold export (partitions monthly to enable it)
---   8.6 plain PG range partitions
--- Conventions (RFC R1-R12):
---   * all prices INTEGER MILLI-CENTS: price_mc = round(price * 1000)  [R3]
---   * every observation: event_time (venue) + capture_time (ours)     [R2]
---   * append-only observations; lifecycle as rows, not updates        [R4,R7]
---   * provenance: source / watchlist_rule / raw_ref everywhere        [R6,R10]
+-- Reset + apply (permitted ONLY while DB is empty):
+--   docker exec -i quantlab-pg psql -U quantlab -d quantlab \
+--     -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+--   docker exec -i quantlab-pg psql -U quantlab -d quantlab \
+--     < db/migrations/001_schema_v0.sql
+--
+-- UNIT DEFINITION (deliberate, documented, not renaming):
+--   *_mc columns = price x 1000 (thousandths of a DOLLAR): 0.001->1, 1.00->1000.
+--   Valid range 0..1000. tick_mc likewise (10 = $0.01 tick, 1 = $0.001 tick).
+--
+-- v0.2 (external review round 2, triaged):
+--   ACCEPTED: composite FKs for token-market & resolution-token consistency;
+--     sequencing + book_generation on WS snapshots & deltas; token-level
+--     tick_sizes; fee_rate_bps + required sequencing on last_trade_events;
+--     trades source CHECK; price/size CHECKs; replay + token-time indexes;
+--     partitions through Nov 2026; provenance columns completed.
+--   MODIFIED: collector_run_id is NULLABLE everywhere (operability; loaders
+--     are expected to populate it, DB does not force it).
+--   REJECTED: price_mc rename (definition documented above); default partition
+--     (DQ alerts on <2 future partitions instead).
 -- ============================================================================
 
 BEGIN;
 
--- ---------- reference layer -------------------------------------------------
+-- ---------- reference & ops -------------------------------------------------
 
 CREATE TABLE venues (
-    id          smallint PRIMARY KEY,
-    name        text NOT NULL UNIQUE,
-    added_at    timestamptz NOT NULL DEFAULT now()
+    id       smallint PRIMARY KEY,
+    name     text NOT NULL UNIQUE,
+    added_at timestamptz NOT NULL DEFAULT now()
 );
 INSERT INTO venues (id, name) VALUES (1, 'polymarket');
 
+CREATE TABLE collector_runs (
+    id          bigserial PRIMARY KEY,
+    component   text NOT NULL,
+    started_at  timestamptz NOT NULL,
+    version_sha text,
+    notes       text
+);
+
 CREATE TABLE events (
-    id              bigserial PRIMARY KEY,
-    venue_id        smallint NOT NULL REFERENCES venues(id),
-    venue_event_id  text,                    -- Gamma event id (may be null early)
-    slug            text,
-    title           text,
-    neg_risk        boolean,                 -- R11: sibling-market grouping
-    category        text,
-    tags            jsonb,
-    first_seen_at   timestamptz NOT NULL,
-    raw_ref         text,                    -- R10: raw file this came from
+    id             bigserial PRIMARY KEY,
+    venue_id       smallint NOT NULL REFERENCES venues(id),
+    venue_event_id text,
+    slug           text,
+    title          text,
+    neg_risk       boolean,
+    category       text,
+    tags           jsonb,
+    first_seen_at  timestamptz NOT NULL,
+    source         text NOT NULL,
+    raw_ref        text,
+    collector_run_id bigint REFERENCES collector_runs(id),
     UNIQUE (venue_id, venue_event_id)
 );
 
 CREATE TABLE markets (
-    id                      bigserial PRIMARY KEY,
-    venue_id                smallint NOT NULL REFERENCES venues(id),
-    event_id                bigint REFERENCES events(id),
-    venue_market_id         text NOT NULL,   -- Gamma "id"
-    condition_id            text,            -- 0x… ; CLOB "market"
-    slug                    text,
-    question                text,
-    resolution_source_text  text,            -- fine print (Hyp-4 resolution risk)
-    end_date                timestamptz,
-    first_seen_at           timestamptz NOT NULL,
-    raw_ref                 text,
-    UNIQUE (venue_id, venue_market_id)
+    id                     bigserial PRIMARY KEY,
+    venue_id               smallint NOT NULL REFERENCES venues(id),
+    event_id               bigint REFERENCES events(id),
+    venue_market_id        text NOT NULL,
+    condition_id           text,
+    slug                   text,
+    question               text,
+    resolution_source_text text,
+    end_date               timestamptz,
+    first_seen_at          timestamptz NOT NULL,
+    source                 text NOT NULL,
+    raw_ref                text,
+    collector_run_id       bigint REFERENCES collector_runs(id),
+    UNIQUE (venue_id, venue_market_id),
+    UNIQUE (id, venue_id)          -- enables composite FK from tokens
 );
 CREATE INDEX idx_markets_condition ON markets (condition_id);
 CREATE INDEX idx_markets_slug      ON markets (slug);
 
 CREATE TABLE tokens (
-    id            bigserial PRIMARY KEY,
-    market_id     bigint NOT NULL REFERENCES markets(id),
-    token_id      text NOT NULL UNIQUE,      -- huge int as text
-    outcome       text,                      -- 'Yes' / 'No' / group title
-    outcome_index smallint
+    id             bigserial PRIMARY KEY,
+    venue_id       smallint NOT NULL REFERENCES venues(id),
+    market_id      bigint NOT NULL,
+    venue_token_id text NOT NULL,
+    outcome        text,
+    outcome_index  smallint,
+    source         text NOT NULL,
+    raw_ref        text,
+    collector_run_id bigint REFERENCES collector_runs(id),
+    UNIQUE (venue_id, venue_token_id),
+    UNIQUE (market_id, outcome_index),
+    UNIQUE (market_id, id),        -- enables composite FK from resolutions
+    FOREIGN KEY (market_id, venue_id) REFERENCES markets (id, venue_id)
 );
 CREATE INDEX idx_tokens_market ON tokens (market_id);
 
--- ---------- slowly-changing per-market facts (append-only) [R8] -------------
+CREATE TABLE market_metadata_versions (
+    id                     bigserial PRIMARY KEY,
+    market_id              bigint NOT NULL REFERENCES markets(id),
+    capture_time           timestamptz NOT NULL,
+    question               text,
+    resolution_source_text text,
+    end_date               timestamptz,
+    slug                   text,
+    source                 text NOT NULL,
+    raw_ref                text,
+    collector_run_id       bigint REFERENCES collector_runs(id)
+);
+CREATE INDEX idx_mmv_market ON market_metadata_versions (market_id, capture_time);
+
+-- ---------- slowly-changing facts (append-only) ------------------------------
 
 CREATE TABLE market_fees (
     market_id          bigint NOT NULL REFERENCES markets(id),
@@ -77,135 +120,176 @@ CREATE TABLE market_fees (
     fee_rate           numeric,
     taker_only         boolean,
     rebate_rate        numeric,
-    source             text NOT NULL,        -- 'gamma' | 'ws_new_market' | …
+    source             text NOT NULL,
+    raw_ref            text,
+    collector_run_id   bigint REFERENCES collector_runs(id),
     PRIMARY KEY (market_id, observed_at)
 );
 
-CREATE TABLE tick_sizes (
-    market_id       bigint NOT NULL REFERENCES markets(id),
-    observed_at     timestamptz NOT NULL,
-    tick_millicents integer NOT NULL,        -- 10 = $0.01, 1 = $0.001
-    source          text NOT NULL,
-    PRIMARY KEY (market_id, observed_at)
+CREATE TABLE tick_sizes (              -- v0.2: token-level (WS event carries asset_id)
+    token_id         bigint NOT NULL REFERENCES tokens(id),
+    event_time       timestamptz,
+    capture_time     timestamptz NOT NULL,
+    tick_mc          integer NOT NULL CHECK (tick_mc > 0),
+    source           text NOT NULL,
+    raw_ref          text,
+    collector_run_id bigint REFERENCES collector_runs(id),
+    connection_id    uuid,
+    ingest_sequence  bigint,
+    PRIMARY KEY (token_id, capture_time)
 );
 
-CREATE TABLE market_status (                 -- R7 lifecycle ledger
-    market_id   bigint NOT NULL REFERENCES markets(id),
-    observed_at timestamptz NOT NULL,
-    status      text NOT NULL CHECK (status IN
-                ('active','closed','proposed','disputed',
-                 'resolved','delisted_observed')),
-    source      text NOT NULL,               -- 'gamma_poll' | 'ws' | '404_inference'
+CREATE TABLE market_status (
+    market_id        bigint NOT NULL REFERENCES markets(id),
+    observed_at      timestamptz NOT NULL,
+    status           text NOT NULL CHECK (status IN
+                     ('active','closed','proposed','disputed',
+                      'resolved','delisted_observed')),
+    source           text NOT NULL,
+    raw_ref          text,
+    collector_run_id bigint REFERENCES collector_runs(id),
     PRIMARY KEY (market_id, observed_at, status)
 );
 
 CREATE TABLE resolutions (
+    id               bigserial PRIMARY KEY,
     market_id        bigint NOT NULL REFERENCES markets(id),
-    resolved_at      timestamptz,            -- venue's time if known
-    winning_token_id text,
-    winning_outcome  text,
-    learned_via      text NOT NULL,          -- 'ws_market_resolved' | 'gamma' | …
+    event_time       timestamptz,
     capture_time     timestamptz NOT NULL,
+    winning_token_id bigint,
+    winning_outcome  text,
+    learned_via      text NOT NULL,
+    status           text NOT NULL CHECK (status IN
+                     ('proposed','disputed','final','corrected')),
     raw_ref          text,
-    PRIMARY KEY (market_id)                  -- one resolution per market
+    collector_run_id bigint REFERENCES collector_runs(id),
+    FOREIGN KEY (market_id, winning_token_id) REFERENCES tokens (market_id, id)
 );
+CREATE INDEX idx_resolutions_market ON resolutions (market_id, capture_time);
 
--- ---------- observation layer (partitioned monthly) -------------------------
--- Partition helper: new partitions created by ops script / loader on demand.
+-- ---------- observation layer (partitioned monthly) ---------------------------
 
-CREATE TABLE tob_snapshots (                 -- top-of-book (REST tier + derived)
-    token_id      text NOT NULL,
-    event_time    timestamptz,               -- venue book timestamp (ms epoch src)
-    capture_time  timestamptz NOT NULL,
-    best_bid_mc   integer,                   -- NULL = empty side (e.g. dead mkt)
-    best_bid_size numeric,
-    best_ask_mc   integer,
-    best_ask_size numeric,
-    source        text NOT NULL,             -- 'rest_book' | 'ws_best_bid_ask' | 'derived'
-    watchlist_rule text,                     -- R6: 'vol24h_top' | 'pinned' | 'sweep'
-    raw_ref       text
-) PARTITION BY RANGE (capture_time);
-
-CREATE TABLE book_snapshots (                -- full depth: REST + WS 'book' events
-    token_id     text NOT NULL,
-    event_time   timestamptz,
-    capture_time timestamptz NOT NULL,
-    bids         jsonb NOT NULL,             -- [[price_mc, size], …] ASC by price
-    asks         jsonb NOT NULL,             -- [[price_mc, size], …] ASC by price
-    venue_hash   text,
-    source       text NOT NULL,
+CREATE TABLE tob_snapshots (
+    token_id       bigint NOT NULL REFERENCES tokens(id),
+    event_time     timestamptz,
+    capture_time   timestamptz NOT NULL,
+    best_bid_mc    integer CHECK (best_bid_mc IS NULL OR best_bid_mc BETWEEN 0 AND 1000),
+    best_bid_size  numeric CHECK (best_bid_size IS NULL OR best_bid_size >= 0),
+    best_ask_mc    integer CHECK (best_ask_mc IS NULL OR best_ask_mc BETWEEN 0 AND 1000),
+    best_ask_size  numeric CHECK (best_ask_size IS NULL OR best_ask_size >= 0),
+    source         text NOT NULL,
     watchlist_rule text,
-    raw_ref      text
-) PARTITION BY RANGE (capture_time);
--- NOTE: loader normalizes both sides to ASCENDING price order (raw asks arrive
--- descending — never trust venue array order; RFC book conventions).
-
-CREATE TABLE book_deltas (                   -- WS price_change firehose [R5]
-    token_id     text NOT NULL,
-    event_time   timestamptz,
-    capture_time timestamptz NOT NULL,
-    price_mc     integer NOT NULL,
-    size         numeric NOT NULL,           -- 0 = level removed
-    side         char(1) NOT NULL CHECK (side IN ('B','S')),
-    venue_hash   text,
-    best_bid_mc  integer,
-    best_ask_mc  integer
+    raw_ref        text,
+    collector_run_id bigint REFERENCES collector_runs(id)
 ) PARTITION BY RANGE (capture_time);
 
-CREATE TABLE trades (                        -- data-api tape + WS last_trade_price
+CREATE TABLE book_snapshots (
+    token_id        bigint NOT NULL REFERENCES tokens(id),
+    event_time      timestamptz,
+    capture_time    timestamptz NOT NULL,
+    bids            jsonb NOT NULL,   -- [[price_mc,size],…] normalized ASC
+    asks            jsonb NOT NULL,   -- [[price_mc,size],…] normalized ASC
+    venue_hash      text,
+    source          text NOT NULL,
+    watchlist_rule  text,
+    raw_ref         text,
+    collector_run_id bigint REFERENCES collector_runs(id),
+    connection_id   uuid,             -- WS-sourced snapshots only
+    ingest_sequence bigint,
+    book_generation bigint,           -- reconstruction segment id (WS)
+    CHECK (source <> 'ws_book'
+           OR (connection_id IS NOT NULL AND ingest_sequence IS NOT NULL
+               AND book_generation IS NOT NULL))
+) PARTITION BY RANGE (capture_time);
+
+CREATE TABLE book_deltas (
+    token_id         bigint NOT NULL REFERENCES tokens(id),
+    event_time       timestamptz,
+    capture_time     timestamptz NOT NULL,
+    price_mc         integer NOT NULL CHECK (price_mc BETWEEN 0 AND 1000),
+    size             numeric NOT NULL CHECK (size >= 0),  -- 0 = level removed
+    side             char(1) NOT NULL CHECK (side IN ('B','S')),
+    venue_hash       text,
+    best_bid_mc      integer CHECK (best_bid_mc IS NULL OR best_bid_mc BETWEEN 0 AND 1000),
+    best_ask_mc      integer CHECK (best_ask_mc IS NULL OR best_ask_mc BETWEEN 0 AND 1000),
+    connection_id    uuid NOT NULL,
+    ingest_sequence  bigint NOT NULL,
+    change_index     smallint NOT NULL DEFAULT 0,
+    book_generation  bigint NOT NULL,
+    collector_run_id bigint REFERENCES collector_runs(id),
+    source           text NOT NULL,
+    watchlist_rule   text,
+    raw_ref          text,
+    UNIQUE (capture_time, connection_id, ingest_sequence, change_index)
+) PARTITION BY RANGE (capture_time);
+
+CREATE TABLE last_trade_events (
+    token_id         bigint NOT NULL REFERENCES tokens(id),
+    event_time       timestamptz,
+    capture_time     timestamptz NOT NULL,
+    price_mc         integer NOT NULL CHECK (price_mc BETWEEN 0 AND 1000),
+    size             numeric CHECK (size IS NULL OR size >= 0),
+    side             text,
+    fee_rate_bps     integer,
+    connection_id    uuid NOT NULL,
+    ingest_sequence  bigint NOT NULL,
+    collector_run_id bigint REFERENCES collector_runs(id),
+    source           text NOT NULL,
+    raw_ref          text,
+    UNIQUE (capture_time, connection_id, ingest_sequence)
+) PARTITION BY RANGE (capture_time);
+
+CREATE TABLE trades (                  -- confirmed data-api tape ONLY (enforced)
     venue_id        smallint NOT NULL REFERENCES venues(id),
-    token_id        text,
+    token_id        bigint REFERENCES tokens(id),
     condition_id    text,
     event_time      timestamptz NOT NULL,
     capture_time    timestamptz NOT NULL,
-    price_mc        integer NOT NULL,
-    size            numeric NOT NULL,
+    price_mc        integer NOT NULL CHECK (price_mc BETWEEN 0 AND 1000),
+    size            numeric NOT NULL CHECK (size >= 0),
     side            text,
     outcome         text,
-    wallet          text,                    -- R9
-    tx_hash         text,                    -- R9
-    venue_trade_key text NOT NULL,           -- tx_hash+asset or WS synthetic key
-    source          text NOT NULL,           -- 'data_api' | 'ws_last_trade'
+    wallet          text,
+    tx_hash         text,
+    venue_trade_key text NOT NULL,
+    source          text NOT NULL DEFAULT 'data_api' CHECK (source = 'data_api'),
+    raw_ref         text,
+    collector_run_id bigint REFERENCES collector_runs(id),
     UNIQUE (venue_id, venue_trade_key, event_time)
 ) PARTITION BY RANGE (event_time);
 
-CREATE TABLE price_history (                 -- backfilled /prices-history
-    token_id      text NOT NULL,
-    ts            timestamptz NOT NULL,
-    price_mc      integer NOT NULL,
-    fidelity_min  integer NOT NULL,
-    backfilled_at timestamptz NOT NULL,
+CREATE TABLE price_history (
+    token_id         bigint NOT NULL REFERENCES tokens(id),
+    ts               timestamptz NOT NULL,
+    price_mc         integer NOT NULL CHECK (price_mc BETWEEN 0 AND 1000),
+    fidelity_min     integer NOT NULL,
+    backfilled_at    timestamptz NOT NULL,
+    source           text NOT NULL DEFAULT 'prices_history',
+    raw_ref          text,
+    collector_run_id bigint REFERENCES collector_runs(id),
     PRIMARY KEY (token_id, ts, fidelity_min)
 );
 
--- ---------- cross-venue IP [R1] ----------------------------------------------
+-- ---------- cross-venue IP -----------------------------------------------------
 
 CREATE TABLE event_matches (
     id         bigserial PRIMARY KEY,
     event_a    bigint NOT NULL REFERENCES events(id),
     event_b    bigint NOT NULL REFERENCES events(id),
-    method     text NOT NULL,                -- 'manual' | 'slug_fuzzy' | …
+    method     text NOT NULL,
     confidence numeric,
     notes      text,
     created_at timestamptz NOT NULL DEFAULT now(),
-    CHECK (event_a < event_b)                -- one row per pair
+    CHECK (event_a < event_b)
 );
 
--- ---------- ops --------------------------------------------------------------
+-- ---------- ops -----------------------------------------------------------------
 
-CREATE TABLE parsed_files (                  -- backloader idempotency ledger
+CREATE TABLE parsed_files (
     file_path  text PRIMARY KEY,
     parsed_at  timestamptz NOT NULL,
     row_counts jsonb,
     parser_sha text
-);
-
-CREATE TABLE collector_runs (
-    id          bigserial PRIMARY KEY,
-    component   text NOT NULL,
-    started_at  timestamptz NOT NULL,
-    version_sha text,
-    notes       text
 );
 
 CREATE TABLE dq_incidents (
@@ -215,15 +299,18 @@ CREATE TABLE dq_incidents (
     severity    text NOT NULL,
     details     jsonb
 );
+-- DQ rule (implemented Day F): alert if any partitioned table has <2 future
+-- monthly partitions. No DEFAULT partition by design.
 
--- ---------- initial partitions (Jul–Sep 2026; loader auto-extends) ----------
+-- ---------- partitions: Jul–Nov 2026 --------------------------------------------
 
 DO $$
 DECLARE t text; m date;
 BEGIN
-  FOREACH t IN ARRAY ARRAY['tob_snapshots','book_snapshots','book_deltas','trades']
+  FOREACH t IN ARRAY ARRAY['tob_snapshots','book_snapshots','book_deltas',
+                           'last_trade_events','trades']
   LOOP
-    FOR i IN 0..2 LOOP
+    FOR i IN 0..4 LOOP
       m := date '2026-07-01' + (i || ' months')::interval;
       EXECUTE format(
         'CREATE TABLE %I_%s PARTITION OF %I FOR VALUES FROM (%L) TO (%L)',
@@ -232,13 +319,17 @@ BEGIN
   END LOOP;
 END $$;
 
--- ---------- indexes on observations ------------------------------------------
+-- ---------- indexes --------------------------------------------------------------
 
-CREATE INDEX idx_tob_token_time   ON tob_snapshots  (token_id, capture_time);
-CREATE INDEX idx_books_token_time ON book_snapshots (token_id, capture_time);
-CREATE INDEX idx_deltas_token_time ON book_deltas   (token_id, capture_time);
-CREATE INDEX idx_trades_cond_time ON trades         (condition_id, event_time);
-CREATE INDEX idx_trades_wallet    ON trades         (wallet);
-CREATE INDEX idx_ph_token         ON price_history  (token_id, ts);
+CREATE INDEX idx_tob_token_time    ON tob_snapshots     (token_id, capture_time);
+CREATE INDEX idx_books_token_time  ON book_snapshots    (token_id, capture_time);
+CREATE INDEX idx_deltas_token_time ON book_deltas       (token_id, capture_time);
+CREATE INDEX idx_deltas_replay     ON book_deltas       (token_id, connection_id,
+                                                         ingest_sequence, change_index);
+CREATE INDEX idx_lte_token_time    ON last_trade_events (token_id, capture_time);
+CREATE INDEX idx_trades_cond_time  ON trades            (condition_id, event_time);
+CREATE INDEX idx_trades_token_time ON trades            (token_id, event_time);
+CREATE INDEX idx_trades_wallet     ON trades            (wallet);
+CREATE INDEX idx_ph_token          ON price_history     (token_id, ts);
 
 COMMIT;
