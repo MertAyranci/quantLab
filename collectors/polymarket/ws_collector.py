@@ -205,7 +205,7 @@ class WSCollector:
 
     # ---- WS message handling ------------------------------------------------
 
-    def handle(self, raw: str):
+   def handle(self, raw: str):
         if raw == "PONG":
             return
         try:
@@ -220,16 +220,17 @@ class WSCollector:
             et = d.get("event_type")
             token = str(d.get("asset_id")) if d.get("asset_id") else None
             if et == "price_change":
-                changes = d.get("changes") or [d]
+                # docs: message carries a `price_changes` array; each change
+                # carries its own asset_id, hash, best_bid, best_ask
+                changes = d.get("price_changes") or d.get("changes") or [d]
                 for ci, ch in enumerate(changes):
-                    self.emit("price_change", token,
-                              {**ch, "market": d.get("market"),
-                               "timestamp": d.get("timestamp"),
-                               "hash": d.get("hash"),
-                               "best_bid": d.get("best_bid"),
-                               "best_ask": d.get("best_ask")}, ci)
-                if d.get("best_bid") or d.get("best_ask"):
-                    self.last_tob[token] = (d.get("best_bid"), d.get("best_ask"))
+                    tok = str(ch.get("asset_id")) if ch.get("asset_id") else token
+                    self.emit("price_change", tok,
+                              {**ch,
+                               "market": d.get("market"),
+                               "timestamp": d.get("timestamp")}, ci)
+                    if ch.get("best_bid") or ch.get("best_ask"):
+                        self.last_tob[tok] = (ch.get("best_bid"), ch.get("best_ask"))
             elif et == "book":
                 self.emit("ws_book", token, d)
                 bids, asks = d.get("bids") or [], d.get("asks") or []
@@ -300,8 +301,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--watchlist-size", type=int, default=50)
     args = ap.parse_args()
-    asyncio.run(WSCollector(args.watchlist_size).run())
-
+    try:
+        asyncio.run(WSCollector(args.watchlist_size).run())
+    except KeyboardInterrupt:
+        log.info("shutdown requested — flushing buffers and exiting cleanly")
 
 if __name__ == "__main__":
     main()
