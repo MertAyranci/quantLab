@@ -12,3 +12,4 @@ __pycache__/
 # os / editor
 .DS_Store
 .vscode/
+config/deep_tokens.txt
