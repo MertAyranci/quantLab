@@ -13,3 +13,6 @@ __pycache__/
 .DS_Store
 .vscode/
 config/deep_tokens.txt
+backups/
+.env.save
+.env # belt-and-suspenders: ensure .env itself is ignored
