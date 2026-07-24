@@ -205,7 +205,7 @@ class WSCollector:
 
     # ---- WS message handling ------------------------------------------------
 
-   def handle(self, raw: str):
+    def handle(self, raw: str):
         if raw == "PONG":
             return
         try:
