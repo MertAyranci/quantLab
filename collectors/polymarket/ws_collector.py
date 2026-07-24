@@ -220,8 +220,6 @@ class WSCollector:
             et = d.get("event_type")
             token = str(d.get("asset_id")) if d.get("asset_id") else None
             if et == "price_change":
-                # docs: message carries a `price_changes` array; each change
-                # carries its own asset_id, hash, best_bid, best_ask
                 changes = d.get("price_changes") or d.get("changes") or [d]
                 for ci, ch in enumerate(changes):
                     tok = str(ch.get("asset_id")) if ch.get("asset_id") else token
