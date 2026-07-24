@@ -376,3 +376,60 @@ Measured: in the 44–56¢ band, gap-to-realized scales with sibling count —
 → Any calibration/probability study MUST control on markets-per-event
 (sibling count), not on the venue's flag. See research/h3_favorite_longshot.md.
 ```
+
+# 2026-07-24 (evening) — Collector v2 deployed; soak surfaces two issues
+
+## Shipped
+- `db/buffer_loader.py` written, reviewed, deployed. Routes WS buffer records
+  into tiered tables per RFC Q8.5:
+  - Tier 1 (breadth): best_bid_ask → tob_snapshots; last_trade_price →
+    last_trade_events; ws_book/rest_resync → book_snapshots (+ derived tob).
+  - Tier 2 (depth): price_change → book_deltas, ONLY for config/deep_tokens.txt.
+  - Reference: tick_size_change → tick_sizes; market_resolved → resolutions +
+    status; new_market → markets/tokens/fees.
+- Both halves under systemd (ws-collector, buffer-loader), auto-restart,
+  EnvironmentFile-wired, two new healthchecks (ws-collector, buffer-loader).
+- **Certified end to end:** delta 52,650 in one manual run; live tick_size_change
+  captured (tick:2 — a market crossing the 0.96/0.04 boundary in real time);
+  lag=0 sustained.
+
+## Measured (the soak earning its keep)
+- **Tier-2 delta rate WILDLY above estimate.** 3 deep tokens = ~52M rows/day.
+  Cut to 1 token → still ~10 GB/day disk growth (47%→54% in 7h). That single
+  token is one of the venue's busiest.
+  → **Lesson: Tier-2 membership must be sized by MEASURED message rate, not
+  token count.** Even one hot token can dominate.
+- **Loader memory LEAK: 592 MB → 1.8 GB over 7h, still climbing.** Inherited
+  Backloader caches (1.5M markets, 3M tokens, 1.5M parsed_files preloaded) were
+  designed for one-off batch runs, not a long-lived daemon. On a 4 GB box with
+  Postgres resident, this will eventually OOM. **Tech debt, must fix before
+  Tier 2 runs unattended.**
+
+## Decision
+- **Tier 2 PAUSED for the soak** (deep_tokens.txt emptied). Rationale: delta
+  pipeline already proven; soak's remaining job is stability, which is easier
+  to diagnose without the firehose. Also isolates the memory-leak diagnosis:
+  if memory still climbs with Tier 2 off, leak is in caches; if it stabilizes,
+  leak scales with delta volume.
+
+## Open / tech debt
+- [ ] buffer_loader memory: replace preloaded caches with DB lookups (token
+      resolution via query, drop parsed_files preload — daemon tracks its own
+      session). Blocks unattended Tier 2.
+- [ ] Retention design for Tier 2 before re-enabling (partition drop / Parquet
+      export / sampling) — RFC Q8.5 sizing was guesswork, now measured.
+- [ ] scripts/ not in git (backup_to_azure.sh exists in one place, no history);
+      gitignore backups/.
+- [ ] Watchlist is 25; can raise Tier 1 later (cheap) once loader is fixed.
+
+## Milestone
+**Phase 1 (Data Layer) functionally complete** ~1 week ahead of the 4-week
+roadmap allotment: REST collector (16d unbroken) + WS collector v2 (tiered) +
+loader + queryable DB (273k snapshots, 1.46M resolutions, 25M price points) +
+5-component monitoring + 2-domain backups + H3 tested & killed.
+
+## Next
+1. Fix loader memory (unblocks Tier 2).
+2. Data-quality checks (Day F) — last Phase-1 piece.
+3. Write-up #1 (census + spread/tick + composition + H3).
+4. LONDON DECISION → venue #2 (Betfair vs Kalshi).

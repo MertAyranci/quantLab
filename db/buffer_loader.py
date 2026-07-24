@@ -111,6 +111,20 @@ class BufferLoader(Backloader):
                                  timeout=30)
         self.unresolved: set[str] = set()
 
+    def _load_caches(self):
+        # Daemon override: DO NOT preload 1.5M markets / 3M tokens / 1.5M
+        # receipts (that was ~1.5GB). Resolve on demand; track only this
+        # session's parsed files.
+        self.market_ids = {}
+        self.token_ids = {}      # filled lazily by token_id_for()
+        self.event_ids = {}
+        self.meta_state = {}
+        self.fee_state = {}
+        self.tick_state = {}
+        self.status_state = {}
+        self.parsed = set()      # this daemon's session only
+        log.info("caches: lazy mode (daemon)")
+
     # ---- token resolution ---------------------------------------------------
 
     def token_id_for(self, venue_token: str | None) -> int | None:
@@ -135,7 +149,14 @@ class BufferLoader(Backloader):
             self.upsert_tokens(mid, data[0], raw_ref)
             if venue_token in self.token_ids:
                 return self.token_ids[venue_token]
-        self.unresolved.add(venue_token)
+                
+        self.cur.execute("SELECT id FROM tokens WHERE venue_token_id=%s", (venue_token,))
+        row = self.cur.fetchone()
+        if row:
+            self.token_ids[venue_token] = row[0]
+            return row[0]
+        if venue_token in self.unresolved:
+            return None
         return None
 
     # ---- record routing ------------------------------------------------------
