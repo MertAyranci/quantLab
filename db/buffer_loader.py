@@ -381,7 +381,8 @@ class BufferLoader(Backloader):
         self.flush(batches)
         self.cur.execute(
             """INSERT INTO parsed_files (file_path, parsed_at, row_counts, parser_sha)
-               VALUES (%s, now(), %s, %s)""",
+               VALUES (%s, now(), %s, %s)
+               ON CONFLICT (file_path) DO NOTHING""",
             (rel, json.dumps(counts), git_sha()))
         return counts
 
@@ -413,8 +414,18 @@ def main():
     log.info("buffer_loader run_id=%s deep_tokens=%d", run_id, len(loader.deep))
 
     while True:
-        files = [f for f in pending_files()
-                 if str(f.relative_to(REPO)) not in loader.parsed]
+        files = []
+        for f in pending_files():
+            rel = str(f.relative_to(REPO))
+            if rel in loader.parsed:
+                continue
+            loader.cur.execute("SELECT 1 FROM parsed_files WHERE file_path=%s", (rel,))
+            if loader.cur.fetchone():
+                # already loaded in a prior run — move to done, don't reprocess
+                loader.parsed.add(rel)
+                shutil.move(str(f), str(DONE_DIR / f.name))
+                continue
+            files.append(f)
         totals: dict[str, int] = {}
         for path in files:
             try:
