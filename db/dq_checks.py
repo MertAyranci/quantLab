@@ -167,7 +167,7 @@ class DQ:
             ) x
         """)
         n = self.cur.fetchone()[0]
-        sev = "warn" if n > 0 else "info"
+        sev = "warn" if n > 3 else "info"
         self.incident("delta_sequencing", sev, {"suspect_connections": n},
                       f"{n} WS connections with sparse sequence coverage")
 
