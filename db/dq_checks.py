@@ -26,6 +26,7 @@ REPO = Path(__file__).resolve().parent.parent
 ENV = dotenv_values(REPO / ".env")
 TG_TOKEN = ENV.get("TELEGRAM_BOT_TOKEN", "")
 TG_CHAT = ENV.get("TELEGRAM_CHAT_ID", "")
+DQ_HEALTHCHECK_URL = ENV.get("DQ_HEALTHCHECK_URL", "")
 
 # thresholds
 STALE_WS_MIN = 15          # WS TOB should be fresher than this
@@ -196,11 +197,14 @@ def main():
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%MZ")
     body = f"{header} — {stamp}\n" + "\n".join(dq.lines)
 
-    if args.quiet and dq.worst == "info":
-        print(body)
-    else:
-        telegram(body)
-        print(body)
+    if DQ_HEALTHCHECK_URL:
+        url = DQ_HEALTHCHECK_URL if dq.worst == "info" else DQ_HEALTHCHECK_URL.rstrip("/") + "/fail"
+        try:
+            httpx.post(url, content=body.encode(), timeout=15)
+        except httpx.HTTPError:
+            pass
+
+    print(body)
 
 
 if __name__ == "__main__":
