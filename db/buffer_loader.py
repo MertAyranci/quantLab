@@ -149,7 +149,7 @@ class BufferLoader(Backloader):
             self.upsert_tokens(mid, data[0], raw_ref)
             if venue_token in self.token_ids:
                 return self.token_ids[venue_token]
-                
+
         self.cur.execute("SELECT id FROM tokens WHERE venue_token_id=%s", (venue_token,))
         row = self.cur.fetchone()
         if row:
@@ -165,6 +165,15 @@ class BufferLoader(Backloader):
         kind = rec.get("kind")
         p = rec.get("payload") or {}
         cap = iso(rec.get("capture_time"))
+
+        # --- lifecycle events route by market identity, NOT watchlist token ---
+        # (a resolving market is usually one we were NOT watching)
+        if kind == "market_resolved":
+            return self._route_resolution(p, cap, raw_ref)
+        if kind == "new_market":
+            return self._route_new_market(p, cap, raw_ref)
+
+        # --- everything else needs a known token ---
         tid = self.token_id_for(rec.get("token"))
         if tid is None:
             return "skipped_no_token"
@@ -241,54 +250,86 @@ class BufferLoader(Backloader):
                  raw_ref, self.run_id, conn_id, seq))
             return "tick"
 
-        if kind == "market_resolved":
-            self.cur.execute("SELECT market_id FROM tokens WHERE id=%s", (tid,))
-            row = self.cur.fetchone()
-            if not row:
-                return "skipped_no_token"
-            mid = row[0]
-            win_venue = str(p.get("winning_asset_id") or "")
-            win_tid = self.token_ids.get(win_venue)
-            self.cur.execute(
-                """INSERT INTO resolutions (market_id, event_time, capture_time,
-                   winning_token_id, winning_outcome, learned_via, status,
-                   raw_ref, collector_run_id)
-                   VALUES (%s,%s,%s,%s,%s,'ws_market_resolved','final',%s,%s)""",
-                (mid, ms_dt(p.get("timestamp")), cap, win_tid,
-                 p.get("winning_outcome"), raw_ref, self.run_id))
-            self.cur.execute(
-                """INSERT INTO market_status (market_id, observed_at, status,
-                   source, raw_ref, collector_run_id)
-                   VALUES (%s,%s,'resolved','ws',%s,%s) ON CONFLICT DO NOTHING""",
-                (mid, cap, raw_ref, self.run_id))
-            return "resolved"
-
-        if kind == "new_market":
-            m = {"id": p.get("id"), "conditionId": p.get("condition_id"),
-                 "slug": p.get("slug"), "question": p.get("question"),
-                 "description": p.get("description"),
-                 "clobTokenIds": json.dumps(p.get("clob_token_ids") or []),
-                 "outcomes": json.dumps(p.get("outcomes") or []),
-                 "orderPriceMinTickSize": p.get("order_price_min_tick_size")}
-            mid = self.upsert_market(m, cap, raw_ref, source="ws_new_market")
-            tids = self.upsert_tokens(mid, m, raw_ref)
-            fs = p.get("fee_schedule") or {}
-            self.cur.execute(
-                """INSERT INTO market_fees (market_id, observed_at, fees_enabled,
-                   taker_base_fee_bps, fee_exponent, fee_rate, taker_only,
-                   rebate_rate, source, raw_ref, collector_run_id)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,'ws_new_market',%s,%s)
-                   ON CONFLICT DO NOTHING""",
-                (mid, cap, p.get("fees_enabled"),
-                 int(p["taker_base_fee"]) if str(p.get("taker_base_fee") or "").isdigit() else None,
-                 num(fs.get("exponent")), num(fs.get("rate")),
-                 fs.get("taker_only"), num(fs.get("rebate_rate")),
-                 raw_ref, self.run_id))
-            self.record_tick(tids, m, cap, raw_ref)
-            return "new_market"
-
         return "skipped_unknown_kind"
+    # ---- helpers for route method ---------------------------------------------
+    def _route_resolution(self, p: dict, cap, raw_ref: str) -> str:
+        """market_resolved: route by the event's own market/condition id,
+        independent of the watchlist. Creates the market via Gamma if unseen."""
+        condition_id = p.get("market")
+        venue_market_id = str(p.get("id") or "")
+        if not condition_id and not venue_market_id:
+            return "skipped_no_market_id"
 
+        # find market: by venue_market_id first, then condition_id, else Gamma lookup
+        mid = None
+        if venue_market_id:
+            self.cur.execute("SELECT id FROM markets WHERE venue_id=%s AND venue_market_id=%s",
+                             (VENUE_ID, venue_market_id))
+            row = self.cur.fetchone()
+            if row:
+                mid = row[0]
+        if mid is None and condition_id:
+            self.cur.execute("SELECT id FROM markets WHERE condition_id=%s", (condition_id,))
+            row = self.cur.fetchone()
+            if row:
+                mid = row[0]
+        if mid is None:
+            # never seen this market — create it from the event + a Gamma lookup
+            toks = p.get("assets_ids") or []
+            stub = {"id": venue_market_id or condition_id,
+                    "conditionId": condition_id,
+                    "clobTokenIds": json.dumps([str(t) for t in toks]),
+                    "outcomes": json.dumps(p.get("outcomes") or [])}
+            mid = self.upsert_market(stub, cap, raw_ref, source="ws_market_resolved")
+            self.upsert_tokens(mid, stub, raw_ref)
+
+        # resolve winning token id (create it if the market was just stubbed)
+        win_venue = str(p.get("winning_asset_id") or "")
+        win_tid = self.token_ids.get(win_venue)
+        if win_tid is None and win_venue:
+            self.cur.execute("SELECT id FROM tokens WHERE venue_token_id=%s", (win_venue,))
+            row = self.cur.fetchone()
+            win_tid = row[0] if row else None
+
+        self.cur.execute(
+            """INSERT INTO resolutions (market_id, event_time, capture_time,
+               winning_token_id, winning_outcome, learned_via, status,
+               raw_ref, collector_run_id)
+               VALUES (%s,%s,%s,%s,%s,'ws_market_resolved','final',%s,%s)""",
+            (mid, ms_dt(p.get("timestamp")), cap, win_tid,
+             p.get("winning_outcome"), raw_ref, self.run_id))
+        self.cur.execute(
+            """INSERT INTO market_status (market_id, observed_at, status,
+               source, raw_ref, collector_run_id)
+               VALUES (%s,%s,'resolved','ws_market_resolved',%s,%s)
+               ON CONFLICT DO NOTHING""",
+            (mid, cap, raw_ref, self.run_id))
+        return "resolved"
+
+    def _route_new_market(self, p: dict, cap, raw_ref: str) -> str:
+        """new_market: create market/tokens/fees from the event payload."""
+        m = {"id": p.get("id"), "conditionId": p.get("condition_id") or p.get("market"),
+             "slug": p.get("slug"), "question": p.get("question"),
+             "resolutionSource": p.get("description"),
+             "clobTokenIds": json.dumps(p.get("clob_token_ids") or p.get("assets_ids") or []),
+             "outcomes": json.dumps(p.get("outcomes") or []),
+             "orderPriceMinTickSize": p.get("order_price_min_tick_size")}
+        mid = self.upsert_market(m, cap, raw_ref, source="ws_new_market")
+        tids = self.upsert_tokens(mid, m, raw_ref)
+        fs = p.get("fee_schedule") or {}
+        self.cur.execute(
+            """INSERT INTO market_fees (market_id, observed_at, fees_enabled,
+               taker_base_fee_bps, fee_exponent, fee_rate, taker_only,
+               rebate_rate, source, raw_ref, collector_run_id)
+               VALUES (%s,%s,%s,%s,%s,%s,%s,%s,'ws_new_market',%s,%s)
+               ON CONFLICT DO NOTHING""",
+            (mid, cap, p.get("fees_enabled"),
+             int(p["taker_base_fee"]) if str(p.get("taker_base_fee") or "").isdigit() else None,
+             num(fs.get("exponent")), num(fs.get("rate")),
+             fs.get("taker_only"), num(fs.get("rebate_rate")),
+             raw_ref, self.run_id))
+        self.record_tick(tids, m, cap, raw_ref)
+        return "new_market"
     # ---- batch flush ----------------------------------------------------------
 
     def flush(self, batches: dict):
