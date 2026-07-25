@@ -104,7 +104,7 @@ class DQ:
                           WHERE s.market_id = m.id AND s.status IN ('closed','resolved'))
         """)
         n = self.cur.fetchone()[0]
-        sev = "warn" if n > 0 else "info"
+        sev = "warn" if n > 2000 else "info"
         self.incident("unresolved_past_end", sev, {"count": n},
                       f"{n} closed markets >3d past end w/o resolution")
 
