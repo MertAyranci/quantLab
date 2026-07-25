@@ -98,6 +98,7 @@ class DQ:
         self.cur.execute("""
             SELECT count(*) FROM markets m
             WHERE m.end_date < now() - interval '3 days'
+              AND m.end_date > now() - interval '30 days'
               AND NOT EXISTS (SELECT 1 FROM resolutions r WHERE r.market_id = m.id)
               AND EXISTS (SELECT 1 FROM market_status s
                           WHERE s.market_id = m.id AND s.status IN ('closed','resolved'))
