@@ -104,8 +104,11 @@ class Harvester(Backloader):
             except (ValueError, TypeError):
                 yes_mc = None
 
-        # near-certainty: extreme price AND resolving within 30 days
-         if (yes_mc is not None and within_30d and yes_mc >= NEAR_HIGH_MC):
+        # near-certainty: HIGH side only (>=0.95) AND resolving within 30d.
+        # Low-side (<=0.05) near-certainties are overwhelmingly losing siblings
+        # in multi-candidate events (H3's negative-risk structure), not H4
+        # last-mile winners — excluded from v1.
+        if yes_mc is not None and within_30d and yes_mc >= NEAR_HIGH_MC:
             before_48h = end - self.now > timedelta(hours=48)
             return "near_certainty", {
                 "crossing_price_mc": yes_mc, "crossing_side": "high",
