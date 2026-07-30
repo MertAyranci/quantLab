@@ -105,12 +105,10 @@ class Harvester(Backloader):
                 yes_mc = None
 
         # near-certainty: extreme price AND resolving within 30 days
-        if (yes_mc is not None and within_30d
-                and (yes_mc >= NEAR_HIGH_MC or yes_mc <= NEAR_LOW_MC)):
-            side = "high" if yes_mc >= NEAR_HIGH_MC else "low"
+         if (yes_mc is not None and within_30d and yes_mc >= NEAR_HIGH_MC):
             before_48h = end - self.now > timedelta(hours=48)
             return "near_certainty", {
-                "crossing_price_mc": yes_mc, "crossing_side": side,
+                "crossing_price_mc": yes_mc, "crossing_side": "high",
                 "crossing_before_48h": before_48h, "scheduled_close": end}
 
         # imminent: resolving within 60h at any price
