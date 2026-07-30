@@ -89,8 +89,13 @@ class Harvester(Backloader):
         log.info("gamma sweep: %d pages", pages)
 
     def classify(self, m: dict):
-        """Return (reason, extra) or (None, None). extra carries crossing info."""
         end = iso(m.get("endDate"))
+        # HARD REQUIREMENT: must be open and resolving within the window
+        if end is None or end <= self.now:
+            return None, None                      # past-end / no date = junk
+        within_imminent = end <= self.now + timedelta(hours=IMMINENT_HOURS)
+        within_30d = end <= self.now + timedelta(days=30)
+
         prices = jloads_maybe(m.get("outcomePrices")) or []
         yes_mc = None
         if prices:
@@ -99,16 +104,17 @@ class Harvester(Backloader):
             except (ValueError, TypeError):
                 yes_mc = None
 
-        # near-certainty: either side crosses (check YES token price)
-        if yes_mc is not None and (yes_mc >= NEAR_HIGH_MC or yes_mc <= NEAR_LOW_MC):
+        # near-certainty: extreme price AND resolving within 30 days
+        if (yes_mc is not None and within_30d
+                and (yes_mc >= NEAR_HIGH_MC or yes_mc <= NEAR_LOW_MC)):
             side = "high" if yes_mc >= NEAR_HIGH_MC else "low"
-            before_48h = (end is None) or (end - self.now > timedelta(hours=48))
+            before_48h = end - self.now > timedelta(hours=48)
             return "near_certainty", {
                 "crossing_price_mc": yes_mc, "crossing_side": side,
                 "crossing_before_48h": before_48h, "scheduled_close": end}
 
-        # imminent: scheduled to end within the window
-        if end is not None and self.now < end <= self.now + timedelta(hours=IMMINENT_HOURS):
+        # imminent: resolving within 60h at any price
+        if within_imminent:
             return "imminent", {"scheduled_close": end}
 
         return None, None
