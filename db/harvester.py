@@ -220,7 +220,24 @@ class Harvester(Backloader):
     # ---- watchlist file -----------------------------------------------------
 
     def write_watchlist(self):
-        """Write YES+NO venue token ids for all 'watching' markets, atomically."""
+        """Write YES+NO venue token ids, atomically. Dry-run previews from the
+        in-memory admits (ledger wasn't written); live reads the ledger."""
+        if self.dry_run:
+            mids = [a["market_id"] for a in self.admits]
+            if not mids:
+                log.info("[dry-run] no admits -> 0 tokens")
+                return []
+            self.cur.execute("""
+                SELECT venue_token_id FROM tokens
+                WHERE market_id = ANY(%s)
+                ORDER BY market_id, outcome_index
+                LIMIT %s""", (mids, MAX_TOKENS))
+            tokens = [r[0] for r in self.cur.fetchall()]
+            log.info("[dry-run] would write %d tokens (%d markets)",
+                     len(tokens), len(mids))
+            return tokens
+
+        # live path: read the ledger (admits were persisted)
         self.cur.execute("""
             SELECT t.venue_token_id
             FROM h4_watch w
@@ -229,9 +246,6 @@ class Harvester(Backloader):
             ORDER BY t.market_id, t.outcome_index
             LIMIT %s""", (MAX_TOKENS,))
         tokens = [r[0] for r in self.cur.fetchall()]
-        if self.dry_run:
-            log.info("[dry-run] would write %d tokens to watchlist", len(tokens))
-            return tokens
         tmp = WATCHLIST_FILE.with_suffix(".tmp")
         tmp.write_text("\n".join(tokens) + "\n")
         tmp.replace(WATCHLIST_FILE)          # atomic rename
