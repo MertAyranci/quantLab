@@ -436,7 +436,7 @@ def main():
                 log.exception("FAILED loading %s — left in place, continuing", path.name)
                 continue
             loader.parsed.add(str(path.relative_to(REPO)))
-            shutil.move(str(path), str(DONE_DIR / path.name))
+            path.unlink() 
             for k, v in counts.items():
                 totals[k] = totals.get(k, 0) + v
         if files:

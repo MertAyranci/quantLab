@@ -171,6 +171,15 @@ class DQ:
         self.incident("delta_sequencing", sev, {"suspect_connections": n},
                       f"{n} WS connections with sparse sequence coverage")
 
+    def check_disk(self):
+        import shutil as _sh
+        total, used, free = _sh.disk_usage("/")
+        pct = 100.0 * used / total
+        sev = "crit" if pct > 90 else ("warn" if pct > 80 else "info")
+        self.incident("disk_space", sev, {"pct_used": round(pct, 1),
+                      "free_gb": round(free / 1e9, 1)},
+                      f"disk {pct:.0f}% used ({free/1e9:.0f}GB free)")
+
     def run(self):
         self.check_ws_freshness()
         self.check_rest_freshness()
@@ -179,7 +188,9 @@ class DQ:
         self.check_crossed_books()
         self.check_loader_lag()
         self.check_delta_sequencing()
+        self.check_disk()
         self.conn.commit()
+        
 
 
 def main():
