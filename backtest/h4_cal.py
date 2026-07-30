@@ -84,7 +84,7 @@ def fetch_observations(cur, horizon_hours: float, tolerance_min: float):
         elig AS (
             SELECT res.market_id, res.event_time, res.winning_token_id,
                    y.token_id, m.event_id,
-                   res.event_time - make_interval(mins => %(horizon_min)s) AS target_t
+                   res.event_time - (%(horizon_min)s * interval '1 minute') AS target_t
             FROM res
             JOIN yes_tok y ON y.market_id = res.market_id
             JOIN markets m ON m.id = res.market_id
@@ -101,7 +101,7 @@ def fetch_observations(cur, horizon_hours: float, tolerance_min: float):
             JOIN price_history ph
               ON ph.token_id = elig.token_id
              AND ph.ts <= elig.target_t
-             AND ph.ts >= elig.target_t - make_interval(mins => %(tol_min)s)
+             AND ph.ts >= elig.target_t - (%(tol_min)s * interval '1 minute')
             ORDER BY elig.market_id, ph.ts DESC
         )
         SELECT event_id, market_id, price_mc, won FROM asof
