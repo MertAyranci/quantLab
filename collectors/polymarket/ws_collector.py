@@ -318,7 +318,7 @@ class WSCollector:
                              self.conn_id[:8], len(self.tokens))
                     self.resync_all("connect")
                     self.last_msg_t = time.monotonic()
-                    last_ping = last_reconcile = last_stats = time.monotonic()
+                    last_ping = last_reconcile = last_stats = last_watchlist = time.monotonic()
                     while True:
                         now = time.monotonic()
                         if now - last_watchlist >= WATCHLIST_RELOAD_S:
