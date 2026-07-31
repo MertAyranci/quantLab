@@ -64,6 +64,8 @@ PING_S = 10
 SILENCE_S = 30
 RECONCILE_S = 300
 HEALTHCHECK_URL = os.getenv("WS_HEALTHCHECK_URL", "")
+WATCHLIST_FILE = REPO / "config" / "watchlist.txt"
+WATCHLIST_RELOAD_S = 60          # re-read the harvester's file this often
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)sZ %(levelname)s %(message)s",
@@ -117,6 +119,17 @@ class WSCollector:
     # ---- watchlist ---------------------------------------------------------
 
     def fetch_watchlist(self):
+        # Prefer the harvester's file; fall back to volume-ranked if absent.
+        if WATCHLIST_FILE.exists():
+            toks = [ln.strip() for ln in WATCHLIST_FILE.read_text().splitlines()
+                    if ln.strip() and not ln.startswith("#")]
+            if toks:
+                self.tokens = toks
+                for t in toks:
+                    self.generation.setdefault(t, 0)
+                log.info("watchlist: %d tokens from harvester file", len(toks))
+                return
+        # fallback: top-N by 24h volume (original behavior)
         r = self.http.get(f"{GAMMA}/markets",
                           params={"active": "true", "closed": "false",
                                   "order": "volume24hr", "ascending": "false",
@@ -127,14 +140,56 @@ class WSCollector:
             try:
                 ids = json.loads(m.get("clobTokenIds") or "[]")
                 if ids:
-                    toks.append(str(ids[0]))            # YES token only (RFC 8.4)
+                    toks.append(str(ids[0]))
             except (json.JSONDecodeError, TypeError):
                 continue
         self.tokens = toks
         for t in toks:
             self.generation.setdefault(t, 0)
-        log.info("watchlist: %d YES tokens (top %d by 24h volume)",
-                 len(toks), self.watchlist_size)
+        log.info("watchlist: %d tokens (volume fallback)", len(toks))
+
+    # ---- resync tokens --------------------------------------------------
+
+    def resync_tokens(self, tokens, reason):
+        books = self.rest_books(tokens)
+        for b in books:
+            t = str(b.get("asset_id"))
+            self.generation[t] = self.generation.get(t, 0) + 1
+            self.seq += 1
+            self.emit("rest_resync_book", t, b)
+        log.info("resync (%s): %d books", reason, len(books))
+
+    # ---- reconcile watchlist -----------------------------------------------
+    async def reconcile_watchlist(self, ws):
+        """Re-read the harvester file; subscribe/unsubscribe the diff over the
+        live connection. New tokens get an immediate REST book snapshot so no
+        last-mile data is lost during a cohort change."""
+        if not WATCHLIST_FILE.exists():
+            return
+        new = [ln.strip() for ln in WATCHLIST_FILE.read_text().splitlines()
+               if ln.strip() and not ln.startswith("#")]
+        if not new:
+            return
+        cur = set(self.tokens)
+        want = set(new)
+        added = want - cur
+        removed = cur - want
+        if not added and not removed:
+            return
+        if added:
+            await ws.send(json.dumps({"assets_ids": list(added),
+                                      "operation": "subscribe"}))
+            for t in added:
+                self.generation.setdefault(t, 0)
+            # immediate REST snapshot for each new token (post-subscribe)
+            self.resync_tokens(list(added), "watchlist_add")
+        if removed:
+            await ws.send(json.dumps({"assets_ids": list(removed),
+                                      "operation": "unsubscribe"}))
+        self.tokens = new
+        log.info("watchlist reconciled: +%d -%d (now %d)",
+                 len(added), len(removed), len(new))
+
 
     # ---- buffer records ----------------------------------------------------
 
@@ -266,6 +321,9 @@ class WSCollector:
                     last_ping = last_reconcile = last_stats = time.monotonic()
                     while True:
                         now = time.monotonic()
+                        if now - last_watchlist >= WATCHLIST_RELOAD_S:
+                            await self.reconcile_watchlist(ws)
+                            last_watchlist = now
                         if now - last_ping >= PING_S:
                             await ws.send("PING")
                             last_ping = now
