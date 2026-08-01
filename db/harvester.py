@@ -66,6 +66,45 @@ class Harvester(Backloader):
         self.admits: list[dict] = []
         self.evicts: list[dict] = []
 
+    # ---- detect closures-----------------------------------------------------
+    def detect_closures(self):
+        """Mark watching markets as 'closed' once trading has actually stopped
+        (resolution recorded OR closed/resolved status observed). Records the
+        final observed price for the survivorship trajectory. Runs before
+        admissions so freed slots can be refilled the same pass."""
+        self.cur.execute("""
+            SELECT w.market_id
+            FROM h4_watch w
+            WHERE w.status = 'watching'
+              AND (EXISTS (SELECT 1 FROM resolutions r WHERE r.market_id = w.market_id)
+                OR EXISTS (SELECT 1 FROM market_status s
+                           WHERE s.market_id = w.market_id
+                             AND s.status IN ('closed','resolved')))
+        """)
+        to_close = [r[0] for r in self.cur.fetchall()]
+        for mid in to_close:
+            if self.dry_run:
+                self.evicts.append({"market_id": mid, "reason": "closed"})
+                continue
+            # capture final observed YES price for the trajectory record
+            self.cur.execute("""
+                SELECT ts.best_bid_mc
+                FROM tob_snapshots ts
+                JOIN tokens tk ON tk.id = ts.token_id
+                WHERE tk.market_id = %s AND tk.outcome_index = 0
+                ORDER BY ts.capture_time DESC LIMIT 1""", (mid,))
+            row = self.cur.fetchone()
+            last_price = row[0] if row else None
+            self.cur.execute("""
+                UPDATE h4_watch
+                SET status='closed', closed_time=now(), final_snapshot_taken=true,
+                    last_observed_price_mc=COALESCE(last_observed_price_mc, %s),
+                    last_observed_time=now()
+                WHERE market_id=%s AND status='watching'""", (last_price, mid))
+        if to_close:
+            log.info("close-detection: marked %d markets closed", len(to_close))
+        return to_close
+
     # ---- venue-wide sweep ---------------------------------------------------
 
     def sweep_gamma(self):
@@ -165,6 +204,7 @@ class Harvester(Backloader):
     # ---- main pass ----------------------------------------------------------
 
     def run_pass(self):
+        self.detect_closures()
         watching = self.currently_watching()
         ev_counts = self.event_counts(watching)
         n_watching = len(watching)
