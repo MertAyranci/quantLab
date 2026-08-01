@@ -106,6 +106,7 @@ class BufferLoader(Backloader):
 
     def __init__(self, conn, run_id, deep_tokens: set[str]):
         super().__init__(conn, run_id)
+        self.token_cache_cap = 50000 
         self.deep = deep_tokens
         self.http = httpx.Client(headers={"User-Agent": "quant-lab-loader/0.1"},
                                  timeout=30)
@@ -128,14 +129,28 @@ class BufferLoader(Backloader):
     # ---- token resolution ---------------------------------------------------
 
     def token_id_for(self, venue_token: str | None) -> int | None:
-        """Internal id for a venue token; fetch market metadata from Gamma once
-        if unknown (new markets appear mid-stream)."""
+        """Internal id for a venue token. Checks in-memory cache, then the DB,
+        then falls back to a Gamma lookup for genuinely new markets. Caches are
+        bounded (cleared past token_cache_cap) so this daemon's memory stays
+        flat over long unattended runs."""
         if not venue_token:
             return None
         if venue_token in self.token_ids:
             return self.token_ids[venue_token]
         if venue_token in self.unresolved:
             return None
+
+        # DB lookup first (cheap, avoids hitting Gamma for known tokens)
+        self.cur.execute("SELECT id FROM tokens WHERE venue_token_id=%s", (venue_token,))
+        row = self.cur.fetchone()
+        if row:
+            if len(self.token_ids) > self.token_cache_cap:
+                self.token_ids.clear()
+                self.unresolved.clear()
+            self.token_ids[venue_token] = row[0]
+            return row[0]
+
+        # unknown token: fetch market metadata from Gamma once (new mid-stream market)
         try:
             r = self.http.get("https://gamma-api.polymarket.com/markets",
                               params={"clob_token_ids": venue_token})
@@ -150,15 +165,9 @@ class BufferLoader(Backloader):
             if venue_token in self.token_ids:
                 return self.token_ids[venue_token]
 
-        self.cur.execute("SELECT id FROM tokens WHERE venue_token_id=%s", (venue_token,))
-        row = self.cur.fetchone()
-        if row:
-            self.token_ids[venue_token] = row[0]
-            return row[0]
-        if venue_token in self.unresolved:
-            return None
+        # genuinely unresolvable — remember the miss so we don't re-query forever
+        self.unresolved.add(venue_token)
         return None
-
     # ---- record routing ------------------------------------------------------
 
     def route(self, rec: dict, raw_ref: str, batches: dict) -> str:
