@@ -53,7 +53,10 @@ NEAR_LOW_MC = 50            # <= 0.05
 MAX_MARKETS = 60
 MAX_TOKENS = 120
 MAX_PER_EVENT = 3
-IMMINENT_MAX_WATCH_DAYS = 7  # applies ONLY to imminent misclassifications
+IMMINENT_MAX_WATCH_DAYS = 7
+IMMINENT_SLOTS = 45           # reserved for fast-resolving markets
+NEAR_MAX_DAYS = 7             # only admit near-certainties resolving within 7d
+IMMINENT_STALE_DAYS = 1   # applies ONLY to imminent misclassifications
 PAGE_SLEEP = 0.25
 
 
@@ -133,7 +136,7 @@ class Harvester(Backloader):
         if end is None or end <= self.now:
             return None, None                      # past-end / no date = junk
         within_imminent = end <= self.now + timedelta(hours=IMMINENT_HOURS)
-        within_30d = end <= self.now + timedelta(days=30)
+        within_near = end <= self.now + timedelta(days=NEAR_MAX_DAYS)
 
         prices = jloads_maybe(m.get("outcomePrices")) or []
         yes_mc = None
@@ -147,7 +150,7 @@ class Harvester(Backloader):
         # Low-side (<=0.05) near-certainties are overwhelmingly losing siblings
         # in multi-candidate events (H3's negative-risk structure), not H4
         # last-mile winners — excluded from v1.
-        if yes_mc is not None and within_30d and yes_mc >= NEAR_HIGH_MC:
+        if yes_mc is not None and within_near and yes_mc >= NEAR_HIGH_MC:
             before_48h = end - self.now > timedelta(hours=48)
             return "near_certainty", {
                 "crossing_price_mc": yes_mc, "crossing_side": "high",
@@ -211,21 +214,27 @@ class Harvester(Backloader):
 
         # 1. evictions first (free up slots)
         for mid, info in watching.items():
-            # imminent misclassification: watched > 7 days AND its scheduled
-            # close is well past -> it never actually resolved as expected
             if info["reason"] == "imminent":
                 age = self.now - info["admit"]
-                if age > timedelta(days=IMMINENT_MAX_WATCH_DAYS):
+                sched = info["sched"]
+                # (a) misclassification cleanup: watched too long
+                too_old = age > timedelta(days=IMMINENT_MAX_WATCH_DAYS)
+                # (b) stale: scheduled close passed but never resolved (lingering)
+                stale = (sched is not None
+                         and sched < self.now - timedelta(days=IMMINENT_STALE_DAYS))
+                if too_old or stale:
                     self.evict(mid, "maxdur")
                     n_watching -= 1
                     if info["event"]:
                         ev_counts[info["event"]] = ev_counts.get(info["event"], 1) - 1
-            # NOTE: near_certainty markets are intentionally NOT evicted here.
-            # They leave only when the collector/status marks trading closed
-            # (handled by a separate close-detection pass, not price reversal).
+            # near_certainty markets are NEVER evicted for price reversal
+            # (survivorship guard); they leave only via close-detection.
 
         # 2. sweep venue-wide, admit new candidates
         seen_markets = set(watching.keys())
+        n_imminent = sum(1 for i in watching.values() if i["reason"] == "imminent")
+        n_near = sum(1 for i in watching.values() if i["reason"] == "near_certainty")
+        near_cap = MAX_MARKETS - IMMINENT_SLOTS      # e.g. 60 - 45 = 15
         for m in self.sweep_gamma():
             if n_watching >= MAX_MARKETS:
                 break
@@ -243,6 +252,9 @@ class Harvester(Backloader):
             reason, extra = self.classify(m)
             if reason is None:
                 continue
+            # enforce near-certainty ceiling so imminent slots stay reserved
+            if reason == "near_certainty" and n_near >= near_cap:
+                continue
 
             # diversification: event cap
             evs = jloads_maybe(m.get("events")) or []
@@ -258,6 +270,10 @@ class Harvester(Backloader):
             self.admit(mid, event_id, reason, extra, cat if isinstance(cat, str) else None)
             seen_markets.add(mid)
             n_watching += 1
+            if reason == "imminent":
+                n_imminent += 1
+            else:
+                n_near += 1
             if event_id is not None:
                 ev_counts[event_id] = ev_counts.get(event_id, 0) + 1
 
