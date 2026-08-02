@@ -433,3 +433,14 @@ loader + queryable DB (273k snapshots, 1.46M resolutions, 25M price points) +
 2. Data-quality checks (Day F) — last Phase-1 piece.
 3. Write-up #1 (census + spread/tick + composition + H3).
 4. LONDON DECISION → venue #2 (Betfair vs Kalshi).
+
+
+
+2026-08-01 — Close-detection + loader hardening.
+
+Diagnosed closed: 0 → confirmed missing close-detection: resolved markets (has_resolution=t) stuck in watching. Built detect_closures() in harvester: marks markets closed on resolution/closed-status, records final price, runs first in run_pass() so freed slots refill same-pass. First 7 Grade-A markets banked. Cohort self-refreshes.
+Loader memory creep (672 MB) fixed: DB-first token lookup + bounded token_ids/unresolved caches (cap 50k, clear-on-overflow). Memory 672 MB → 32 MB, now flat on long runs. Also fixed dead unresolved-miss code that re-queried Gamma endlessly.
+Full health sweep green: services active, disk 55%, DQ OK all checks, fresh data flowing (732 tob/5min).
+Grade-A dataset now accumulating autonomously toward tight-horizon H4-Cal (runnable ~mid-week when closed reaches a few dozen).
+
+2026-08-02 — Harvester cohort tuning. Diagnosed closed flatlined at 7: cohort silted with slow-resolving markets (imminent lingerers past scheduled_close + near-certainties admitted up to 30d out, squatting slots). Fix: reserved 45/60 slots for imminent (fast churn guaranteed), tightened near-certainty window to 7d, evict stale imminent (>1d past close) and too-distant near-certainties (>7d out, no last-mile yet — safe re: survivorship). Fixed evict() bug: too_distant/maxdur → evicted_maxdur, only close-detection → closed (keeps Grade-A set clean). Reshaped cohort: 25 evicted, 60 refilled imminent-heavy. Grade-A now accumulating faster.
