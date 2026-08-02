@@ -227,8 +227,17 @@ class Harvester(Backloader):
                     n_watching -= 1
                     if info["event"]:
                         ev_counts[info["event"]] = ev_counts.get(info["event"], 1) - 1
-            # near_certainty markets are NEVER evicted for price reversal
-            # (survivorship guard); they leave only via close-detection.
+            # near_certainty: survivorship guard protects markets in their final
+            # window, but a market resolving weeks out has no last-mile yet and
+            # may be evicted to free slots (re-admitted as its date approaches).
+            elif info["reason"] == "near_certainty":
+                sched = info["sched"]
+                if (sched is not None
+                        and sched > self.now + timedelta(days=NEAR_MAX_DAYS)):
+                    self.evict(mid, "too_distant")
+                    n_watching -= 1
+                    if info["event"]:
+                        ev_counts[info["event"]] = ev_counts.get(info["event"], 1) - 1
 
         # 2. sweep venue-wide, admit new candidates
         seen_markets = set(watching.keys())
