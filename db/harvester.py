@@ -199,10 +199,15 @@ class Harvester(Backloader):
         self.evicts.append({"market_id": market_id, "reason": reason})
         if self.dry_run:
             return
+        status = {
+            "maxdur":      "evicted_maxdur",
+            "too_distant": "evicted_maxdur",   # evicted while open, NOT closed
+            "closed":      "closed",           # genuinely resolved (close-detection)
+        }.get(reason, "evicted_maxdur")
         self.cur.execute("""
             UPDATE h4_watch SET status=%s, evicted_time=now(), evicted_reason=%s
             WHERE market_id=%s AND status='watching'""",
-            ("evicted_maxdur" if reason == "maxdur" else "closed", reason, market_id))
+            (status, reason, market_id))
 
     # ---- main pass ----------------------------------------------------------
 
