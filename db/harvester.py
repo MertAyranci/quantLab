@@ -99,11 +99,19 @@ class Harvester(Backloader):
             row = self.cur.fetchone()
             last_price = row[0] if row else None
             self.cur.execute("""
-                UPDATE h4_watch
-                SET status='closed', closed_time=now(), final_snapshot_taken=true,
-                    last_observed_price_mc=COALESCE(last_observed_price_mc, %s),
-                    last_observed_time=now()
-                WHERE market_id=%s AND status='watching'""", (last_price, mid))
+                UPDATE h4_watch w
+                SET status='closed', final_snapshot_taken=true,
+                    closed_time = COALESCE(
+                        (SELECT r.event_time FROM resolutions r
+                         WHERE r.market_id = w.market_id
+                         ORDER BY r.event_time LIMIT 1),
+                        (SELECT max(ts.capture_time) FROM tob_snapshots ts
+                         JOIN tokens tk ON tk.id = ts.token_id
+                         WHERE tk.market_id = w.market_id),
+                        now()),
+                    last_observed_price_mc = COALESCE(last_observed_price_mc, %s),
+                    last_observed_time = now()
+                WHERE market_id = %s AND status='watching'""", (last_price, mid))
         if to_close:
             log.info("close-detection: marked %d markets closed", len(to_close))
         return to_close
