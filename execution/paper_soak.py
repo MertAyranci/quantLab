@@ -141,12 +141,35 @@ def main():
         print("\ntracker:", tracker.summary())
         return
 
+    import httpx
+    from book_reader import read_book
+    sweep_http = httpx.Client(headers={"User-Agent": "quant-lab-exec/0.1"}, timeout=30)
+    pass_n = 0
     while True:
+        pass_n += 1
         stats = run_h4_rule(mgr, cur, entered)
-        print(f"{datetime.now(timezone.utc).isoformat()} pass: {stats}")
+
+        # mark open positions to current conservative price (bid) each pass
+        now = datetime.now(timezone.utc)
+        for mid in list(tracker.positions.keys()):
+            book = read_book(cur, mid, now, outcome_index=0)
+            if book.best_bid is not None:
+                tracker.update_mark(mid, book.best_bid)
+
+        # resolution sweep every 5th pass (~5 min) — settle resolved markets
+        if pass_n % 5 == 0:
+            actions = tracker.resolution_sweep(sweep_http)
+            settled = [a for a in actions if a.get("action") == "settled"]
+            if settled:
+                print(f"  RESOLVED: {len(settled)} positions settled -> "
+                      f"realized now ${tracker.realized_pnl:.2f}")
+                # allow re-entry if a settled market re-appears (it won't, but clean)
+                for a in settled:
+                    entered.discard(a["market_id"])
+
+        print(f"{now.isoformat()} pass {pass_n}: {stats}")
         print(f"  tracker: {tracker.summary()}")
-        print(f"  ledger: {mgr.ledger_summary()}")
-        conn.commit()   # release any read locks
+        conn.commit()
         if args.once:
             break
         time.sleep(60)
