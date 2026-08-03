@@ -110,6 +110,7 @@ class WSCollector:
         self.tokens: list[str] = []          # venue token ids (YES side)
         self.generation: dict[str, int] = {}
         self.last_tob: dict[str, tuple] = {} # token -> (bid, ask) venue strings
+        self.last_snap_t: dict[str, float] = {}
         self.conn_id = None
         self.seq = 0
         self.last_msg_t = 0.0
@@ -237,9 +238,14 @@ class WSCollector:
         log.info("resync (%s): %d books, generations bumped", reason, len(books))
 
     def reconcile(self):
-        """Compare REST TOB vs last-seen WS TOB; mismatches -> targeted resync."""
+        """Compare REST TOB vs last-seen WS TOB. Emit a snapshot when the book
+        changed, when we've never recorded this token, or when the last snapshot
+        is older than the heartbeat interval (so frozen/illiquid markets still
+        record their stable price — critical for quiet near-certainties)."""
+        HEARTBEAT_S = 300          # force a snapshot at least this often
+        now = time.monotonic()
         books = self.rest_books(self.tokens)
-        mismatched = 0
+        mismatched = heartbeat = 0
         for b in books:
             t = str(b.get("asset_id"))
             bids, asks = b.get("bids") or [], b.get("asks") or []
@@ -248,15 +254,23 @@ class WSCollector:
             rest = (str(bb) if bb is not None else None,
                     str(ba) if ba is not None else None)
             seen = self.last_tob.get(t)
-            if seen is not None and seen != rest:
-                mismatched += 1
+            last_snap = self.last_snap_t.get(t, 0.0)
+            changed = seen is not None and seen != rest
+            never = seen is None
+            stale = (now - last_snap) > HEARTBEAT_S
+            if changed or never or stale:
+                if changed:
+                    mismatched += 1
+                elif not never:
+                    heartbeat += 1
                 self.generation[t] = self.generation.get(t, 0) + 1
                 self.seq += 1
                 self.emit("rest_resync_book", t, b)
                 self.last_tob[t] = rest
-        log.info("reconcile: %d/%d tokens mismatched (books moving between "
-                 "polls is normal; sustained high rates are not)",
-                 mismatched, len(books))
+                self.last_snap_t[t] = now
+        log.info("reconcile: %d changed, %d heartbeat, %d tokens "
+                 "(books moving between polls is normal)",
+                 mismatched, heartbeat, len(books))
 
     # ---- WS message handling ------------------------------------------------
 
