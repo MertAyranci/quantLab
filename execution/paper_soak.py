@@ -129,7 +129,10 @@ def main():
     conn = connect()
     cur = conn.cursor()
     tracker = Tracker(live_capital=LIVE_CAPITAL)
-    mgr = OrderManager(tracker, FillConfig.base(), mode="paper",
+    cfg = FillConfig.base()
+    cfg.full_book_ttl_s = 600.0     # near-certainties are stable; a 10-min-old
+    cfg.bbo_ttl_s = 600.0           # quote on a pinned market is still valid
+    mgr = OrderManager(tracker, cfg, mode="paper",
                        ledger_path=LEDGER, fee_bps=0.0)
     entered: set = set()
 
