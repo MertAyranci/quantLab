@@ -66,10 +66,10 @@ def candidate_pm_markets(cur, commence_time):
         SELECT id, question, end_date
         FROM markets
         WHERE question ~ '^[A-Za-z. ]+ vs\\. [A-Za-z. ]+$'
-          AND question NOT ILIKE '%:%'
-          AND question NOT ILIKE '%spread%'
-          AND question NOT ILIKE '%innings%'
-          AND question NOT ILIKE '%O/U%'
+          AND question NOT ILIKE '%%:%%'
+          AND question NOT ILIKE '%%spread%%'
+          AND question NOT ILIKE '%%innings%%'
+          AND question NOT ILIKE '%%O/U%%'
           AND end_date BETWEEN %s - interval '1 day' AND %s + interval '1 day'
     """, (commence_time, commence_time))
     return cur.fetchall()
