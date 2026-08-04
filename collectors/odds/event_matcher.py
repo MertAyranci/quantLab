@@ -61,17 +61,20 @@ def connect():
 
 
 def candidate_pm_markets(cur, commence_time):
-    """Polymarket moneyline markets resolving within +/-1 day of the game."""
+    """Polymarket moneyline markets whose slug-encoded date matches the game
+    date (slugs look like 'mlb-stl-nyy-2026-08-05'). Date from slug, since
+    end_date is null for per-game markets."""
+    game_date = commence_time.date().isoformat()   # 'YYYY-MM-DD'
     cur.execute("""
-        SELECT id, question, end_date
+        SELECT id, question, slug
         FROM markets
         WHERE question ~ '^[A-Za-z. ]+ vs\\. [A-Za-z. ]+$'
           AND question NOT ILIKE '%%:%%'
           AND question NOT ILIKE '%%spread%%'
           AND question NOT ILIKE '%%innings%%'
           AND question NOT ILIKE '%%O/U%%'
-          AND end_date BETWEEN %s - interval '1 day' AND %s + interval '1 day'
-    """, (commence_time, commence_time))
+          AND slug LIKE %s
+    """, (f"%{game_date}",))
     return cur.fetchall()
 
 
@@ -87,12 +90,12 @@ def match_all(cur, dry_run=False):
     for game_id, oddsapi_id, commence, home, away in games:
         want = {norm_team(home), norm_team(away)}
         found = None
-        for pm_id, question, end_date in candidate_pm_markets(cur, commence):
+        for pm_id, question, slug in candidate_pm_markets(cur, commence):
             parsed = parse_pm_matchup(question)
             if not parsed:
                 continue
             if set(parsed) == want:
-                found = (pm_id, question, end_date)
+                found = (pm_id, question, slug)
                 break
         if found:
             matched += 1
