@@ -64,7 +64,7 @@ def grade_a_markets(cur, horizon_hours):
             SELECT 1 FROM tob_snapshots ts
             WHERE ts.token_id = y.token_id
               AND ts.capture_time < w.closed_time
-              AND ts.capture_time > w.closed_time - make_interval(hours => %s) - interval '30 min'
+              AND ts.capture_time > w.closed_time - (%s * interval '1 hour') - interval '30 min'
           )
         ORDER BY w.closed_time DESC
     """, (horizon_hours,))
