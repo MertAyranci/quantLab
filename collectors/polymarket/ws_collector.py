@@ -151,13 +151,12 @@ class WSCollector:
         log.info("watchlist: %d tokens (volume fallback)", len(toks))
 #----- for crypto watchlist -----------------------------------------------
     def _read_watchlist_files(self):
-        """Union of tokens from the H4 watchlist and the crypto watchlist."""
         toks = []
         for f in (WATCHLIST_FILE, WATCHLIST_CRYPTO_FILE):
             if f.exists():
                 toks += [ln.strip() for ln in f.read_text().splitlines()
                          if ln.strip() and not ln.startswith("#")]
-        return list(dict.fromkeys(toks))   # dedupe, preserve order
+        return list(dict.fromkeys(toks))
     # ---- resync tokens --------------------------------------------------
 
     def resync_tokens(self, tokens, reason):
