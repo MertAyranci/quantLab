@@ -65,6 +65,7 @@ SILENCE_S = 30
 RECONCILE_S = 300
 HEALTHCHECK_URL = os.getenv("WS_HEALTHCHECK_URL", "")
 WATCHLIST_FILE = REPO / "config" / "watchlist.txt"
+WATCHLIST_CRYPTO_FILE = REPO / "config" / "watchlist_crypto.txt"   # ADD THIS
 WATCHLIST_RELOAD_S = 60          # re-read the harvester's file this often
 
 logging.basicConfig(level=logging.INFO,
@@ -148,7 +149,15 @@ class WSCollector:
         for t in toks:
             self.generation.setdefault(t, 0)
         log.info("watchlist: %d tokens (volume fallback)", len(toks))
-
+#----- for crypto watchlist -----------------------------------------------
+    def _read_watchlist_files(self):
+        """Union of tokens from the H4 watchlist and the crypto watchlist."""
+        toks = []
+        for f in (WATCHLIST_FILE, WATCHLIST_CRYPTO_FILE):
+            if f.exists():
+                toks += [ln.strip() for ln in f.read_text().splitlines()
+                         if ln.strip() and not ln.startswith("#")]
+        return list(dict.fromkeys(toks))   # dedupe, preserve order
     # ---- resync tokens --------------------------------------------------
 
     def resync_tokens(self, tokens, reason):
@@ -165,10 +174,9 @@ class WSCollector:
         """Re-read the harvester file; subscribe/unsubscribe the diff over the
         live connection. New tokens get an immediate REST book snapshot so no
         last-mile data is lost during a cohort change."""
-        if not WATCHLIST_FILE.exists():
+        if not (WATCHLIST_FILE.exists() or WATCHLIST_CRYPTO_FILE.exists()):
             return
-        new = [ln.strip() for ln in WATCHLIST_FILE.read_text().splitlines()
-               if ln.strip() and not ln.startswith("#")]
+        new = self._read_watchlist_files()
         if not new:
             return
         cur = set(self.tokens)
