@@ -73,20 +73,17 @@ def iso(s):
 
 def retained_boundaries():
     """All 5-min boundaries whose resolution time is in
-    [now - GRACE, now + LOOKAHEAD] -> union retention, nothing dropped early."""
+    [now - GRACE, now + LOOKAHEAD] -> union retention: keep the just-resolved
+    cohort (within grace, for the final checkpoint) plus current + upcoming.
+    Nothing is dropped before it resolves."""
     now = int(time.time())
-    base = (now // 300) * 300
+    # earliest boundary we still care about: one that resolved <= GRACE ago
+    start = ((now - GRACE_S) // 300) * 300
     bounds = []
-    b = base
-    # walk back a little (to keep just-resolved cohorts in grace) and forward
-    while b >= now - GRACE_S - 300:
-        b -= 300
-    b += 300
+    b = start
     while b <= now + LOOKAHEAD_S:
-        if b >= now - GRACE_S - 300:      # within grace of already-passed, or future
-            # keep boundaries whose end (=b) is >= now-GRACE
-            if b >= now - GRACE_S:
-                bounds.append(b)
+        if b >= now - GRACE_S:
+            bounds.append(b)
         b += 300
     return sorted(set(bounds))
 
