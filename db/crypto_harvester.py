@@ -70,12 +70,19 @@ def fetch_live_5m(http):
             toks = json.loads(toks)
         if not toks or len(toks) < 1:
             continue
+        end = iso(m.get("endDate"))
+        if end is not None:
+            secs = (end - datetime.now(timezone.utc)).total_seconds()
+            # only currently-live markets: resolving within the next 6 min,
+            # or just resolved in the last 1 min (grace for capture)
+            if secs < -60 or secs > 360:
+                continue
         out.append({
             "slug": slug, "question": m.get("question"),
             "condition_id": m.get("conditionId"),
             "yes_token": str(toks[0]),
             "no_token": str(toks[1]) if len(toks) > 1 else None,
-            "end_date": iso(m.get("endDate")),
+            "end_date": end,
             "venue_market_id": str(m.get("id") or m.get("conditionId") or slug),
         })
     return out
