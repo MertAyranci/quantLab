@@ -71,18 +71,25 @@ def iso(s):
         return None
 
 
+# NOTE: the slug timestamp is the market's START boundary; it RESOLVES 300s
+# later. So end_date = slug_ts + 300. All retention/checkpoint timing keys off
+# the resolution time, i.e. slug_ts + RESOLVE_OFFSET.
+RESOLVE_OFFSET = 300
+
 def retained_boundaries():
-    """All 5-min boundaries whose resolution time is in
+    """Slug timestamps whose RESOLUTION time (slug_ts + 300) is in
     [now - GRACE, now + LOOKAHEAD] -> union retention: keep the just-resolved
     cohort (within grace, for the final checkpoint) plus current + upcoming.
     Nothing is dropped before it resolves."""
     now = int(time.time())
-    # earliest boundary we still care about: one that resolved <= GRACE ago
-    start = ((now - GRACE_S) // 300) * 300
     bounds = []
-    b = start
-    while b <= now + LOOKAHEAD_S:
-        if b >= now - GRACE_S:
+    # iterate candidate slug timestamps on 5-min grid; keep those whose
+    # resolution time falls in the window
+    base = ((now - GRACE_S) // 300) * 300
+    b = base - 300      # start one grid step back for safety
+    while b + RESOLVE_OFFSET <= now + LOOKAHEAD_S:
+        resolve = b + RESOLVE_OFFSET
+        if resolve >= now - GRACE_S:
             bounds.append(b)
         b += 300
     return sorted(set(bounds))
