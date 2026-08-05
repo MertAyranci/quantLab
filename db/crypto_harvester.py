@@ -112,14 +112,15 @@ def upsert_market(cur, m):
         (POLY_VENUE_ID, m["venue_market_id"], m["condition_id"], m["slug"],
          m["question"], m["end_date"]))
     mid = cur.fetchone()[0]
-    for idx, tok in ((0, m["yes_token"]), (1, m["no_token"])):
+    for idx, tok, outcome in ((0, m["yes_token"], "Up"), (1, m["no_token"], "Down")):
         if not tok:
             continue
         cur.execute("""
-            INSERT INTO tokens (market_id, venue_id, venue_token_id, outcome_index)
-            VALUES (%s,%s,%s,%s)
+            INSERT INTO tokens (market_id, venue_id, venue_token_id, outcome_index,
+                                outcome, source)
+            VALUES (%s,%s,%s,%s,%s,'crypto_harvester')
             ON CONFLICT (venue_id, venue_token_id) DO NOTHING""",
-            (mid, POLY_VENUE_ID, tok, idx))
+            (mid, POLY_VENUE_ID, tok, idx, outcome))
     return mid
 
 
