@@ -1,32 +1,31 @@
-"""Crypto harvester — last-mile capture for 5-minute Up/Down markets.
+"""Crypto harvester (Gamma-direct) — last-mile capture for 5-minute Up/Down markets.
 
-The 5-minute BTC/ETH markets live only ~5 minutes, so the slow H4 harvester and
-daily discovery never capture their order books. This job runs every 1-2 minutes,
-finds 5m crypto markets resolving in the next ~6 minutes, and writes their YES
-tokens to a dedicated watchlist file the WS collector reads. That gives us dense
-last-mile books (the 95->99c climb) needed to test crypto-H4.
+The 5m crypto markets live ~5 minutes and daily discovery never catches them in
+time. This job polls Gamma DIRECTLY every ~60s for live 'updown-5m' markets
+(all assets: btc/eth/sol/xrp/doge/hype/bnb/zec/...), upserts any it hasn't seen
+into markets+tokens, and writes their 'Up' (YES) tokens to a dedicated watchlist
+the WS collector also reads. That yields dense last-mile books for crypto-H4.
 
-Writes to config/watchlist_crypto.txt (separate from the H4 watchlist so the two
-don't clobber each other). The WS collector must be configured to read BOTH files.
+clobTokenIds[0] = "Up" (YES), clobTokenIds[1] = "Down". endDate = resolution time.
 
-Design:
-  * admit markets whose resolve_time is in [now-1min, now+6min] -> covers a
-    market's full 5-min life plus a small grace window
-  * one YES token per market (outcome_index 0)
-  * cap the list so we never over-subscribe (5m markets are frequent)
-  * records admissions to a crypto_watch table for later Grade-A selection
+Writes:
+  config/watchlist_crypto.txt   (WS collector reads this + the H4 watchlist)
+  crypto_watch table            (admission ledger for Grade-A selection)
 
 Usage:
-  .venv/bin/python db/crypto_harvester.py            # one pass, write watchlist
+  .venv/bin/python db/crypto_harvester.py            # one pass
   .venv/bin/python db/crypto_harvester.py --dry-run  # show, don't write
 """
 
 from __future__ import annotations
 
 import argparse
+import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+import httpx
 import psycopg2
 from dotenv import dotenv_values
 
@@ -34,9 +33,11 @@ REPO = Path(__file__).resolve().parents[1]
 ENV = dotenv_values(REPO / ".env")
 WATCHLIST = REPO / "config" / "watchlist_crypto.txt"
 
-WINDOW_PAST_MIN = 1        # keep markets up to 1 min past resolve (grace)
-WINDOW_FUTURE_MIN = 6      # admit markets resolving within 6 min
-MAX_MARKETS = 40           # cap concurrent watched 5m markets
+GAMMA = "https://gamma-api.polymarket.com"
+UA = {"User-Agent": "quant-lab-crypto/0.1"}
+SLUG_RE = re.compile(r"-updown-5m-\d+$")
+POLY_VENUE_ID = 1          # Polymarket venue id in your venues table
+MAX_TOKENS = 60            # safety cap on concurrent watched crypto tokens
 
 
 def connect():
@@ -44,26 +45,62 @@ def connect():
                             user="quantlab", password=ENV["PG_PASSWORD"])
 
 
-def upcoming_5m_markets(cur):
-    """5-minute crypto markets resolving within the capture window, with their
-    YES venue token id for the watchlist."""
+def iso(s):
+    if not s:
+        return None
+    try:
+        return datetime.fromisoformat(str(s).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def fetch_live_5m(http):
+    """Live 5m markets from Gamma, newest first (freshly-created = about to run)."""
+    r = http.get(f"{GAMMA}/markets",
+                 params={"closed": "false", "order": "startDate",
+                         "ascending": "false", "limit": 100})
+    r.raise_for_status()
+    out = []
+    for m in r.json():
+        slug = m.get("slug") or ""
+        if not SLUG_RE.search(slug):
+            continue
+        toks = m.get("clobTokenIds")
+        if isinstance(toks, str):
+            toks = json.loads(toks)
+        if not toks or len(toks) < 1:
+            continue
+        out.append({
+            "slug": slug, "question": m.get("question"),
+            "condition_id": m.get("conditionId"),
+            "yes_token": str(toks[0]),
+            "no_token": str(toks[1]) if len(toks) > 1 else None,
+            "end_date": iso(m.get("endDate")),
+            "venue_market_id": str(m.get("id") or m.get("conditionId") or slug),
+        })
+    return out
+
+
+def upsert_market(cur, m):
+    """Insert market + Up/Down tokens if unseen. Returns internal market id."""
     cur.execute("""
-        WITH c AS (
-          SELECT id, slug,
-                 to_timestamp(substring(slug from 'updown-5m-([0-9]+)')::bigint) AS resolve_time
-          FROM markets
-          WHERE slug ~ '(btc|eth)-updown-5m-[0-9]+'
-        )
-        SELECT c.id, c.slug, c.resolve_time, tk.venue_token_id
-        FROM c
-        JOIN tokens tk ON tk.market_id = c.id AND tk.outcome_index = 0
-        WHERE c.resolve_time BETWEEN now() - (%s * interval '1 min')
-                                 AND now() + (%s * interval '1 min')
-          AND tk.venue_token_id IS NOT NULL
-        ORDER BY c.resolve_time
-        LIMIT %s
-    """, (WINDOW_PAST_MIN, WINDOW_FUTURE_MIN, MAX_MARKETS))
-    return cur.fetchall()
+        INSERT INTO markets (venue_id, venue_market_id, condition_id, slug,
+                             question, end_date, first_seen_at, source)
+        VALUES (%s,%s,%s,%s,%s,%s, now(), 'crypto_harvester')
+        ON CONFLICT (venue_id, venue_market_id) DO UPDATE SET slug=EXCLUDED.slug
+        RETURNING id""",
+        (POLY_VENUE_ID, m["venue_market_id"], m["condition_id"], m["slug"],
+         m["question"], m["end_date"]))
+    mid = cur.fetchone()[0]
+    for idx, tok in ((0, m["yes_token"]), (1, m["no_token"])):
+        if not tok:
+            continue
+        cur.execute("""
+            INSERT INTO tokens (market_id, venue_id, venue_token_id, outcome_index)
+            VALUES (%s,%s,%s,%s)
+            ON CONFLICT (venue_id, venue_token_id) DO NOTHING""",
+            (mid, POLY_VENUE_ID, tok, idx))
+    return mid
 
 
 def main():
@@ -71,35 +108,40 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    conn = connect()
-    cur = conn.cursor()
-    rows = upcoming_5m_markets(cur)
-
-    tokens = [r[3] for r in rows]
+    http = httpx.Client(headers=UA, timeout=30)
+    markets = fetch_live_5m(http)
     now = datetime.now(timezone.utc)
-    print(f"{now.isoformat()} crypto-harvester: {len(rows)} live 5m markets")
-    for mid, slug, rt, tok in rows[:8]:
-        secs = (rt - now).total_seconds()
-        print(f"  {slug}  resolve in {secs:+.0f}s")
+    print(f"{now.isoformat()} crypto-harvester: {len(markets)} live 5m markets")
+    for m in markets[:8]:
+        secs = (m["end_date"] - now).total_seconds() if m["end_date"] else None
+        if secs is not None:
+            print(f"  {m['slug']}  resolve in {secs:+.0f}s")
+        else:
+            print(f"  {m['slug']}")
+
+    yes_tokens = [m["yes_token"] for m in markets][:MAX_TOKENS]
 
     if args.dry_run:
-        print(f"[dry-run] would write {len(tokens)} tokens to {WATCHLIST.name}")
+        print(f"[dry-run] would write {len(yes_tokens)} YES tokens to {WATCHLIST.name}")
         return
 
-    # record admissions (idempotent) for later Grade-A selection
-    for mid, slug, rt, tok in rows:
+    conn = connect()
+    cur = conn.cursor()
+    for m in markets:
+        mid = upsert_market(cur, m)
         cur.execute("""
             INSERT INTO crypto_watch (market_id, slug, resolve_time, admitted_at)
             VALUES (%s,%s,%s, now())
-            ON CONFLICT (market_id) DO NOTHING""", (mid, slug, rt))
+            ON CONFLICT (market_id) DO NOTHING""",
+            (mid, m["slug"], m["end_date"]))
     conn.commit()
 
-    # atomic watchlist write
     WATCHLIST.parent.mkdir(exist_ok=True)
     tmp = WATCHLIST.with_suffix(".tmp")
-    tmp.write_text("\n".join(tokens) + ("\n" if tokens else ""))
+    tmp.write_text("\n".join(yes_tokens) + ("\n" if yes_tokens else ""))
     tmp.replace(WATCHLIST)
-    print(f"wrote {len(tokens)} tokens to {WATCHLIST.name}")
+    print(f"wrote {len(yes_tokens)} tokens to {WATCHLIST.name}, "
+          f"upserted {len(markets)} markets")
 
 
 if __name__ == "__main__":
