@@ -444,3 +444,83 @@ Full health sweep green: services active, disk 55%, DQ OK all checks, fresh data
 Grade-A dataset now accumulating autonomously toward tight-horizon H4-Cal (runnable ~mid-week when closed reaches a few dozen).
 
 2026-08-02 — Harvester cohort tuning. Diagnosed closed flatlined at 7: cohort silted with slow-resolving markets (imminent lingerers past scheduled_close + near-certainties admitted up to 30d out, squatting slots). Fix: reserved 45/60 slots for imminent (fast churn guaranteed), tightened near-certainty window to 7d, evict stale imminent (>1d past close) and too-distant near-certainties (>7d out, no last-mile yet — safe re: survivorship). Fixed evict() bug: too_distant/maxdur → evicted_maxdur, only close-detection → closed (keeps Grade-A set clean). Reshaped cohort: 25 evicted, 60 refilled imminent-heavy. Grade-A now accumulating faster.
+
+# Journal — 2026-08-05
+
+## Mac compromise & full recovery
+- Downloaded a phishing app; wiped Macintosh HD and rebuilt from scratch.
+- **Zero project loss** — everything lives on GitHub + the Hetzner server, which
+  ran autonomously throughout. Mac was only an editing terminal.
+- Recovery: reinstalled brew/git/python, re-cloned repo over SSH (generated new
+  key, added to GitHub), restored server access via Hetzner console + pulling the
+  new key from `github.com/MertAyranci.keys` into authorized_keys.
+- **Security rotation** (phishing hygiene): changed GitHub password, email,
+  exchange, and confirmed no wallet seed/keys were on the wiped Mac. Old Mac SSH
+  key to be removed from server authorized_keys.
+- Server health after recovery: all collectors active, disk 58%, loader memory
+  bounded. Nothing broke while away.
+
+## Paper soak — H4 live verdict (concluded)
+- Soak ran ~1,490 passes over the downtime. Result: 19 open positions, ~$332
+  deployed, unrealized drifting to ~-$25, **realized 0 (nothing resolved)**.
+- Root cause revealed: the >=95c entry filter selects LONG-DATED parked markets
+  (2026 political primaries, central-bank meetings) that resolve weeks/months out.
+  Capital locks up, drifts negative on spread, never realizes.
+- This is the **capital-lockup mechanism** made concrete — a sharper H4 negative
+  than H4-Exec alone. Soak stopped; final state saved to
+  logs/paper_soak_final_state.txt.
+- H4 verdict now has THREE independent confirmations: H3 calibration (efficient),
+  H4-Exec (no near-cert window on sports), paper soak (capital lockup on parked).
+
+## Crypto-H4 — new hypothesis, capture layer built & PROVEN
+User's insight: 5-minute crypto Up/Down markets DO reach near-certainty before
+resolving (unlike sports), so they may be the right shape for H4. Decided to test.
+
+Findings & builds:
+- **Discovery**: daily discovery misses 5m markets (they live 5 min). Firehose
+  queries (startDate desc / endDate asc) return stale/future markets, not live
+  ones. **Solution: compute-from-clock** — slugs encode a timestamp; fetch the
+  live slugs directly. Deterministic and reliable.
+- **CRITICAL: slug timestamp = START boundary, resolves at slug_ts + 300.** Not
+  the end time. All retention/checkpoint timing must key off Gamma `endDate`.
+  (Caught before it shifted every observation by a full market duration.)
+- **Eviction bug (diagnosed from ws-collector logs)**: harvester's "current +
+  next N" watchlist dropped resolving cohorts 60-235s BEFORE resolution —
+  destroying exactly the last-mile data H4 tests. Fix: **union retention** — keep
+  every cohort until end_date + 15s grace; never unsubscribe an unresolved market.
+- **Both tokens**: near-certainty appears on either side (near-cert Down = Up~5c),
+  so watchlist BOTH outcome tokens (0 and 1).
+- **Final checkpoint**: harvester REST-fetches both books at T-0 and writes a
+  `crypto_final_checkpoint` tob_snapshot, guaranteeing the resolution-instant
+  state regardless of collector timing.
+- Collector wired to read watchlist_crypto.txt (union of both watchlist files);
+  battle-tested core otherwise untouched (fix lives in harvester, not collector).
+- Migration 005: crypto_watch admission ledger.
+- Cron: `* * * * * flock -n ... crypto_harvester.py` (flock prevents overlapping
+  passes when a checkpoint loop runs long).
+
+**Acceptance test PASSED**: dense final-60s capture (BTC 482 snaps in last minute),
+final_checkpoints >=1 per market, closest_to_resolve at -2 to -90s (reaches
+resolution, not cut off early), both outcome_index 0 AND 1 captured. Valid
+last-mile data now accumulating every 5 min across 8 assets.
+
+Preliminary signal (from sparse pre-fix data): near-certainty exists (BNB ~5c at
+T-60) BUT spreads are huge (XRP bid 340/ask 560 = 22c spread at T-60). Likely the
+same execution wall — but now we'll MEASURE it rigorously instead of assuming.
+
+## Disk watch
+Crypto capture is dense (BTC ~2,121 snaps/market/5min). Monitor disk over next day.
+BBO-dedup optimization (suppress identical consecutive snapshots, keep heartbeat)
+deferred until data quality confirmed — per "fix coverage first, optimize second."
+
+## State at session end
+- Crypto-H4: capture live, proven, accumulating. NEXT: let accumulate ~1 day →
+  build crypto Grade-A selector + run H4-Exec (spread is the key metric).
+- H2: ready to analyze (20k odds snaps, 30 matched games) — deferred.
+- Execution engine: complete (48 tests), paper soak concluded.
+- Machine healthy post-recovery.
+
+## Next session options
+1. Crypto-H4 H4-Exec run (once a day of cohorts banked) — the verdict.
+2. H2 lead-lag analysis (data ready now).
+3. Disk/dedup optimization if crypto capture pressures storage.
