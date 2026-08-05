@@ -1,16 +1,16 @@
-"""Crypto harvester (Gamma-direct) — last-mile capture for 5-minute Up/Down markets.
+"""Crypto harvester (compute-and-fetch) — last-mile capture for 5-minute markets.
 
-The 5m crypto markets live ~5 minutes and daily discovery never catches them in
-time. This job polls Gamma DIRECTLY every ~60s for live 'updown-5m' markets
-(all assets: btc/eth/sol/xrp/doge/hype/bnb/zec/...), upserts any it hasn't seen
-into markets+tokens, and writes their 'Up' (YES) tokens to a dedicated watchlist
-the WS collector also reads. That yields dense last-mile books for crypto-H4.
+The 5m crypto markets are clockwork: they resolve on 5-minute boundaries and
+their slug encodes the resolution Unix timestamp (e.g. btc-updown-5m-1785891000).
+So we don't SEARCH Gamma's firehose (which mixes stale + future + all timeframes);
+we COMPUTE the live slugs from the clock and fetch them directly. Deterministic
+and reliable.
 
-clobTokenIds[0] = "Up" (YES), clobTokenIds[1] = "Down". endDate = resolution time.
+Each pass: for each asset, for the current + next 5-min boundary, build the slug,
+fetch it from Gamma, upsert it, and watchlist its 'Up' (YES) token so the WS
+collector captures its last-mile book.
 
-Writes:
-  config/watchlist_crypto.txt   (WS collector reads this + the H4 watchlist)
-  crypto_watch table            (admission ledger for Grade-A selection)
+clobTokenIds[0] = "Up" (YES), [1] = "Down". endDate = resolution time.
 
 Usage:
   .venv/bin/python db/crypto_harvester.py            # one pass
@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -35,9 +35,11 @@ WATCHLIST = REPO / "config" / "watchlist_crypto.txt"
 
 GAMMA = "https://gamma-api.polymarket.com"
 UA = {"User-Agent": "quant-lab-crypto/0.1"}
-SLUG_RE = re.compile(r"-updown-5m-\d+$")
-POLY_VENUE_ID = 1          # Polymarket venue id in your venues table
-MAX_TOKENS = 60            # safety cap on concurrent watched crypto tokens
+POLY_VENUE_ID = 1
+
+# assets seen on the 5m board; harmless if some don't exist for a given boundary
+ASSETS = ["btc", "eth", "sol", "xrp", "doge", "hype", "bnb", "zec"]
+BOUNDARIES_AHEAD = 2       # current + next 5-min boundary (covers the live + on-deck)
 
 
 def connect():
@@ -54,42 +56,53 @@ def iso(s):
         return None
 
 
+def live_slugs():
+    """Compute the slugs for markets resolving on the upcoming 5-min boundaries."""
+    now = int(time.time())
+    base = (now // 300) * 300
+    slugs = []
+    for i in range(0, BOUNDARIES_AHEAD + 1):
+        ts = base + i * 300
+        if ts < now - 60:          # skip boundaries already well past
+            continue
+        for a in ASSETS:
+            slugs.append(f"{a}-updown-5m-{ts}")
+    return slugs
+
+
+def fetch_by_slug(http, slug):
+    r = http.get(f"{GAMMA}/markets", params={"slug": slug})
+    if r.status_code != 200:
+        return None
+    data = r.json()
+    if not data:
+        return None
+    m = data[0]
+    toks = m.get("clobTokenIds")
+    if isinstance(toks, str):
+        toks = json.loads(toks)
+    if not toks:
+        return None
+    return {
+        "slug": slug, "question": m.get("question"),
+        "condition_id": m.get("conditionId"),
+        "yes_token": str(toks[0]),
+        "no_token": str(toks[1]) if len(toks) > 1 else None,
+        "end_date": iso(m.get("endDate")),
+        "venue_market_id": str(m.get("id") or m.get("conditionId") or slug),
+    }
+
+
 def fetch_live_5m(http):
-    """Live 5m markets from Gamma, newest first (freshly-created = about to run)."""
-    r = http.get(f"{GAMMA}/markets",
-                 params={"closed": "false", "order": "startDate",
-                         "ascending": "false", "limit": 100})
-    r.raise_for_status()
     out = []
-    for m in r.json():
-        slug = m.get("slug") or ""
-        if not SLUG_RE.search(slug):
-            continue
-        toks = m.get("clobTokenIds")
-        if isinstance(toks, str):
-            toks = json.loads(toks)
-        if not toks or len(toks) < 1:
-            continue
-        end = iso(m.get("endDate"))
-        if end is not None:
-            secs = (end - datetime.now(timezone.utc)).total_seconds()
-            # only currently-live markets: resolving within the next 6 min,
-            # or just resolved in the last 1 min (grace for capture)
-            if secs < -60 or secs > 360:
-                continue
-        out.append({
-            "slug": slug, "question": m.get("question"),
-            "condition_id": m.get("conditionId"),
-            "yes_token": str(toks[0]),
-            "no_token": str(toks[1]) if len(toks) > 1 else None,
-            "end_date": end,
-            "venue_market_id": str(m.get("id") or m.get("conditionId") or slug),
-        })
+    for slug in live_slugs():
+        m = fetch_by_slug(http, slug)
+        if m:
+            out.append(m)
     return out
 
 
 def upsert_market(cur, m):
-    """Insert market + Up/Down tokens if unseen. Returns internal market id."""
     cur.execute("""
         INSERT INTO markets (venue_id, venue_market_id, condition_id, slug,
                              question, end_date, first_seen_at, source)
@@ -119,14 +132,14 @@ def main():
     markets = fetch_live_5m(http)
     now = datetime.now(timezone.utc)
     print(f"{now.isoformat()} crypto-harvester: {len(markets)} live 5m markets")
-    for m in markets[:8]:
+    for m in markets[:12]:
         secs = (m["end_date"] - now).total_seconds() if m["end_date"] else None
         if secs is not None:
             print(f"  {m['slug']}  resolve in {secs:+.0f}s")
         else:
             print(f"  {m['slug']}")
 
-    yes_tokens = [m["yes_token"] for m in markets][:MAX_TOKENS]
+    yes_tokens = [m["yes_token"] for m in markets]
 
     if args.dry_run:
         print(f"[dry-run] would write {len(yes_tokens)} YES tokens to {WATCHLIST.name}")
