@@ -101,27 +101,57 @@ def slugs_for_boundaries(bounds):
 
 def fetch_by_slug(http, slug):
     try:
-        r = http.get(f"{GAMMA}/markets", params={"slug": slug})
-    except httpx.HTTPError:
+        r = http.get(f"{GAMMA}/markets/slug/{slug}")
+    except httpx.HTTPError as exc:
+        print(f"Gamma request failed for {slug}: {exc}")
         return None
+
+    if r.status_code == 404:
+        return None
+
     if r.status_code != 200:
+        print(f"Gamma returned HTTP {r.status_code} for {slug}")
         return None
-    data = r.json()
-    if not data:
+
+    try:
+        m = r.json()
+    except json.JSONDecodeError:
+        print(f"Gamma returned invalid JSON for {slug}")
         return None
-    m = data[0]
+
+    if not isinstance(m, dict):
+        print(f"Unexpected Gamma response type for {slug}: {type(m).__name__}")
+        return None
+
+    if m.get("slug") != slug:
+        print(
+            f"Gamma slug mismatch: requested={slug}, "
+            f"returned={m.get('slug')}"
+        )
+        return None
+
     toks = m.get("clobTokenIds")
     if isinstance(toks, str):
-        toks = json.loads(toks)
-    if not toks:
+        try:
+            toks = json.loads(toks)
+        except json.JSONDecodeError:
+            print(f"Invalid clobTokenIds for {slug}")
+            return None
+
+    if not isinstance(toks, list) or len(toks) < 2:
+        print(f"Missing two outcome tokens for {slug}")
         return None
+
     return {
-        "slug": slug, "question": m.get("question"),
+        "slug": slug,
+        "question": m.get("question"),
         "condition_id": m.get("conditionId"),
         "yes_token": str(toks[0]),
-        "no_token": str(toks[1]) if len(toks) > 1 else None,
+        "no_token": str(toks[1]),
         "end_date": iso(m.get("endDate")),
-        "venue_market_id": str(m.get("id") or m.get("conditionId") or slug),
+        "venue_market_id": str(
+            m.get("id") or m.get("conditionId") or slug
+        ),
     }
 
 
