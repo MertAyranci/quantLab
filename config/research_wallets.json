@@ -1,0 +1,33 @@
+{
+    "_note": "Public on-chain Polymarket wallets studied for sports-trading patterns. Analysis of forward-predictive value only; reputation is not assumed. Addresses are public blockchain data.",
+    "wallets": [
+      {
+        "name": "RN1",
+        "address": "0x2005d16a84ceefa912d4e380cd32e7ff827875ea",
+        "role": "primary_study_subject",
+        "priority": 1,
+        "notes": "First forensics target. Verify aggregate PnL empirically before drawing conclusions."
+      },
+      {
+        "name": "SwissTony",
+        "address": "0x204f72f35326db932158cba6adff0b9a1da95e14",
+        "role": "study_subject",
+        "priority": 2,
+        "notes": ""
+      },
+      {
+        "name": "HomeRunHazard",
+        "address": "0x5268527977f700f9bf9b6d5cd843859e4e70135d",
+        "role": "study_subject",
+        "priority": 3,
+        "notes": ""
+      },
+      {
+        "name": "wr0ngw4yb3tt0r",
+        "address": "0x224a89dbe0db0d6124b335edabd15b3f877da3d5",
+        "role": "study_subject",
+        "priority": 4,
+        "notes": ""
+      }
+    ]
+  }
