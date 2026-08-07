@@ -83,9 +83,16 @@ def _get(http, path, params):
 
 
 def venue_trade_key(wallet, t):
+    """Deterministic per-fill key. price/size are QUANTIZED before hashing so
+    tiny float-representation differences between API calls don't produce a new
+    key for the same fill (which would defeat the UNIQUE dedup). One tx may hold
+    multiple fills, so asset/side/price/size are all included, NOT tx alone."""
+    # quantize to the venue's real precision: price to 1e-4, size to 1e-6
+    price_q = f"{float(t.get('price', 0)):.4f}"
+    size_q = f"{float(t.get('size', 0)):.6f}"
     raw = "|".join(str(x) for x in [
         wallet, t.get("transactionHash"), t.get("conditionId"), t.get("asset"),
-        t.get("timestamp"), t.get("side"), t.get("price"), t.get("size")])
+        t.get("timestamp"), t.get("side"), price_q, size_q])
     return hashlib.sha256(raw.encode()).hexdigest()
 
 
