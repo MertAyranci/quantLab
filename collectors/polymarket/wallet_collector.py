@@ -40,7 +40,7 @@ import json
 import logging
 import time
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -166,15 +166,20 @@ def api_get(
 
 
 def load_h2_mlb_targets(cur) -> list[dict[str, Any]]:
-    """Load one row per unique H2-matched MLB Polymarket market."""
+    """Load one row per unique H2-matched MLB Polymarket market.
+
+    Some markets were matched to more than one odds_game row. MAX(commence_time)
+    selects the later and credible MLB start time for those duplicate mappings.
+    """
 
     cur.execute(
         """
-        SELECT DISTINCT
+        SELECT
             m.id AS market_id,
             m.condition_id,
             m.slug,
             m.end_date,
+            MAX(og.commence_time) AS commence_time,
             (
                 SELECT COUNT(*)
                 FROM tokens t
@@ -186,19 +191,32 @@ def load_h2_mlb_targets(cur) -> list[dict[str, Any]]:
         WHERE og.polymarket_market_id IS NOT NULL
           AND og.sport_key ILIKE '%mlb%'
           AND m.condition_id IS NOT NULL
+        GROUP BY
+            m.id,
+            m.condition_id,
+            m.slug,
+            m.end_date
         ORDER BY m.id
         """
     )
 
     targets = []
 
-    for market_id, condition_id, slug, end_date, token_count in cur.fetchall():
+    for (
+        market_id,
+        condition_id,
+        slug,
+        end_date,
+        commence_time,
+        token_count,
+    ) in cur.fetchall():
         targets.append(
             {
                 "market_id": market_id,
                 "condition_id": condition_id,
                 "slug": slug,
                 "end_date": end_date,
+                "commence_time": commence_time,
                 "token_count": int(token_count),
             }
         )
@@ -503,13 +521,25 @@ def fetch_trades_for_market(
     )
 
 
-def is_market_ended(end_date: datetime | None) -> bool:
-    """Return whether the market's configured end time is in the past."""
+def is_market_finished(
+    end_date: datetime | None,
+    commence_time: datetime | None,
+) -> bool:
+    """Return whether collection can be treated as final.
 
-    if end_date is None:
-        return False
+    Prefer the Polymarket end date when available. MLB rows currently have NULL
+    end_date, so use the canonical game start plus an eight-hour safety buffer.
+    """
 
-    return end_date <= datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc)
+
+    if end_date is not None:
+        return end_date <= now
+
+    if commence_time is not None:
+        return commence_time + timedelta(hours=8) <= now
+
+    return False
 
 
 def process_market(
@@ -529,6 +559,7 @@ def process_market(
     condition_id = target["condition_id"]
     slug = target["slug"]
     end_date = target["end_date"]
+    commence_time = target["commence_time"]
     token_count = target["token_count"]
 
     counters: Counter[str] = Counter()
@@ -677,8 +708,8 @@ def process_market(
                     f"malformed={counters['malformed']}"
                 )
 
-            if not is_market_ended(end_date):
-                problems.append("market_not_ended")
+            if not is_market_finished(end_date, commence_time):
+                problems.append("market_not_finished")
 
             status = "complete" if not problems else "partial"
 
@@ -698,6 +729,7 @@ def process_market(
                     f"malformed={counters['malformed']}",
                     f"pagination={pagination_note}",
                     f"end_date={end_date.isoformat() if end_date else 'NULL'}",
+                    f"commence_time={commence_time.isoformat() if commence_time else 'NULL'}",
                     (
                         "problems=" + ",".join(problems)
                         if problems
@@ -882,10 +914,15 @@ def main() -> int:
             for index, target in enumerate(targets, start=1):
                 log.info(
                     "[dry-run] %02d market_id=%s tokens=%s "
-                    "end=%s condition=%s slug=%s",
+                    "commence=%s end=%s condition=%s slug=%s",
                     index,
                     target["market_id"],
                     target["token_count"],
+                    (
+                    target["commence_time"].isoformat()
+                    if target["commence_time"]
+                    else "NULL"
+                    ),
                     (
                         target["end_date"].isoformat()
                         if target["end_date"]
@@ -894,7 +931,6 @@ def main() -> int:
                     target["condition_id"],
                     target["slug"],
                 )
-
             return 0
 
         totals: Counter[str] = Counter()
