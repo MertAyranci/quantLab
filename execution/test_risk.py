@@ -1,250 +1,177 @@
-"""Risk module — the gate every order passes through before placement.
+"""Exhaustive tests for the risk module.
 
-Design contract (from execution-requirements.md sec.1):
-  * PURE where it can be: check_order() is a function of (order, state) with no
-    network and no side effects, so it is exhaustively unit-testable.
-  * Limits are HARD-CODED here, not configurable at call sites.
-  * The engine can REFUSE before it can PLACE.
+Run:  .venv/bin/python -m pytest execution/test_risk.py -v
+  or: .venv/bin/python execution/test_risk.py   (runs a plain assert harness)
 
-Phase 2A/2B (persistent risk state + correct equity):
-  * RiskState now carries EXPLICIT realized_pnl and fee_drag, so a realized loss
-    or fees ALONE can move equity and trip halts (not only open-position MTM).
-  * equity = starting_capital + realized_pnl + unrealized_pnl - fee_drag
-  * day_start_equity and peak_equity are LATCHED (set once / ratchet), never
-    recomputed to current on each call. Persistence (load/save) keeps latched
-    halt/kill/baseline across process restart.
-  * check_order()/evaluate_halts() remain PURE (no DB). Persistence is a
-    separate boundary (load_risk_state/save_risk_state/reset_daily_baseline).
-
-Money units: dollars as float. Prices are probabilities in [0,1].
+The point of this file: PROVE the gate refuses every over-limit order before any
+code that can touch real money is written. If a test here fails, the risk module
+is not trusted and nothing goes live.
 """
 
-from __future__ import annotations
-
-from dataclasses import dataclass, field
-from datetime import date, datetime, timezone
-from enum import Enum
+import sys
 from pathlib import Path
 
-# ---- hard-coded limits (raise only by editing here, after clean operation) ----
-
-MAX_PER_MARKET = 100.0        # $ open exposure in one market
-MAX_TOTAL_DEPLOYED = 500.0    # $ open exposure across all markets
-DAILY_LOSS_HALT = 0.02        # 2% of live capital -> halt new orders for the day
-DRAWDOWN_STOP = 0.10          # 10% of live capital -> full stop, manual review
-PRICE_MIN = 0.01              # reject fills outside [1c, 99c] unless flagged
-PRICE_MAX = 0.99
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from risk import (  # noqa: E402
+    Order, Position, RiskState, Decision,
+    check_order, evaluate_halts,
+    MAX_PER_MARKET, MAX_TOTAL_DEPLOYED, DAILY_LOSS_HALT, DRAWDOWN_STOP,
+)
 
 
-class Decision(Enum):
-    ALLOW = "allow"
-    REJECT = "reject"
+def fresh_state(capital=500.0, positions=None):
+    return RiskState(
+        live_capital=capital,
+        day_start_equity=capital,
+        peak_equity=capital,
+        positions=positions or [],
+    )
 
 
-@dataclass(frozen=True)
-class Order:
-    market_id: int
-    token_id: int
-    side: str                 # "buy" | "sell"
-    size_usd: float           # notional at the limit price
-    limit_price: float        # probability [0,1]
-    allow_extreme: bool = False   # explicit opt-in for <1c / >99c (near-cert strat)
+def buy(market_id=1, size=50.0, price=0.97, extreme=False):
+    return Order(market_id=market_id, token_id=market_id * 10,
+                 side="buy", size_usd=size, limit_price=price,
+                 allow_extreme=extreme)
 
 
-@dataclass
-class Position:
-    market_id: int
-    token_id: int
-    size_usd: float           # current open notional (cost basis)
-    exit_price: float         # CONSERVATIVE current exit price (bid for a long)
-    entry_price: float
+# ---- basic allow -----------------------------------------------------------
+
+def test_clean_order_allowed():
+    r = check_order(buy(size=50), fresh_state())
+    assert r.allowed, r.reason
 
 
-@dataclass
-class RiskState:
-    live_capital: float                     # capital allocated to live trading
-    day_start_equity: float                 # equity at start of trading day (LATCHED)
-    peak_equity: float                      # high-water mark for drawdown (RATCHETS)
-    positions: list[Position] = field(default_factory=list)
-    halted_today: bool = False              # daily-loss halt latched
-    stopped: bool = False                   # drawdown full-stop latched
-    kill: bool = False                      # kill switch engaged
-    # ---- explicit P&L components (Phase 2B) ----
-    realized_pnl: float = 0.0               # realized gains/losses this day
-    fee_drag: float = 0.0                   # cumulative fees this day
-
-    def open_exposure(self) -> float:
-        return sum(p.size_usd for p in self.positions)
-
-    def exposure_in_market(self, market_id: int) -> float:
-        return sum(p.size_usd for p in self.positions if p.market_id == market_id)
-
-    def unrealized_pnl(self) -> float:
-        # conservative: mark each long at its exit (bid) price
-        pnl = 0.0
-        for p in self.positions:
-            if p.entry_price > 0:
-                shares = p.size_usd / p.entry_price
-                pnl += shares * (p.exit_price - p.entry_price)
-        return pnl
-
-    def current_equity(self) -> float:
-        """equity = live_capital + realized_pnl + unrealized_pnl - fee_drag.
-
-        With the defaults realized_pnl=0 and fee_drag=0 this reduces EXACTLY to
-        the previous formula (live_capital + unrealized_pnl), so existing tests
-        are unaffected. Explicit realized_pnl/fee_drag let a realized loss or
-        fees alone move equity."""
-        return (self.live_capital
-                + self.realized_pnl
-                + self.unrealized_pnl()
-                - self.fee_drag)
+def test_zero_size_rejected():
+    r = check_order(buy(size=0), fresh_state())
+    assert not r.allowed and "size" in r.reason
 
 
-@dataclass
-class RiskResult:
-    decision: Decision
-    reason: str = ""
-
-    @property
-    def allowed(self) -> bool:
-        return self.decision is Decision.ALLOW
+def test_price_out_of_unit_interval_rejected():
+    assert not check_order(buy(price=0.0), fresh_state()).allowed
+    assert not check_order(buy(price=1.0), fresh_state()).allowed
+    assert not check_order(buy(price=1.5), fresh_state()).allowed
 
 
-def evaluate_halts(state: RiskState) -> RiskState:
-    """Update latched halt/stop flags from current equity. Called continuously.
-    day_start_equity is NOT modified here (it is the fixed daily baseline set by
-    reset_daily_baseline). peak_equity ratchets up only. Flags latch on (never
-    cleared here)."""
-    equity = state.current_equity()
-    if equity > state.peak_equity:
-        state.peak_equity = equity
+# ---- price sanity ----------------------------------------------------------
 
-    daily_change = equity - state.day_start_equity
-    if daily_change <= -DAILY_LOSS_HALT * state.live_capital:
-        state.halted_today = True
-
-    drawdown = (state.peak_equity - equity)
-    if drawdown >= DRAWDOWN_STOP * state.live_capital:
-        state.stopped = True
-
-    return state
+def test_extreme_price_rejected_without_flag():
+    r = check_order(buy(price=0.995), fresh_state())
+    assert not r.allowed and "allow_extreme" in r.reason
 
 
-def check_order(order: Order, state: RiskState) -> RiskResult:
-    """The gate. Returns ALLOW or REJECT(reason). No side effects, no network."""
-
-    # 0. global stops (checked first — they override everything)
-    if state.kill:
-        return RiskResult(Decision.REJECT, "kill switch engaged")
-    if state.stopped:
-        return RiskResult(Decision.REJECT, "drawdown full-stop latched")
-    if state.halted_today:
-        return RiskResult(Decision.REJECT, "daily-loss halt latched")
-
-    # 1. basic validity
-    if order.size_usd <= 0:
-        return RiskResult(Decision.REJECT, "non-positive size")
-    if not (0.0 < order.limit_price < 1.0):
-        return RiskResult(Decision.REJECT, f"price {order.limit_price} out of (0,1)")
-
-    # 2. price sanity (fat-finger / stale-quote guard)
-    if not order.allow_extreme and not (PRICE_MIN <= order.limit_price <= PRICE_MAX):
-        return RiskResult(Decision.REJECT,
-                          f"price {order.limit_price} outside [{PRICE_MIN},{PRICE_MAX}] "
-                          f"and allow_extreme not set")
-
-    # 3. per-market cap (only buys add exposure; sells reduce it)
-    if order.side == "buy":
-        new_market = state.exposure_in_market(order.market_id) + order.size_usd
-        if new_market > MAX_PER_MARKET + 1e-9:
-            return RiskResult(Decision.REJECT,
-                              f"per-market cap: {new_market:.2f} > {MAX_PER_MARKET}")
-
-        # 4. total deployed cap
-        new_total = state.open_exposure() + order.size_usd
-        if new_total > MAX_TOTAL_DEPLOYED + 1e-9:
-            return RiskResult(Decision.REJECT,
-                              f"total deployed cap: {new_total:.2f} > {MAX_TOTAL_DEPLOYED}")
-
-    return RiskResult(Decision.ALLOW, "ok")
+def test_extreme_price_allowed_with_flag():
+    r = check_order(buy(price=0.995, extreme=True), fresh_state())
+    assert r.allowed, r.reason
 
 
-def flatten_reason(state: RiskState) -> str | None:
-    """Why the engine should flatten/halt, if any (for alerts)."""
-    if state.kill:
-        return "kill switch"
-    if state.stopped:
-        return "drawdown full-stop"
-    if state.halted_today:
-        return "daily-loss halt"
-    return None
+# ---- per-market cap --------------------------------------------------------
+
+def test_per_market_cap_blocks_oversize():
+    r = check_order(buy(size=MAX_PER_MARKET + 1), fresh_state())
+    assert not r.allowed and "per-market" in r.reason
 
 
-# ==========================================================================
-# Persistence boundary (Phase 2A) — keeps latched state across process restart.
-# Kept OUT of the pure gate above; the engine calls these at startup / on
-# mutation / at daily reset. Postgres-backed (single latched row per key).
-# ==========================================================================
-
-_ENV = None
-def _connect():
-    global _ENV
-    import psycopg2
-    from dotenv import dotenv_values
-    if _ENV is None:
-        _ENV = dotenv_values(Path(__file__).resolve().parents[1] / ".env")
-    return psycopg2.connect(host="127.0.0.1", port=5432, dbname="quantlab",
-                            user="quantlab", password=_ENV["PG_PASSWORD"])
+def test_per_market_cap_accumulates():
+    # already $80 in market 1; a $30 buy would make $110 > $100
+    st = fresh_state(positions=[Position(1, 10, 80.0, 0.96, 0.95)])
+    r = check_order(buy(market_id=1, size=30), st)
+    assert not r.allowed and "per-market" in r.reason
 
 
-def save_risk_state(state: RiskState, key: str = "live") -> None:
-    """Persist the latched fields + baseline. Positions are NOT persisted here
-    (they are reconciled from the venue/ledger); this stores the risk LATCH."""
-    conn = _connect(); cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO risk_state (key, trading_day, live_capital, day_start_equity,
-            peak_equity, realized_pnl, fee_drag, halted_today, stopped, kill,
-            updated_at)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s, now())
-        ON CONFLICT (key) DO UPDATE SET
-            trading_day=EXCLUDED.trading_day, live_capital=EXCLUDED.live_capital,
-            day_start_equity=EXCLUDED.day_start_equity, peak_equity=EXCLUDED.peak_equity,
-            realized_pnl=EXCLUDED.realized_pnl, fee_drag=EXCLUDED.fee_drag,
-            halted_today=EXCLUDED.halted_today, stopped=EXCLUDED.stopped,
-            kill=EXCLUDED.kill, updated_at=now()""",
-        (key, date.today(), state.live_capital, state.day_start_equity,
-         state.peak_equity, state.realized_pnl, state.fee_drag,
-         state.halted_today, state.stopped, state.kill))
-    conn.commit(); cur.close(); conn.close()
+def test_per_market_cap_exact_boundary_allowed():
+    st = fresh_state(positions=[Position(1, 10, 60.0, 0.96, 0.95)])
+    r = check_order(buy(market_id=1, size=40), st)   # exactly $100
+    assert r.allowed, r.reason
 
 
-def load_risk_state(key: str = "live") -> RiskState | None:
-    """Reload the latched state (halts/kill/baseline survive restart). Positions
-    are attached separately by the engine from the reconciled ledger. Returns
-    None if no state persisted yet."""
-    conn = _connect(); cur = conn.cursor()
-    cur.execute("""SELECT live_capital, day_start_equity, peak_equity,
-        realized_pnl, fee_drag, halted_today, stopped, kill
-        FROM risk_state WHERE key=%s""", (key,))
-    row = cur.fetchone(); cur.close(); conn.close()
-    if not row:
-        return None
-    lc, dse, pk, rp, fd, halt, stop, kill = row
-    return RiskState(live_capital=float(lc), day_start_equity=float(dse),
-                     peak_equity=float(pk), realized_pnl=float(rp),
-                     fee_drag=float(fd), halted_today=halt, stopped=stop, kill=kill)
+# ---- total deployed cap ----------------------------------------------------
+
+def test_total_deployed_cap():
+    # five markets at $100 each = $500 already deployed; any new buy exceeds
+    pos = [Position(i, i * 10, 100.0, 0.96, 0.95) for i in range(1, 6)]
+    st = fresh_state(positions=pos)
+    r = check_order(buy(market_id=99, size=10), st)
+    assert not r.allowed and "total deployed" in r.reason
 
 
-def reset_daily_baseline(state: RiskState, key: str = "live") -> RiskState:
-    """Start a new trading day: fix day_start_equity to current equity, reset
-    peak to it, clear the DAILY halt and daily P&L accumulators. Does NOT clear
-    the drawdown stop or operator kill (those require explicit review/reset)."""
-    eq = state.current_equity()
-    state.day_start_equity = eq
-    state.peak_equity = max(eq, eq)
-    state.halted_today = False
-    state.realized_pnl = 0.0
-    state.fee_drag = 0.0
-    save_risk_state(state, key)
-    return state
+def test_total_deployed_boundary_allowed():
+    pos = [Position(i, i * 10, 100.0, 0.96, 0.95) for i in range(1, 5)]  # $400
+    st = fresh_state(positions=pos)
+    r = check_order(buy(market_id=99, size=100), st)   # -> $500 exactly
+    assert r.allowed, r.reason
+
+
+# ---- global stops ----------------------------------------------------------
+
+def test_kill_switch_blocks_everything():
+    st = fresh_state()
+    st.kill = True
+    assert not check_order(buy(size=1), st).allowed
+
+
+def test_daily_halt_blocks():
+    st = fresh_state()
+    st.halted_today = True
+    assert not check_order(buy(size=1), st).allowed
+
+
+def test_drawdown_stop_blocks():
+    st = fresh_state()
+    st.stopped = True
+    assert not check_order(buy(size=1), st).allowed
+
+
+# ---- halt evaluation (conservative MTM) ------------------------------------
+
+def test_daily_loss_triggers_halt():
+    # $500 capital, 2% = $10 daily loss budget. A position marked down $12.
+    # entry 0.97, exit 0.94 -> shares = 100/0.97 = 103.1; loss = 103.1*0.03 = 3.09
+    # need a bigger position: $400 at entry 0.97, exit 0.94
+    st = fresh_state(positions=[Position(1, 10, 400.0, 0.94, 0.97)])
+    evaluate_halts(st)
+    # shares = 400/0.97 = 412.4; loss = 412.4 * (0.94-0.97) = -12.37 < -10
+    assert st.halted_today, "should halt on >2% daily loss"
+
+
+def test_small_loss_no_halt():
+    st = fresh_state(positions=[Position(1, 10, 50.0, 0.97, 0.97)])
+    evaluate_halts(st)
+    assert not st.halted_today
+
+
+def test_drawdown_triggers_stop():
+    # capital 500, peak 500, 10% = $50 drawdown. Mark positions down $60.
+    st = fresh_state(positions=[Position(1, 10, 400.0, 0.855, 0.97)])
+    # shares = 412.4; loss = 412.4*(0.855-0.97) = -47.4 ... push harder:
+    st.positions = [Position(1, 10, 400.0, 0.82, 0.97)]
+    evaluate_halts(st)
+    # shares 412.4 * (0.82-0.97) = -61.9 -> drawdown 61.9 > 50
+    assert st.stopped, "should full-stop on >10% drawdown"
+
+
+# ---- conservative marking sanity ------------------------------------------
+
+def test_conservative_mtm_uses_exit_price():
+    # a long marked at bid (exit) below entry shows a loss, not a gain
+    st = fresh_state(positions=[Position(1, 10, 100.0, 0.95, 0.98)])
+    assert st.unrealized_pnl() < 0   # exit 0.95 < entry 0.98 -> loss
+
+
+def _run_all():
+    fns = [v for k, v in sorted(globals().items())
+           if k.startswith("test_") and callable(v)]
+    passed = 0
+    for fn in fns:
+        try:
+            fn()
+            print(f"  PASS {fn.__name__}")
+            passed += 1
+        except AssertionError as e:
+            print(f"  FAIL {fn.__name__}: {e}")
+    print(f"\n{passed}/{len(fns)} passed")
+    return passed == len(fns)
+
+
+if __name__ == "__main__":
+    ok = _run_all()
+    sys.exit(0 if ok else 1)

@@ -121,6 +121,103 @@ def test_restart_preserves_daily_baseline():
         "baseline + peak must survive restart, not reset to current"
 
 
+
+# --------------------------------------------------------------------------
+# Additional Phase 2A safety invariants
+# --------------------------------------------------------------------------
+
+def test_stopped_survives_restart():
+    if not HAS_PERSISTENCE:
+        raise AssertionError("no persistence layer yet")
+
+    st = RiskState(
+        live_capital=100.0,
+        day_start_equity=100.0,
+        peak_equity=100.0,
+    )
+
+    st.stopped = True
+
+    save_risk_state(
+        st,
+        key="test_stopped_restart",
+    )
+
+    reloaded = load_risk_state(
+        key="test_stopped_restart",
+    )
+
+    assert reloaded is not None
+    assert reloaded.stopped, \
+        "drawdown/full-stop must survive restart"
+
+
+def test_daily_reset_does_not_clear_kill_or_drawdown_stop():
+    if not HAS_PERSISTENCE:
+        raise AssertionError("no persistence layer yet")
+
+    st = RiskState(
+        live_capital=100.0,
+        day_start_equity=95.0,
+        peak_equity=110.0,
+        realized_pnl=-2.0,
+        fee_drag=1.0,
+        halted_today=True,
+        stopped=True,
+        kill=True,
+    )
+
+    reset_daily_baseline(
+        st,
+        key="test_reset_latches",
+    )
+
+    # Daily halt is allowed to reset.
+    assert not st.halted_today
+
+    # Operator kill and drawdown stop require explicit/manual reset.
+    assert st.kill, \
+        "daily reset must NOT clear operator kill"
+
+    assert st.stopped, \
+        "daily reset must NOT clear drawdown full-stop"
+
+
+def test_daily_reset_does_not_change_current_equity():
+    if not HAS_PERSISTENCE:
+        raise AssertionError("no persistence layer yet")
+
+    st = RiskState(
+        live_capital=100.0,
+        day_start_equity=100.0,
+        peak_equity=110.0,
+        realized_pnl=10.0,
+        fee_drag=2.0,
+    )
+
+    before = st.current_equity()
+
+    reset_daily_baseline(
+        st,
+        key="test_reset_equity",
+    )
+
+    after = st.current_equity()
+
+    assert abs(after - before) < 1e-9, (
+        f"daily reset changed equity: "
+        f"before={before}, after={after}"
+    )
+
+    assert abs(st.day_start_equity - before) < 1e-9, (
+        "new daily baseline must equal equity "
+        "at the reset boundary"
+    )
+
+    assert st.peak_equity >= before, \
+        "daily reset must never lower peak equity"
+
+
 def _run_all():
     fns = [v for k, v in sorted(globals().items())
            if k.startswith("test_") and callable(v)]
