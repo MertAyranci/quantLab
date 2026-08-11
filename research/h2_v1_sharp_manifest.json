@@ -1,0 +1,81 @@
+{
+  "artifacts": {
+    "sharp_features": {
+      "file": "h2_v1_sharp_features.csv",
+      "rows": 252,
+      "sha256": "bff4dc6aa6e44068e2a2e2c479449fc2c037fdb66e886e190d45c99df2ab6671"
+    },
+    "sharp_tape": {
+      "file": "h2_v1_sharp_tape.csv",
+      "rows": 548,
+      "sha256": "3bc2c04da738168555ece776175d5cdf7c5fd518ec339d058f708f8c0fec3374"
+    }
+  },
+  "built_at_utc": "2026-08-11T19:42:46.082245+00:00",
+  "exchange_family_policy": {
+    "betfair": [
+      "betfair_ex_eu",
+      "betfair_ex_uk"
+    ],
+    "family_collapse": "median home implied probability within family",
+    "matchbook": [
+      "matchbook"
+    ],
+    "sharp_consensus": "median home implied probability across available exchange families",
+    "single_family_allowed": true,
+    "smarkets": [
+      "smarkets"
+    ]
+  },
+  "family_composition": {
+    "betfair+matchbook": 1,
+    "betfair+matchbook+smarkets": 304,
+    "matchbook+smarkets": 95,
+    "smarkets": 148
+  },
+  "feature_version": "H2-v1-SHARP-M3",
+  "information_clock": "odds_snapshots.capture_time; poll observed_at is maximum capture_time across exchange rows in collector_run_id",
+  "market_coverage": {
+    "10m": 4,
+    "30m": 17,
+    "5m": 2,
+    "60m": 32,
+    "6h": 39,
+    "all_pregame": 42
+  },
+  "move_coverage": {
+    "10m": 0,
+    "30m": 8,
+    "5m": 0,
+    "60m": 22,
+    "6h": 34,
+    "all_pregame": 42
+  },
+  "movement_policy": "Window movement uses only polls actually observed inside the window. Zero polls => missing. One poll => level available but movement missing. No stale poll is carried into a window.",
+  "parent_cohort": "H2-v1",
+  "parent_cohort_csv_sha256": "9126626396b97959179d17e6acfe6205101f64cbf36b275d1866e8cd7445c3b6",
+  "poll_counts": {
+    "10m": 4,
+    "30m": 25,
+    "5m": 2,
+    "60m": 54,
+    "6h": 280,
+    "all_pregame": 548
+  },
+  "price_representation": {
+    "consensus_interpretation": "median consensus of available exchange-family back-odds-derived home probabilities; not an exchange back/lay midpoint",
+    "lay_prices_collected": false,
+    "liquidity_collected": false,
+    "market_depth_collected": false,
+    "price_side": "back_only",
+    "probability_source": "overround-adjusted implied probabilities derived from exchange h2h back odds"
+  },
+  "windows": {
+    "10m": "[T0-10m, T0)",
+    "30m": "[T0-30m, T0)",
+    "5m": "[T0-5m, T0)",
+    "60m": "[T0-60m, T0)",
+    "6h": "[T0-6h, T0)",
+    "all_pregame": "all observed exchange polls before T0"
+  }
+}
