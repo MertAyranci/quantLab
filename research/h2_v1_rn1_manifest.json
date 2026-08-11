@@ -1,0 +1,140 @@
+{
+  "artifacts": {
+    "features": {
+      "file": "h2_v1_rn1_features.csv",
+      "rows": 252,
+      "sha256": "c64d7f6597a0650cfae29900af77ddb5e12aaa0fbce8426f10fcb5f74ef4e277"
+    },
+    "pregame_tape": {
+      "file": "h2_v1_rn1_pregame_tape.csv",
+      "rows": 213,
+      "sha256": "4149e9882ff186c50a76584565dc5b4fe735bb2ea316b02ab8b5e3d33dc1bc37"
+    }
+  },
+  "built_at_utc": "2026-08-11T16:57:46.123589+00:00",
+  "direction_policy": {
+    "cash_flow_unit": "size_shares * execution_price",
+    "interpretation": "Observed change in directional exposure, not absolute wallet position; starting inventory is unknown.",
+    "negative": [
+      "SELL home token",
+      "BUY away token"
+    ],
+    "positive": [
+      "BUY home token",
+      "SELL away token"
+    ],
+    "primary_unit": "shares",
+    "reference_axis": "home_team"
+  },
+  "feature_version": "H2-v1-RN1-M2",
+  "market_counts": {
+    "active_by_window": {
+      "10m": 22,
+      "30m": 24,
+      "5m": 22,
+      "60m": 25,
+      "6h": 25,
+      "all_pregame": 26
+    },
+    "cohort": 42,
+    "pregame_active": 26,
+    "pregame_zero": 16
+  },
+  "parent_cohort": "H2-v1",
+  "parent_cohort_csv_sha256": "9126626396b97959179d17e6acfe6205101f64cbf36b275d1866e8cd7445c3b6",
+  "source_fill_counts": {
+    "all": 3626,
+    "exact_t0_excluded": 3,
+    "post_start_excluded": 3410,
+    "pregame": 213
+  },
+  "timing_policy": {
+    "clock": "trades.event_time",
+    "exact_t0": "excluded",
+    "post_start": "excluded",
+    "pregame": "event_time < canonical_commence_time"
+  },
+  "wallet": "RN1",
+  "window_fill_counts": {
+    "10m": 94,
+    "30m": 113,
+    "5m": 94,
+    "60m": 158,
+    "6h": 171,
+    "all_pregame": 213
+  },
+  "windows": {
+    "10m": "[T0-10m, T0)",
+    "30m": "[T0-30m, T0)",
+    "5m": "[T0-5m, T0)",
+    "60m": "[T0-60m, T0)",
+    "6h": "[T0-6h, T0)",
+    "all_pregame": "(-infinity, T0)"
+  },
+  "zero_pregame_markets": [
+    {
+      "market_id": 1595163,
+      "slug": "mlb-oak-cin-2026-08-04"
+    },
+    {
+      "market_id": 1595176,
+      "slug": "mlb-pit-mil-2026-08-04"
+    },
+    {
+      "market_id": 1595178,
+      "slug": "mlb-min-kc-2026-08-04"
+    },
+    {
+      "market_id": 1614998,
+      "slug": "mlb-sd-ari-2026-08-05"
+    },
+    {
+      "market_id": 1614971,
+      "slug": "mlb-tor-hou-2026-08-05"
+    },
+    {
+      "market_id": 1614983,
+      "slug": "mlb-oak-cin-2026-08-05"
+    },
+    {
+      "market_id": 1614994,
+      "slug": "mlb-min-kc-2026-08-05"
+    },
+    {
+      "market_id": 1673808,
+      "slug": "mlb-sd-ari-2026-08-06"
+    },
+    {
+      "market_id": 1673793,
+      "slug": "mlb-oak-cin-2026-08-06"
+    },
+    {
+      "market_id": 1673795,
+      "slug": "mlb-nym-cle-2026-08-06"
+    },
+    {
+      "market_id": 1673840,
+      "slug": "mlb-det-sea-2026-08-06"
+    },
+    {
+      "market_id": 1673815,
+      "slug": "mlb-cws-bos-2026-08-06"
+    },
+    {
+      "market_id": 1673887,
+      "slug": "mlb-laa-mia-2026-08-07"
+    },
+    {
+      "market_id": 1673893,
+      "slug": "mlb-cle-cws-2026-08-07"
+    },
+    {
+      "market_id": 1673903,
+      "slug": "mlb-min-mil-2026-08-07"
+    },
+    {
+      "market_id": 1673885,
+      "slug": "mlb-atl-nyy-2026-08-07"
+    }
+  ]
+}
