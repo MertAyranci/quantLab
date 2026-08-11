@@ -1,0 +1,88 @@
+{
+  "audited_start_overrides": {
+    "1614971": "2026-08-05T18:10:03+00:00",
+    "1614975": "2026-08-05T18:21:00+00:00",
+    "1614976": "2026-08-05T19:11:00+00:00",
+    "1614979": "2026-08-05T18:36:00+00:00",
+    "1673840": "2026-08-06T20:11:00+00:00"
+  },
+  "broad_n": 42,
+  "canonical_time_policy": "single linked commencement time unless explicitly listed in audited_start_overrides; five UTC/local-date collision cases were manually reviewed before freeze",
+  "cohort": "H2-v1",
+  "coverage_policy": {
+    "broad": "at least one pregame odds snapshot and at least one pregame exchange snapshot for the canonical Odds API game",
+    "coverage_clock": "odds_snapshots.capture_time",
+    "note": "M1 measures collector availability. M3 will use book_last_update where appropriate for lead-lag timing.",
+    "tight": "broad coverage plus at least one odds snapshot and one exchange snapshot in [T-6h, T0] for the canonical game"
+  },
+  "csv_file": "h2_v1_cohort.csv",
+  "csv_sha256": "9126626396b97959179d17e6acfe6205101f64cbf36b275d1866e8cd7445c3b6",
+  "definition_version": 1,
+  "frozen_at_utc": "2026-08-11T15:45:59.557803+00:00",
+  "market_ids": [
+    1595162,
+    1595163,
+    1595165,
+    1595169,
+    1595170,
+    1595171,
+    1595175,
+    1595176,
+    1595178,
+    1615001,
+    1614998,
+    1614971,
+    1614975,
+    1614979,
+    1614976,
+    1614981,
+    1614983,
+    1614985,
+    1614987,
+    1614992,
+    1614991,
+    1614997,
+    1614994,
+    1614988,
+    1673808,
+    1673754,
+    1673793,
+    1673795,
+    1673842,
+    1673840,
+    1673810,
+    1673815,
+    1673812,
+    1673805,
+    1673845,
+    1673887,
+    1673882,
+    1673893,
+    1673903,
+    1673863,
+    1673846,
+    1673885
+  ],
+  "membership_basis": "42 MLB Polymarket markets with complete RN1 targeted collection at initial H2-v1 freeze; membership thereafter fixed by committed cohort CSV",
+  "rn1_raw_fill_count": 3626,
+  "sport": "MLB",
+  "tight_exclusions": [
+    {
+      "market_id": 1673754,
+      "reason": "no_final_6h_odds_or_exchange_coverage",
+      "slug": "mlb-laa-bal-2026-08-06"
+    },
+    {
+      "market_id": 1673793,
+      "reason": "no_final_6h_odds_or_exchange_coverage",
+      "slug": "mlb-oak-cin-2026-08-06"
+    },
+    {
+      "market_id": 1673795,
+      "reason": "no_final_6h_odds_or_exchange_coverage",
+      "slug": "mlb-nym-cle-2026-08-06"
+    }
+  ],
+  "tight_n": 39,
+  "wallet": "RN1"
+}
