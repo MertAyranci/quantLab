@@ -1,0 +1,23 @@
+{
+  "artifacts": {
+    "decision": {
+      "file": "h2_v1_m8_decision.json",
+      "sha256": "315c600526eeb935ad6d7511290b6a38d9c1469cafe2e217e6b097509bf711bc"
+    }
+  },
+  "final_decisions": {
+    "h2_v1_deployable_strategy_supported": false,
+    "h2_v2_primary_holds_to_resolution": true,
+    "h2_v2_primary_is_fair_value_dislocation": true,
+    "live_clob_required": true,
+    "maker_is_secondary": true,
+    "rn1_required_for_h2_v2": false
+  },
+  "parents": {
+    "m6_results_sha256": "25392ba88b660aeefab3861615d4fb165eebb9ecfe5683e898e6168c136148de",
+    "m7_spec_sha256": "9ccd61fb85ed10696f40456e2640c9daf9442ca2297057c695d15032f495fe1d",
+    "m7_summary_sha256": "b6656666b1ccb7fddaf0931600fa6adc2d5c773320c14ed57f92ff55752a8d2a",
+    "m7_trades_sha256": "033027a7e446e8cc0e75a09a8bded7644ca97c4191ac7559ec8b26eca449fd7e"
+  },
+  "version": "H2-v1-M8"
+}

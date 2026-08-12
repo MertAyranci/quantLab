@@ -1,0 +1,161 @@
+{
+  "frozen_at_utc": "2026-08-12T21:51:57.176921+00:00",
+  "h2_v1_final_conclusion": {
+    "disposition": "Reject H2-v1 RN1/sharp directional taker-lag strategy as a deployable trading strategy.",
+    "important_secondary_result": "Sharp-PM fair-value gap showed evidence of subsequent Polymarket convergence, motivating H2-v2.",
+    "positive_economic_proxy": false,
+    "rn1_historically_live_actionable": false,
+    "rn1_primary_statistically_supported": false,
+    "sharp_primary_statistically_supported": false
+  },
+  "h2_v2": {
+    "calibration_phase": {
+      "candidate_edge_thresholds": [
+        0.005,
+        0.01,
+        0.015,
+        0.02,
+        0.025,
+        0.03,
+        0.04,
+        0.05
+      ],
+      "eligible_markets": 60,
+      "no_go_rule": "If no candidate threshold with at least 20 trades has positive calibration mean net PnL, do not start the confirmatory OOS test without declaring a new hypothesis.",
+      "oos_data_may_not_be_used": true,
+      "purpose": [
+        "verify collector quality",
+        "measure actual latency",
+        "select the edge threshold",
+        "validate fair-value construction"
+      ],
+      "threshold_selection": "Among thresholds producing at least 20 calibration trades, choose the threshold with the highest market-equal realized after-fee PnL per share."
+    },
+    "external_fair_value": {
+      "consensus": "median of available fresh family probabilities",
+      "family_probability": "midpoint in probability space between the best available back and lay prices",
+      "preferred_families": [
+        "Betfair",
+        "Matchbook",
+        "Smarkets"
+      ],
+      "required_fresh_families": 2,
+      "requirements": [
+        "capture best back",
+        "capture best lay",
+        "capture source timestamp",
+        "capture local receive timestamp"
+      ],
+      "stale_carry_forward": false,
+      "target_max_source_age_seconds": 10
+    },
+    "future_separate_hypotheses": [
+      "cross-market arbitrage",
+      "logical consistency arbitrage",
+      "maker market-making",
+      "news/lineup latency",
+      "multi-wallet informed-flow models"
+    ],
+    "maker_branch": {
+      "may_replace_primary_post_hoc": false,
+      "purpose": "Test whether passive execution improves economics after the taker-value hypothesis is independently assessed.",
+      "requirements": [
+        "live order-book depth",
+        "queue-aware conservative fill model",
+        "trade tape",
+        "quote placement/cancellation timestamps",
+        "adverse-selection measurement"
+      ],
+      "status": "secondary separate experiment"
+    },
+    "name": "External fair-value dislocation versus Polymarket executable price",
+    "oos_phase": {
+      "eligible_markets": 100,
+      "insufficient_trade_rule": "Fewer than 30 completed primary trades after 100 eligible markets is classified as inconclusive, not failure.",
+      "maximum_primary_positions_per_market": 1,
+      "minimum_completed_trades_for_conclusion": 30,
+      "parameter_changes_allowed": false,
+      "primary_metric": "market-equal mean realized after-fee PnL per share",
+      "primary_success_rule": "At least 30 completed primary trades and positive market-equal mean after-fee PnL per share.",
+      "primary_unit": "market",
+      "secondary_metrics": [
+        "total fixed-5-share net PnL",
+        "median net PnL per trade",
+        "win rate",
+        "mean predicted edge",
+        "calibration of external fair probability",
+        "Brier score"
+      ],
+      "starts": "Immediately after calibration is completed and the threshold/configuration is cryptographically frozen.",
+      "strong_confirmation_rule": "Primary success rule plus a market-level bootstrap 95% confidence interval whose lower bound exceeds zero."
+    },
+    "polymarket_execution_data": {
+      "book_capture": "capture every available real-time book update rather than periodic historical snapshots",
+      "required_fields": [
+        "best bid",
+        "best ask",
+        "bid depth",
+        "ask depth",
+        "tick size",
+        "minimum order size",
+        "market fee schedule",
+        "exchange/event timestamp where available",
+        "local receive timestamp"
+      ],
+      "source": "live CLOB"
+    },
+    "primary_hypothesis": "When Polymarket's executable outcome price is sufficiently below a fresh external sharp-market fair probability after accounting for taker fees, buying that outcome and holding to resolution produces positive out-of-sample net PnL.",
+    "primary_strategy": {
+      "entry_direction": "buy only the outcome with positive frozen-threshold edge",
+      "entry_execution_model": "paper fill uses the executable ask observed after the prespecified latency allowance, never the earlier decision-time quote",
+      "exit": "hold to market resolution",
+      "forced_short_horizon_exit": false,
+      "paper_execution_latency_ms": 500,
+      "position_size_shares": 5,
+      "positions_per_market": 1,
+      "realized_net_pnl_formula": "resolution_payout - executed_entry_price - actual_market_entry_fee",
+      "resolution_payout_per_share": {
+        "loser": 0,
+        "winner": 1
+      },
+      "second_trading_fee": false,
+      "signal_edge_formula": "fair_probability_of_outcome - executable_ask_price - taker_fee_per_share",
+      "style": "single-leg taker value trade"
+    },
+    "rn1_secondary_branch": {
+      "primary_result_may_not_depend_on_it": true,
+      "question": "Does genuinely real-time RN1 flow improve prediction or trade selection conditional on fair-value dislocation?",
+      "status": "optional secondary experiment"
+    },
+    "rn1_used_in_primary_model": false,
+    "universe": {
+      "in_play_allowed": false,
+      "market_type": "pregame moneyline",
+      "one_canonical_polymarket_market_per_game": true,
+      "sport": "MLB"
+    },
+    "why_hold_to_resolution": "The primary question is whether external fair value identifies underpriced contracts. Holding to resolution avoids forcing a second spread/fee crossing that destroyed H2-v1 scalp economics."
+  },
+  "research_rules": [
+    "Do not use RN1 as a required H2-v2 input.",
+    "Do not use historical H2-v1 outcomes to select the H2-v2 threshold.",
+    "Do not alter the OOS threshold after the first OOS market begins.",
+    "Do not count multiple primary trades in one market.",
+    "Do not infer executable prices from trade prints when live book data exists.",
+    "Always use the market-specific fee schedule.",
+    "Do not call paper fills realized fills.",
+    "Do not promote maker or RN1 secondary analyses after seeing a failed primary result."
+  ],
+  "rn1_decision": {
+    "future_use_condition": "RN1 may be added only as a prespecified secondary feature after a genuinely real-time collector is demonstrated.",
+    "primary_signal": false,
+    "real_time_quality_gate": {
+      "failure_consequence": "RN1 remains excluded from live signal generation.",
+      "target_p90_capture_lag_seconds": 5
+    },
+    "reason": "H2-v1 did not establish RN1 as necessary or independently tradeable, and historical RN1 collection was not actionable.",
+    "required_for_h2_v2": false,
+    "role": "optional secondary confirmation feature"
+  },
+  "version": "H2-v1-M8"
+}
