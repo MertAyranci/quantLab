@@ -1,0 +1,133 @@
+{
+  "artifacts": {
+    "pm_pregame_tape": {
+      "file": "h2_v1_pm_pregame_tape.csv",
+      "rows": 16047,
+      "sha256": "c9efa7ee7fd05de709ca79e163174afdac1f838482b7948e22ee19fe7f5362c7"
+    },
+    "pm_responses": {
+      "file": "h2_v1_pm_responses.csv",
+      "rows": 3044,
+      "sha256": "8c733557e79820c2f2d7214b0fa5fd3270e13a38751fc7c1fae946342e6550f1"
+    }
+  },
+  "baseline_summary": {
+    "rn1": {
+      "available": 213,
+      "fresh_300s": 201,
+      "fresh_30s": 158,
+      "fresh_600s": 208,
+      "fresh_60s": 169,
+      "signals": 213
+    },
+    "sharp": {
+      "available": 546,
+      "fresh_300s": 221,
+      "fresh_30s": 38,
+      "fresh_600s": 279,
+      "fresh_60s": 77,
+      "signals": 548
+    }
+  },
+  "built_at_utc": "2026-08-11T23:46:55.752740+00:00",
+  "counts": {
+    "markets": 42,
+    "pregame_pm_trades": 16047,
+    "response_rows": 3044,
+    "rn1_signals": 213,
+    "rn1_tx_matches": 213,
+    "sharp_signals": 548
+  },
+  "feature_version": "H2-v1-PM-M4",
+  "freshness_policy": {
+    "baseline_flags_seconds": [
+      30,
+      60,
+      300,
+      600
+    ],
+    "interpretation": "freshness is recorded, not silently filtered; M5/M6 choose sensitivity subsets",
+    "response_target_flags_seconds": [
+      5,
+      15,
+      30,
+      60
+    ],
+    "rows_dropped_for_staleness": false
+  },
+  "horizons_seconds": [
+    10,
+    30,
+    60,
+    300
+  ],
+  "limitations": [
+    "H2-v1 has no locally recorded pregame TOB for these 42 markets.",
+    "M4 measures executed-price reaction rather than order-book midpoint reaction.",
+    "Absence of a response execution is missing response data, not a zero price move.",
+    "Public execution timestamps have one-second resolution.",
+    "Tradeability, spread, depth and realistic execution are not inferred in M4."
+  ],
+  "parent_cohort": "H2-v1",
+  "parent_hashes": {
+    "cohort_csv": "9126626396b97959179d17e6acfe6205101f64cbf36b275d1866e8cd7445c3b6",
+    "rn1_pregame_tape": "4149e9882ff186c50a76584565dc5b4fe735bb2ea316b02ab8b5e3d33dc1bc37",
+    "sharp_tape": "3bc2c04da738168555ece776175d5cdf7c5fd518ec339d058f708f8c0fec3374"
+  },
+  "polymarket_source": {
+    "bid_ask_available": false,
+    "endpoint": "Data API /trades",
+    "liquidity_available": false,
+    "order_book_available": false,
+    "price_representation": "executed trade price transformed to HOME axis",
+    "scope": "market-wide executions",
+    "taker_only": true,
+    "timestamp_resolution": "1 second"
+  },
+  "response_summary": {
+    "rn1": {
+      "10": {
+        "pregame_eligible": 203,
+        "response_available": 141
+      },
+      "30": {
+        "pregame_eligible": 185,
+        "response_available": 153
+      },
+      "300": {
+        "pregame_eligible": 119,
+        "response_available": 117
+      },
+      "60": {
+        "pregame_eligible": 135,
+        "response_available": 111
+      }
+    },
+    "sharp": {
+      "10": {
+        "pregame_eligible": 548,
+        "response_available": 21
+      },
+      "30": {
+        "pregame_eligible": 548,
+        "response_available": 56
+      },
+      "300": {
+        "pregame_eligible": 546,
+        "response_available": 211
+      },
+      "60": {
+        "pregame_eligible": 547,
+        "response_available": 84
+      }
+    }
+  },
+  "timing_policy": {
+    "baseline": "last PM execution strictly before the completed second containing signal_time",
+    "game_start": "target_time >= canonical T0 is ineligible",
+    "response": "PM executions with event_time > signal_time and <= target_time",
+    "rn1_signal_clock": "M2 trades.event_time",
+    "same_second_policy": "same-second executions are excluded from baseline and response when ordering is ambiguous",
+    "sharp_signal_clock": "M3 observed_at"
+  }
+}
