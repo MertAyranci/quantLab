@@ -1,0 +1,126 @@
+{
+  "aligned_sharp_policy": {
+    "rn1_event": "last sharp poll strictly before RN1 fill",
+    "sharp_event": "current sharp poll",
+    "sharp_pm_gap": "aligned sharp HOME probability minus M4 PM baseline HOME execution price",
+    "tradeability": "not inferred; PM and sharp staleness remain explicit"
+  },
+  "artifact": {
+    "file": "h2_v1_event_panel.csv",
+    "rows": 761,
+    "sha256": "12fe2f912e45c5e11f3c7ee70bb3a7556f49d0129df987815361c8d53d1bcee8"
+  },
+  "built_at_utc": "2026-08-12T00:59:53.646709+00:00",
+  "counts": {
+    "markets": 42,
+    "rn1_signals": 213,
+    "sharp_signals": 548,
+    "total_signals": 761
+  },
+  "cross_clock_availability": {
+    "rn1_next_sharp": 117,
+    "rn1_prev_sharp": 171,
+    "sharp_next_rn1": 327,
+    "sharp_prev_rn1": 82
+  },
+  "cross_clock_policy": {
+    "next": "strictly later event in other clock",
+    "previous": "strictly earlier event in other clock",
+    "threshold_filtering": "none in M5; raw lags preserved for M6"
+  },
+  "feature_version": "H2-v1-EVENT-M5",
+  "limitations": [
+    "Sharp polling cadence is coarse in H2-v1; nearest cross-clock lags do not imply causal ordering.",
+    "Some sharp innovations coincide with exchange-family composition changes.",
+    "RN1 fills include same-second clusters and are not assumed statistically independent.",
+    "Polymarket response prices are executed prices, not historical bid/ask midpoint observations.",
+    "No freshness, magnitude or direction threshold is selected in M5."
+  ],
+  "m6_feasibility": {
+    "rn1": {
+      "10": {
+        "broad": 134,
+        "strict": 108
+      },
+      "30": {
+        "broad": 145,
+        "strict": 117
+      },
+      "300": {
+        "broad": 62,
+        "strict": 33
+      },
+      "60": {
+        "broad": 103,
+        "strict": 41
+      }
+    },
+    "sharp": {
+      "10": {
+        "broad": 20,
+        "strict": 10
+      },
+      "30": {
+        "broad": 48,
+        "strict": 23
+      },
+      "300": {
+        "broad": 73,
+        "strict": 18
+      },
+      "60": {
+        "broad": 68,
+        "strict": 20
+      }
+    }
+  },
+  "m6_feasibility_definitions": {
+    "broad": "direction available; PM baseline <=300s old; response exists; last response <=60s old at target",
+    "strict": "direction available; PM baseline <=60s old; response exists; last response <=30s old at target"
+  },
+  "parent_cohort": "H2-v1",
+  "parent_hashes": {
+    "cohort_csv": "9126626396b97959179d17e6acfe6205101f64cbf36b275d1866e8cd7445c3b6",
+    "pm_responses": "8c733557e79820c2f2d7214b0fa5fd3270e13a38751fc7c1fae946342e6550f1",
+    "rn1_pregame_tape": "4149e9882ff186c50a76584565dc5b4fe735bb2ea316b02ab8b5e3d33dc1bc37",
+    "sharp_tape": "3bc2c04da738168555ece776175d5cdf7c5fd518ec339d058f708f8c0fec3374"
+  },
+  "pm_response_policy": {
+    "horizons_seconds": [
+      10,
+      30,
+      60,
+      300
+    ],
+    "missing_response": "remains missing, never converted to zero",
+    "pivot": "four horizons become columns on each signal",
+    "source": "frozen M4 Polymarket response table"
+  },
+  "rn1_clustering_policy": {
+    "same_second": "individual fills retained; cluster size, rank and cluster net HOME exposure preserved",
+    "same_transaction": "individual fills retained; transaction cluster size preserved",
+    "statistical_interpretation": "M6 must account for non-independence rather than treating clustering as additional independent information"
+  },
+  "rn1_clustering_summary": {
+    "largest_same_second_cluster": 4,
+    "largest_same_tx_cluster": 2,
+    "rows_in_same_second_clusters": 83,
+    "rows_in_same_tx_clusters": 2,
+    "same_second_clusters": 37,
+    "same_tx_clusters": 1
+  },
+  "sharp_innovation_policy": {
+    "composition_change": "flagged, never silently filtered",
+    "definition": "current sharp HOME consensus probability minus immediately previous sharp HOME consensus probability in same market",
+    "first_poll": "missing innovation"
+  },
+  "sharp_innovation_summary": {
+    "away": 137,
+    "composition_changed": 60,
+    "delta_available": 506,
+    "first_no_delta": 42,
+    "home": 174,
+    "zero": 195
+  },
+  "unit_of_observation": "one RN1 fill or one sharp exchange poll"
+}
