@@ -1,0 +1,193 @@
+{
+  "binary_close_mechanism": {
+    "gross_pnl_per_share_formula": "1 - entry_token_price - opposite_token_price",
+    "gross_value_per_pair": 1.0,
+    "merge_gas_included": false,
+    "method": "buy opposite outcome then merge complete pair",
+    "reason": "Historical gas conditions for merge transactions are not available in H2-v1."
+  },
+  "decision_framework": {
+    "historically_executable_strategy_demonstrated": false,
+    "overall_language": "Report positive or negative historical print-supported economic proxy separately from demonstrated live tradeability.",
+    "positive_print_proxy": "primary sharp market-equal platform-fee-adjusted PnL/share > 0",
+    "reason": "H2-v1 lacks historical bid/ask quotes and depth, so trade prints cannot prove hypothetical executable fills.",
+    "rn1_live_strategy_supported": false
+  },
+  "economic_metrics": {
+    "aggregate_primary": [
+      "event_count",
+      "market_count",
+      "event_weighted_mean_net_per_share",
+      "event_weighted_median_net_per_share",
+      "positive_zero_negative_event_counts",
+      "market_equal_mean_net_per_share",
+      "positive_zero_negative_market_counts",
+      "mean_five_share_net",
+      "median_five_share_net"
+    ],
+    "formal_significance_test": false,
+    "per_trade": [
+      "entry_price",
+      "opposite_price",
+      "gross_pnl_per_share",
+      "entry_fee_per_share",
+      "opposite_fee_per_share",
+      "platform_fee_adjusted_pnl_per_share",
+      "five_share_platform_fee_adjusted_pnl",
+      "total_pair_cost_per_share",
+      "return_on_total_pair_cost",
+      "entry_delay_seconds",
+      "hedge_delay_after_target_seconds"
+    ],
+    "reason": "M7 is economic/execution characterization following the frozen M6 hypothesis test, not a new significance search."
+  },
+  "execution_data_limit": {
+    "historical_bid_ask_available": false,
+    "historical_depth_available": false,
+    "historical_order_book_available": false,
+    "interpretation": "Executed taker prints support a historical execution proxy but do not prove that our own order would have filled at that price or size."
+  },
+  "fee_contract": {
+    "charged_legs": [
+      "desired-outcome taker BUY",
+      "opposite-outcome taker BUY"
+    ],
+    "exponent": 1,
+    "fee_per_share_formula": "rate * p * (1 - p)",
+    "fees_enabled": true,
+    "gas": "excluded and disclosed separately",
+    "maker_rebate_rate": 0.15,
+    "markets_audited": 42,
+    "merge_fee": "not modeled as a Polymarket trading fee",
+    "rate": 0.05,
+    "source": "market-specific feeSchedule audited across all 42 frozen H2-v1 markets",
+    "taker_only": true,
+    "terminology": "platform-fee-adjusted net proxy; not fully net realized PnL",
+    "unique_fee_configurations": 1
+  },
+  "frozen_at_utc": "2026-08-12T14:17:29.936840+00:00",
+  "frozen_before_economic_estimation": true,
+  "market_execution_constraints": {
+    "interpretation": "A >=5-share historical print demonstrates that such a trade size occurred, not that our hypothetical order would necessarily have received the same fill.",
+    "minimum_order_size_shares": 5,
+    "primary_liquidity_support": "both historical BUY prints must each have size >=5 shares",
+    "tick_size": 0.001
+  },
+  "non_goals": [
+    "Do not alter signal horizons after observing PnL.",
+    "Do not alter action latency after observing PnL.",
+    "Do not alter the 300-second primary hedge cap after observing PnL.",
+    "Do not promote sharp-gap secondary evidence to primary.",
+    "Do not claim RN1 was live-actionable in H2-v1.",
+    "Do not infer historical spread or order-book depth from prints.",
+    "Do not invent merge gas costs.",
+    "Do not claim realized or deployable profitability from this proxy."
+  ],
+  "parent_artifacts": {
+    "event_panel": {
+      "file": "h2_v1_event_panel.csv",
+      "sha256": "12fe2f912e45c5e11f3c7ee70bb3a7556f49d0129df987815361c8d53d1bcee8"
+    },
+    "m6_results": {
+      "file": "h2_v1_m6_results.csv",
+      "sha256": "25392ba88b660aeefab3861615d4fb165eebb9ecfe5683e898e6168c136148de"
+    },
+    "m6_spec": {
+      "file": "h2_v1_m6_spec.json",
+      "sha256": "15f8a60806f90408d2e31be2af23024deaa330453237af096c5c2fdce73636cd"
+    },
+    "pm_pregame_tape": {
+      "file": "h2_v1_pm_pregame_tape.csv",
+      "sha256": "c9efa7ee7fd05de709ca79e163174afdac1f838482b7948e22ee19fe7f5362c7"
+    }
+  },
+  "rn1_oracle": {
+    "action_latency_seconds": 0,
+    "analysis_id": "rn1_30s_econ_oracle",
+    "candidate_events": 106,
+    "entry_second_policy": "exclude the entire RN1 signal second",
+    "expected_markets": 7,
+    "expected_round_trips": 20,
+    "formal_tradeability_claim": false,
+    "historical_live_actionable": false,
+    "max_delay_after_target_seconds": 300,
+    "minimum_print_size_shares": 5,
+    "reason": "0/213 frozen RN1 fills were captured by the historical collector within 3600 seconds of venue event_time.",
+    "signal_population": "M6 RN1 same-second clustered +30s broad population",
+    "signal_target_seconds": 30,
+    "status": "oracle-only non-actionable opportunity bound"
+  },
+  "scientific_question": "Conditional on the frozen H2-v1 signals, is there historical print-supported economic edge after Polymarket platform taker fees?",
+  "sharp_gap_secondary": {
+    "action_latency_seconds": 10,
+    "analysis_id": "sharp_gap_60s_econ_secondary",
+    "candidate_events": 56,
+    "expected_markets": 14,
+    "expected_round_trips": 16,
+    "max_delay_after_target_seconds": 300,
+    "minimum_print_size_shares": 5,
+    "not_promotable_to_primary": true,
+    "signal_direction": "sign(sharp_pm_gap_at_signal)",
+    "signal_population": "M6 sharp-gap +60s broad secondary population",
+    "signal_target_seconds": 60,
+    "status": "secondary economic proxy"
+  },
+  "sharp_prespecified_sensitivities": [
+    {
+      "action_latency_seconds": 10,
+      "analysis_id": "sharp_60s_econ_hedge60",
+      "expected_markets": 10,
+      "expected_round_trips": 10,
+      "max_delay_after_target_seconds": 60,
+      "minimum_print_size_shares": 5,
+      "signal_target_seconds": 60
+    },
+    {
+      "action_latency_seconds": 10,
+      "analysis_id": "sharp_60s_econ_hedge120",
+      "expected_markets": 13,
+      "expected_round_trips": 15,
+      "max_delay_after_target_seconds": 120,
+      "minimum_print_size_shares": 5,
+      "signal_target_seconds": 60
+    },
+    {
+      "action_latency_seconds": 10,
+      "analysis_id": "sharp_60s_econ_no_size_gate",
+      "expected_markets": 19,
+      "expected_round_trips": 22,
+      "max_delay_after_target_seconds": 300,
+      "minimum_print_size_shares": null,
+      "signal_target_seconds": 60
+    }
+  ],
+  "sharp_primary": {
+    "action_latency_seconds": 10,
+    "analysis_id": "sharp_60s_econ_primary",
+    "candidate_events": 57,
+    "candidate_markets": 29,
+    "close": {
+      "final_action": "merge equal token pair",
+      "max_delay_after_target_seconds": 300,
+      "must_be_pregame": true,
+      "selection": "first matching taker BUY print at or after signal_time + 60s",
+      "side": "BUY",
+      "token": "opposite outcome"
+    },
+    "entry": {
+      "deadline": "strictly before signal_time + 60s",
+      "selection": "first matching taker BUY print at or after signal_time + 10s",
+      "side": "BUY",
+      "token": "signal-implied outcome"
+    },
+    "expected_markets": 17,
+    "expected_round_trips": 20,
+    "minimum_print_size_shares": 5,
+    "reason_for_300s_execution_cap": "Chosen before PnL using execution coverage only. A 60s hedge cap leaves only 10 >=5-share trades across 10 markets, while 300s retains 20 across 17 markets. The predictive target remains +60s.",
+    "signal_direction": "sign(sharp_home_delta)",
+    "signal_population": "M6 nonzero sharp innovation +60s broad population",
+    "signal_target_seconds": 60,
+    "status": "primary economic proxy"
+  },
+  "spec_version": "H2-v1-M7-SPEC-1"
+}

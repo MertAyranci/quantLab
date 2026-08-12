@@ -1,0 +1,54 @@
+{
+  "artifacts": {
+    "market_effects": {
+      "file": "h2_v1_m7_market_effects.csv",
+      "rows": 80,
+      "sha256": "e4950c95950982f6eb4d190262138d1e16e8f237bb16d74e6c746e4d33745756"
+    },
+    "summary": {
+      "file": "h2_v1_m7_summary.csv",
+      "rows": 6,
+      "sha256": "b6656666b1ccb7fddaf0931600fa6adc2d5c773320c14ed57f92ff55752a8d2a"
+    },
+    "trades": {
+      "file": "h2_v1_m7_trades.csv",
+      "rows": 103,
+      "sha256": "033027a7e446e8cc0e75a09a8bded7644ca97c4191ac7559ec8b26eca449fd7e"
+    }
+  },
+  "built_at_utc": "2026-08-12T14:23:08.462662+00:00",
+  "decisions": {
+    "historically_executable_strategy_demonstrated": false,
+    "positive_print_proxy": false,
+    "rn1_live_strategy_supported": false
+  },
+  "fee_model": {
+    "charged_on": "both taker BUY legs",
+    "exponent": 1,
+    "formula": "rate * p * (1-p)",
+    "rate": "0.05"
+  },
+  "interpretation_limits": [
+    "Historical order-book bid/ask and depth are unavailable.",
+    "Observed taker BUY prints do not prove our hypothetical order would have filled at the same price or size.",
+    "The primary sharp predictive target remains +60 seconds; the 300-second cap is an execution unwind allowance.",
+    "Both historical BUY prints must be at least 5 shares in the primary economic proxy.",
+    "Platform taker fees are included using the frozen historical market feeSchedule rate.",
+    "Historical merge gas is not modeled.",
+    "RN1 economics are oracle-only because RN1 was not historically captured by the collector in actionable real time.",
+    "No new M7 significance test is performed."
+  ],
+  "parents": {
+    "event_panel_sha256": "12fe2f912e45c5e11f3c7ee70bb3a7556f49d0129df987815361c8d53d1bcee8",
+    "m6_results_sha256": "25392ba88b660aeefab3861615d4fb165eebb9ecfe5683e898e6168c136148de",
+    "m6_spec_sha256": "15f8a60806f90408d2e31be2af23024deaa330453237af096c5c2fdce73636cd",
+    "pm_pregame_tape_sha256": "c9efa7ee7fd05de709ca79e163174afdac1f838482b7948e22ee19fe7f5362c7"
+  },
+  "preregistration": {
+    "spec_file": "h2_v1_m7_spec.json",
+    "spec_sha256": "9ccd61fb85ed10696f40456e2640c9daf9442ca2297057c695d15032f495fe1d",
+    "verified_before_economic_estimation": true
+  },
+  "primary_analysis_id": "sharp_60s_econ_primary",
+  "version": "H2-v1-M7"
+}
