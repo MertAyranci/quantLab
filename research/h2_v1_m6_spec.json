@@ -1,0 +1,215 @@
+{
+  "common_direction_axis": {
+    "axis": "HOME",
+    "positive_response": "Polymarket subsequently moves in the direction implied by the signal"
+  },
+  "decision_rules": {
+    "overall_h2_v1": "report channels separately; evidence in either channel may support predictive lag, but H2-v1 cannot establish a causal sharp->RN1->PM chain because sharp polling is too coarse",
+    "rn1_channel_supported": "RN1 primary market-equal effect > 0 and Holm-adjusted two-sided p < 0.05",
+    "sharp_channel_supported": "sharp primary market-equal effect > 0 and Holm-adjusted two-sided p < 0.05"
+  },
+  "frozen_at_utc": "2026-08-12T13:28:00.158614+00:00",
+  "frozen_before_effect_estimation": true,
+  "non_goals": [
+    "No parameter or horizon will be changed after seeing effect estimates.",
+    "No live-trading profitability claim is made in M6.",
+    "No bid/ask spread, slippage, depth, latency or fees are modeled here.",
+    "Economic tradeability belongs to H2-M7.",
+    "No strong minute-scale sharp->RN1 causal ordering claim is permitted."
+  ],
+  "observability_filters": {
+    "broad": {
+      "baseline": "PM baseline execution age <= 300 seconds",
+      "response": "response execution exists",
+      "target_freshness": "last response execution <= 60 seconds old at target"
+    },
+    "strict": {
+      "baseline": "PM baseline execution age <= 60 seconds",
+      "response": "response execution exists",
+      "target_freshness": "last response execution <= 30 seconds old at target"
+    }
+  },
+  "outcome": {
+    "interpretation": {
+      "negative": "PM moved against predicted signal direction",
+      "positive": "PM moved in predicted signal direction",
+      "zero": "no executed-price change"
+    },
+    "pm_price": "M5/M4 last executed HOME-axis Polymarket price within the response horizon",
+    "raw_response": "last_response_home_price - PM baseline_home_price",
+    "signed_response": "signal_direction_home_sign * raw_response",
+    "tradeability_claim": false
+  },
+  "parent_panel": {
+    "file": "h2_v1_event_panel.csv",
+    "rows": 761,
+    "sha256": "12fe2f912e45c5e11f3c7ee70bb3a7556f49d0129df987815361c8d53d1bcee8"
+  },
+  "prespecified_sensitivities": [
+    {
+      "analysis_id": "rn1_10s_broad",
+      "expected_events": 98,
+      "expected_markets": 22,
+      "horizon_seconds": 10,
+      "observability": "broad",
+      "source": "rn1"
+    },
+    {
+      "analysis_id": "rn1_30s_strict",
+      "expected_events": 87,
+      "expected_markets": 22,
+      "horizon_seconds": 30,
+      "observability": "strict",
+      "source": "rn1"
+    },
+    {
+      "analysis_id": "rn1_60s_broad",
+      "expected_events": 77,
+      "expected_markets": 11,
+      "horizon_seconds": 60,
+      "interpretation": "underpowered cross-market sensitivity",
+      "observability": "broad",
+      "source": "rn1"
+    },
+    {
+      "analysis_id": "sharp_30s_broad",
+      "composition_policy": "all",
+      "expected_events": 42,
+      "expected_markets": 26,
+      "horizon_seconds": 30,
+      "observability": "broad",
+      "source": "sharp"
+    },
+    {
+      "analysis_id": "sharp_60s_broad_stable",
+      "composition_policy": "stable_only",
+      "expected_events": 53,
+      "expected_markets": 25,
+      "horizon_seconds": 60,
+      "observability": "broad",
+      "source": "sharp"
+    },
+    {
+      "analysis_id": "sharp_300s_broad",
+      "composition_policy": "all",
+      "expected_events": 55,
+      "expected_markets": 28,
+      "horizon_seconds": 300,
+      "observability": "broad",
+      "source": "sharp"
+    },
+    {
+      "analysis_id": "sharp_300s_broad_stable",
+      "composition_policy": "stable_only",
+      "expected_events": 49,
+      "expected_markets": 24,
+      "horizon_seconds": 300,
+      "observability": "broad",
+      "source": "sharp"
+    },
+    {
+      "analysis_id": "sharp_60s_strict",
+      "composition_policy": "all",
+      "expected_events": 16,
+      "expected_markets": 14,
+      "horizon_seconds": 60,
+      "interpretation": "small-sample sensitivity only",
+      "observability": "strict",
+      "source": "sharp"
+    }
+  ],
+  "primary_inference": {
+    "alpha": 0.05,
+    "alternative": "two-sided",
+    "confidence_interval": 0.95,
+    "estimator": "equal-weighted mean across market-level mean signed responses",
+    "event_weighted_result": "descriptive only",
+    "expected_effect_direction": "positive",
+    "independence_unit": "market_id",
+    "market_weight": "equal",
+    "minimum_markets_for_primary_test": 20,
+    "multiple_testing": {
+      "applies_to": "two-sided primary p-values",
+      "family": [
+        "rn1_30s_broad_primary",
+        "sharp_60s_broad_primary"
+      ],
+      "method": "Holm"
+    },
+    "null": "mean market signed response = 0",
+    "test": "one-sample Student t-test across market-level mean effects",
+    "within_market_step": "mean signed response across qualifying events in each market"
+  },
+  "primary_tests": {
+    "rn1": {
+      "analysis_id": "rn1_30s_broad_primary",
+      "expected_events": 106,
+      "expected_markets": 23,
+      "horizon_seconds": 30,
+      "observability": "broad",
+      "reason": "30 seconds is short-lag but better matched to the approximately 25-second median PM execution cadence than 10 seconds",
+      "signal": "RN1 same-second cluster net direction"
+    },
+    "sharp": {
+      "analysis_id": "sharp_60s_broad_primary",
+      "composition_policy": "all compositions",
+      "expected_events": 57,
+      "expected_markets": 29,
+      "horizon_seconds": 60,
+      "observability": "broad",
+      "reason": "60 seconds is the shortest scientifically relevant horizon with broad cross-market coverage and directly tests the hypothesized short-lived lag",
+      "signal": "nonzero sharp HOME innovation direction"
+    }
+  },
+  "rn1_sharp_joint_analysis": {
+    "descriptive_age_thresholds_seconds": [
+      300,
+      900,
+      1800,
+      3600
+    ],
+    "formal_primary_test": false,
+    "reason": "cross-clock audit shows too few RN1 clusters with genuinely recent nonzero sharp innovations for reliable primary inference"
+  },
+  "rn1_unit": {
+    "audit_counts": {
+      "directional_clusters": 167,
+      "mixed_member_direction_clusters": 16,
+      "raw_fills": 213,
+      "same_second_clusters": 167,
+      "zero_net_clusters": 0
+    },
+    "cluster_definition": "same market_id and identical RN1 event second",
+    "direction": "sign(rn1_second_cluster_signed_home_shares)",
+    "individual_fill_independence": false,
+    "mixed_member_direction_clusters": "retained in primary analysis; cluster net direction governs",
+    "primary_unit": "same-second RN1 cluster",
+    "zero_net_clusters": "exclude"
+  },
+  "scientific_question": "Do RN1 directional trading events and/or nonzero sharp-market innovations predict subsequent Polymarket HOME-price movement?",
+  "secondary_sharp_gap_test": {
+    "analysis_id": "sharp_gap_60s_broad",
+    "interpretation": "tests whether Polymarket converges toward the contemporaneous sharp probability",
+    "outcome": "predictor_direction * PM +60s raw response",
+    "predictor_direction": "sign(sharp_pm_gap_at_signal)",
+    "sample": "nonzero sharp innovations satisfying sharp +60s broad observability",
+    "status": "secondary; not part of primary Holm family",
+    "zero_gap": "exclude"
+  },
+  "sharp_unit": {
+    "audit_counts": {
+      "all_polls": 548,
+      "first_no_innovation": 42,
+      "nonzero_composition_changed": 60,
+      "nonzero_composition_stable": 251,
+      "nonzero_innovations": 311,
+      "zero_innovations": 195
+    },
+    "composition_change": "retain in primary; composition-stable subset is prespecified sensitivity analysis",
+    "first_poll": "exclude because innovation unavailable",
+    "innovation": "current sharp HOME consensus probability minus immediately previous sharp HOME consensus probability within market",
+    "primary_unit": "individual sharp poll innovation",
+    "zero_innovation": "exclude from directional tests; preserve as descriptive control"
+  },
+  "spec_version": "H2-v1-M6-SPEC-1"
+}

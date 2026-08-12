@@ -1,0 +1,45 @@
+{
+  "artifacts": {
+    "market_effects": {
+      "file": "h2_v1_m6_market_effects.csv",
+      "rows": 253,
+      "sha256": "e4ddded3396929d276f3b5397d4059afbf606acaa4e55e6e3570234e36d88ccf"
+    },
+    "results": {
+      "file": "h2_v1_m6_results.csv",
+      "rows": 11,
+      "sha256": "25392ba88b660aeefab3861615d4fb165eebb9ecfe5683e898e6168c136148de"
+    }
+  },
+  "built_at_utc": "2026-08-12T13:40:34.961816+00:00",
+  "decisions": {
+    "rn1_channel_supported": false,
+    "sharp_channel_supported": false
+  },
+  "inference": {
+    "alpha": 0.05,
+    "confidence_interval": 0.95,
+    "multiple_testing": "Holm adjustment across the two prespecified primary tests",
+    "primary_estimator": "equal-weighted mean of market-level mean signed responses",
+    "primary_test": "two-sided one-sample Student t-test across market-level effects"
+  },
+  "interpretation_limits": [
+    "M6 tests predictive executed-price reaction, not executable net profitability.",
+    "Market-level equal weighting is the primary independence treatment.",
+    "RN1 same-second fills are collapsed to one cluster-level signal.",
+    "Sharp zero innovations are excluded from directional testing.",
+    "Sharp composition-stable results are prespecified sensitivity analyses.",
+    "Sharp polling cadence is too coarse to establish a minute-scale causal sharp->RN1->PM chain."
+  ],
+  "preregistration": {
+    "panel_sha256": "12fe2f912e45c5e11f3c7ee70bb3a7556f49d0129df987815361c8d53d1bcee8",
+    "spec_file": "h2_v1_m6_spec.json",
+    "spec_sha256": "15f8a60806f90408d2e31be2af23024deaa330453237af096c5c2fdce73636cd",
+    "verified_before_analysis": true
+  },
+  "primary_analysis_ids": [
+    "rn1_30s_broad_primary",
+    "sharp_60s_broad_primary"
+  ],
+  "version": "H2-v1-M6"
+}
