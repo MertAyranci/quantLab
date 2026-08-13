@@ -1,0 +1,56 @@
+{
+  "builder_sha256": "324ccba8cc74d0853de640d5758c3cc77c7fbba30cad81022adac138e5022ab8",
+  "contract_sha256": "4a09e3124bd0e05624a577916b10a712802bcc1096f6218a765c3830cf239cc4",
+  "decision_endpoint": {
+    "anchors": 1080,
+    "base_sources": {
+      "rest_book": 728,
+      "ws_book": 352
+    },
+    "connection_mixing": 0,
+    "crossed": 0,
+    "generation_mixing": 0,
+    "lookahead": 0,
+    "reconstructed": 1080,
+    "reference_covered": 1080,
+    "reference_price_matches": 1080,
+    "reference_price_mismatches": 0,
+    "reference_size_comparisons": 2156,
+    "reference_size_mismatch_anchors": 582,
+    "replayed_deltas": 30862,
+    "two_sided": 1080
+  },
+  "decisions": {
+    "m2_overall_pass": false
+  },
+  "engineering_dataset": {
+    "configuration_covered": 1080,
+    "distinct_games": 9,
+    "sharp_collector_run_id": 11691,
+    "tape_rows": 1080,
+    "unique_market_mapping": 1080,
+    "unique_outcome_token_mapping": 1080
+  },
+  "execution_500ms_endpoint": {
+    "anchors": 1080,
+    "base_sources": {
+      "rest_book": 728,
+      "ws_book": 352
+    },
+    "connection_mixing": 0,
+    "crossed": 0,
+    "generation_mixing": 0,
+    "lookahead": 0,
+    "reconstructed": 1080,
+    "reference_covered": 1080,
+    "reference_price_matches": 1080,
+    "reference_price_mismatches": 0,
+    "reference_size_comparisons": 2156,
+    "reference_size_mismatch_anchors": 588,
+    "replayed_deltas": 30932,
+    "two_sided": 1080
+  },
+  "interpretation": "M2 validates deterministic synchronization and book replay only. No edge, threshold, trade, fill, PnL, resolution, calibration, or OOS strategy result is computed.",
+  "tape_sha256": "88a1bd4cbaf3254850c0dc1c4c2c305e18db68700a5e90d7e86f64a74706d312",
+  "version": "H2-v2-M2-VALIDATION-1"
+}

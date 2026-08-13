@@ -1,0 +1,57 @@
+{
+  "version": "H2-v2-M2-FAILURE-DIAGNOSIS-1",
+  "milestone": "H2-v2 M2 — synchronized sharp and Polymarket decision tape",
+  "m2_result": "FAIL",
+  "contract_sha256": "4a09e3124bd0e05624a577916b10a712802bcc1096f6218a765c3830cf239cc4",
+  "builder_sha256": "324ccba8cc74d0853de640d5758c3cc77c7fbba30cad81022adac138e5022ab8",
+  "tape_sha256": "88a1bd4cbaf3254850c0dc1c4c2c305e18db68700a5e90d7e86f64a74706d312",
+  "validation_sha256": "06983e20c4fcb1d09254221e99213a2e8497088263fb20d95955a884e7005f5e",
+
+  "passed_components": {
+    "tape_rows": "1080/1080",
+    "distinct_games": "9/9",
+    "unique_market_mapping": "1080/1080",
+    "unique_outcome_token_mapping": "1080/1080",
+    "configuration_coverage": "1080/1080",
+    "decision_reconstruction": "1080/1080",
+    "execution_500ms_reconstruction": "1080/1080",
+    "decision_reference_price_agreement": "1080/1080",
+    "execution_reference_price_agreement": "1080/1080",
+    "decision_generation_mixing": 0,
+    "execution_generation_mixing": 0,
+    "decision_connection_mixing": 0,
+    "execution_connection_mixing": 0,
+    "decision_crossed_books": 0,
+    "execution_crossed_books": 0,
+    "decision_lookahead": 0,
+    "execution_lookahead": 0
+  },
+
+  "failed_component": {
+    "requirement": "Exact reconstructed size agreement whenever the latest H2-v2 tob_snapshot contains a non-null size.",
+    "decision_size_comparisons": 2156,
+    "decision_size_mismatch_anchors": 582,
+    "decision_size_mismatch_sides": 776,
+    "execution_size_comparisons": 2156,
+    "execution_size_mismatch_anchors": 588,
+    "execution_size_mismatch_sides": 784
+  },
+
+  "diagnosis": {
+    "decision_mismatch_sides_with_same_level_post_reference_delta": 776,
+    "decision_mismatch_sides_without_same_level_post_reference_delta": 0,
+    "execution_mismatch_sides_with_same_level_post_reference_delta": 784,
+    "execution_mismatch_sides_without_same_level_post_reference_delta": 0,
+    "interpretation": "Every observed size mismatch occurred where the exact current top price level had a later same-generation book delta after the size-bearing TOB reference row. Therefore the latest TOB size is not a valid endpoint ground truth after later price_change deltas, even though its price remains valid.",
+    "reconstruction_failure_demonstrated": false,
+    "reference_size_staleness_demonstrated": true
+  },
+
+  "methodological_disposition": {
+    "retroactively_change_m2_contract": false,
+    "retroactively_mark_m2_pass": false,
+    "next_step": "Create a separately preregistered H2-v2 M2b replay-validation remediation using a valid size-state validation rule before any edge, threshold, trade, fill, PnL, calibration, or OOS analysis."
+  },
+
+  "performance_data_inspected": false
+}
