@@ -1,0 +1,83 @@
+{
+  "version": "H2-v2-M2c-CONCLUSION-1",
+  "milestone": "H2-v2 M2c — exact size divergence root-cause investigation",
+
+  "parent_m2b_commit": "2a40bf8cb220babf2a7364806bfc6d1abce68627",
+
+  "artifacts": {
+    "contract_sha256": "db502a88e241071c1faabeef90a97e84cdab1c46fcea850964fd6e2b5d3cb19c",
+    "diagnostic_sha256": "d6c2bd48d769b7cd37c77ceac2afd93840c4e2417f2d1aef0e4986846baf73e8",
+    "pair_diagnostics_sha256": "e0d914a0acddf0383b0651da898977550715729e94378dfcaec8c17d6a31555a",
+    "mismatch_diagnostics_sha256": "49794bc40ddda6c35ad4306e81bf93b61ae7fd2834144a209f4c129ce6624db5",
+    "summary_sha256": "dcd304c370f561c4be450c4a32d09d7496543aff130f39a1f84fee838013f931"
+  },
+
+  "frozen_parent_reproduction": {
+    "checkpoint_pairs": 142,
+    "passed_pairs": 84,
+    "failed_pairs": 58,
+    "presence_mismatches": 0,
+    "size_mismatches": 114
+  },
+
+  "tested_hypothesis": {
+    "id": "trade_triggered_ws_book",
+    "decision": "TRADE_TRIGGER_NOT_SUPPORTED",
+
+    "failed_pairs": {
+      "pairs": 58,
+      "exact_event_time_trade": 0,
+      "adjacent_sequence_trade": 0,
+      "associated_trade": 0,
+      "nearest_trade_event_distance_ms_p50": "538.000"
+    },
+
+    "passed_control_pairs": {
+      "pairs": 84,
+      "exact_event_time_trade": 0,
+      "adjacent_sequence_trade": 0,
+      "associated_trade": 0,
+      "nearest_trade_event_distance_ms_p50": "205.000"
+    },
+
+    "interpretation": "Under the preregistered exact-event-time and adjacent-sequence association rules, failed M2b checkpoint pairs are not associated with stored last_trade_price events. Trade proximity also does not separate failed pairs from passing controls in the expected direction."
+  },
+
+  "new_engineering_localization": {
+    "mismatches": 114,
+    "bid_side": 57,
+    "ask_side": 57,
+    "checkpoint_lower_than_replay": 114,
+    "checkpoint_higher_than_replay": 0,
+    "price_level_membership_mismatches": 0,
+
+    "interpretation": "The remaining replay defect is directional and quantity-specific: reconstructed books systematically retain more size than the later full-book checkpoint while preserving the correct set of price levels.",
+
+    "demonstrated": [
+      "price-level membership reconstruction is correct on the M2b checkpoint sample",
+      "size divergence is exclusively replay-overstatement relative to checkpoint",
+      "generation mixing does not explain the divergence",
+      "connection mixing does not explain the divergence",
+      "sequence-rule violations do not explain the divergence",
+      "the preregistered last_trade_price association hypothesis does not explain the divergence"
+    ],
+
+    "not_yet_determined": [
+      "whether all book-changing quantity reductions are represented in persisted price_change rows",
+      "whether price_change size semantics are being interpreted correctly",
+      "whether websocket frame/message ordering introduces an unmodeled state transition",
+      "whether another market-channel event type carries relevant quantity mutation",
+      "whether raw-buffer records differ materially from the normalized database representation"
+    ]
+  },
+
+  "methodological_disposition": {
+    "m2_result_changed": false,
+    "m2b_result_changed": false,
+    "m2c_is_diagnostic": true,
+
+    "next_step": "Close and commit M2c. Investigate missing quantity-reduction semantics in a separate engineering milestone using raw websocket records and database rows, without inspecting strategy edge, thresholds, trades, PnL, resolutions, calibration, or OOS results."
+  },
+
+  "performance_data_inspected": false
+}

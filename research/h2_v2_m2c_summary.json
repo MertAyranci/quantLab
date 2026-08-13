@@ -1,0 +1,76 @@
+{
+  "association_rule": {
+    "fallback": "same-token adjacent WS sequence (absolute sequence gap = 1) on same connection",
+    "primary": "same-token exact server event_time on same connection"
+  },
+  "contract_sha256": "db502a88e241071c1faabeef90a97e84cdab1c46fcea850964fd6e2b5d3cb19c",
+  "diagnostic_sha256": "d6c2bd48d769b7cd37c77ceac2afd93840c4e2417f2d1aef0e4986846baf73e8",
+  "failed_pair_trade_diagnostics": {
+    "base_sources": {
+      "rest_book": 14,
+      "ws_book": 44
+    },
+    "nearest_trade_event_abs_distance_ms": {
+      "max": "312268.0",
+      "n": 57,
+      "p50": "538.000",
+      "p90": "103868.400"
+    },
+    "pairs": 58,
+    "pairs_with_adjacent_sequence_trade": 0,
+    "pairs_with_any_token_trade": 57,
+    "pairs_with_associated_trade": 0,
+    "pairs_with_exact_event_time_same_connection_trade": 0,
+    "pairs_with_exact_event_time_trade": 0,
+    "tokens": 6
+  },
+  "frozen_parent_reproduction": {
+    "failed_pairs": 58,
+    "pairs": 142,
+    "passed_pairs": 84,
+    "presence_mismatches": 0,
+    "size_mismatches": 114
+  },
+  "interpretation": "Diagnostic only. M2 and M2b remain frozen FAIL regardless of M2c findings. No strategy performance information was inspected.",
+  "m2b_checkpoint_results_sha256": "c058cd37fbdfed83f7c2909577ecd270f6608ce0d738af84cb486baab58dc66c",
+  "mismatch_diagnostics": {
+    "associated_trade_price_matches_level": 0,
+    "by_base_source": {
+      "rest_book": 28,
+      "ws_book": 86
+    },
+    "by_direction": {
+      "checkpoint_lower": 114
+    },
+    "by_side": {
+      "B": 57,
+      "S": 57
+    },
+    "mismatches": 114,
+    "mismatches_with_associated_trade": 0,
+    "trade_side_consistent": 0,
+    "trade_side_inconsistent": 0
+  },
+  "mismatch_diagnostics_sha256": "49794bc40ddda6c35ad4306e81bf93b61ae7fd2834144a209f4c129ce6624db5",
+  "pair_diagnostics_sha256": "e0d914a0acddf0383b0651da898977550715729e94378dfcaec8c17d6a31555a",
+  "passed_pair_control": {
+    "base_sources": {
+      "rest_book": 12,
+      "ws_book": 72
+    },
+    "nearest_trade_event_abs_distance_ms": {
+      "max": "364510.0",
+      "n": 80,
+      "p50": "205.000",
+      "p90": "111657.500"
+    },
+    "pairs": 84,
+    "pairs_with_adjacent_sequence_trade": 0,
+    "pairs_with_any_token_trade": 80,
+    "pairs_with_associated_trade": 0,
+    "pairs_with_exact_event_time_same_connection_trade": 0,
+    "pairs_with_exact_event_time_trade": 0,
+    "tokens": 10
+  },
+  "version": "H2-v2-M2c-SUMMARY-1"
+}
