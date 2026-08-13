@@ -1,0 +1,148 @@
+{
+  "version": "H2-v2-M2h-CONTRACT-1",
+
+  "milestone": "H2-v2 M2h — authoritative snapshot-reset synchronized replay",
+
+  "parent_m2g_commit": "4078edf8a52703c64409a353574896d7bf0a698e",
+
+  "goal": "Replace the invalid requirement that price_change events independently reproduce later trade-triggered ws_book snapshots with an authoritative full-snapshot reset replay model, then rebuild and validate the frozen H2-v2 synchronized research tape.",
+
+  "scope": {
+    "engineering_only": true,
+    "performance_analysis": false,
+    "signal_analysis": false,
+    "edge_analysis": false,
+    "trade_simulation": false,
+    "pnl_analysis": false
+  },
+
+  "frozen_universe": {
+    "source": "H2-v2 M1b collector run 11691",
+    "time_to_game_hours": "0 < h <= 23",
+    "expected_games": 9,
+    "expected_outcome_anchors": 1080,
+    "endpoints_per_anchor": 2,
+    "expected_total_endpoints": 2160,
+    "decision_endpoint": "sharp consensus capture time",
+    "execution_endpoint": "decision endpoint + 500 milliseconds"
+  },
+
+  "source_semantics": {
+    "ws_book": "Authoritative complete order-book state. Replaces the entire reconstructed state for the token.",
+    "rest_book": "Authoritative complete order-book state. Replaces the entire reconstructed state and starts a new book generation.",
+    "price_change": "Absolute price-level state update after the most recent authoritative full snapshot. Positive size sets/replaces the level size; size zero removes the level.",
+    "last_trade_price": "Execution metadata only. It does not directly mutate reconstructed book state.",
+    "best_bid_ask": "Validation/reference metadata only. It does not directly mutate full depth."
+  },
+
+  "replay_rule": {
+    "base": "For endpoint T, choose the latest ws_book or rest_book full snapshot with capture_time <= T.",
+
+    "ws_base_continuation": "Apply only same-token price_change rows on the same connection and generation with base ingest_sequence < delta ingest_sequence and delta capture_time <= T.",
+
+    "rest_base_continuation": "Apply only same-token price_change rows in the same generation, captured after the REST snapshot and <= T, using at most one continuation websocket connection.",
+
+    "delta_order": [
+      "ingest_sequence ASC",
+      "change_index ASC",
+      "capture_time ASC"
+    ],
+
+    "delta_application": "size == 0 removes the level; otherwise replace that level with the reported size.",
+
+    "later_full_snapshot_rule": "No replay crosses an intervening full snapshot. If a later full snapshot exists <= T it must be selected as the base instead.",
+
+    "generation_crossing_allowed": false,
+    "lookahead_allowed": false,
+    "trade_inference_allowed": false
+  },
+
+  "important_change_from_m2b": {
+    "removed_invalid_requirement": "price_change replay must exactly reproduce the next ws_book full snapshot",
+
+    "reason": "Polymarket documents book as a full snapshot emitted when a trade affects the book, while price_change represents order placement/cancellation updates.",
+
+    "prior_m2_result_changed": false,
+    "prior_m2b_result_changed": false,
+    "prior_m2c_result_changed": false,
+    "prior_m2f_result_changed": false,
+    "prior_m2g_result_changed": false
+  },
+
+  "validation": {
+    "expected_tape_rows": 1080,
+    "expected_endpoints": 2160,
+
+    "requirements": {
+      "mapping_complete": "1080/1080",
+      "market_config_complete": "1080/1080",
+      "decision_reconstruction_complete": "1080/1080",
+      "execution_500ms_reconstruction_complete": "1080/1080",
+
+      "authoritative_base_present": "2160/2160",
+      "latest_full_snapshot_rule": "2160/2160",
+      "intervening_full_snapshot_violations": 0,
+
+      "generation_mixing": 0,
+      "connection_mixing": 0,
+      "lookahead": 0,
+      "crossed_books": 0,
+
+      "decision_price_agreement": "1080/1080",
+      "execution_price_agreement": "1080/1080",
+
+      "deterministic_rebuild": true
+    },
+
+    "size_validation": {
+      "stale_tob_size_as_ground_truth": false,
+
+      "next_ws_book_reproduction_as_ground_truth": false,
+
+      "accepted_state_definition": "Latest authoritative full snapshot plus causally subsequent price_change level updates through endpoint T."
+    }
+  },
+
+  "frozen_prior_evidence": {
+    "m2f_raw_frame_integrity_failures": 0,
+    "m2f_collector_normalization_losses": 0,
+    "m2f_normalized_to_database_losses": 0,
+
+    "m2f_exact_replay_pairs": 948,
+    "m2f_trade_book_transition_supported_pairs": 112,
+    "m2f_unexplained_source_transition_pairs": 124,
+
+    "m2g_direct_trade_accounting_supported_pairs": 1,
+
+    "interpretation": "Prior evidence establishes that the observed divergence is not caused by raw capture, normalization, or database persistence loss and is not generally repairable by inferred last_trade_price mutations."
+  },
+
+  "outcome": {
+    "PASS": "All frozen replay validation requirements pass.",
+    "FAIL": "One or more frozen replay validation requirements fail.",
+
+    "if_pass": "Freeze the synchronized replay layer and proceed to the next H2-v2 strategy/calibration milestone.",
+
+    "if_fail": "Freeze the failure. Do not alter acceptance criteria inside M2h."
+  },
+
+  "prohibited": [
+    "No edge calculation",
+    "No signal threshold selection",
+    "No calibration",
+    "No OOS evaluation",
+    "No resolution inspection",
+    "No simulated fills",
+    "No PnL",
+    "No posthoc exclusions",
+    "No arbitrary timing tolerances",
+    "No modification of prior milestone conclusions"
+  ],
+
+  "planned_artifacts": [
+    "research/h2_v2_m2h_build.py",
+    "research/h2_v2_m2h_tape.jsonl",
+    "research/h2_v2_m2h_validation.json",
+    "research/h2_v2_m2h_conclusion.json"
+  ]
+}

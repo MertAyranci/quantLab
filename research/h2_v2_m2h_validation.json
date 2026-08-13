@@ -1,0 +1,94 @@
+{
+  "builder_sha256": "94876180e1eed3fbd30bde1d8bc10df8e67e444967c9864d737e8cf0fa4709d9",
+  "contract_sha256": "ea0ce05b254a7da951303c1538609926716dfb7200cf23b50ae67570d2aefe43",
+  "decision_endpoint": {
+    "anchors": 1080,
+    "base_sources": {
+      "rest_book": 728,
+      "ws_book": 352
+    },
+    "connection_mixing": 0,
+    "crossed": 0,
+    "generation_mixing": 0,
+    "lookahead": 0,
+    "reconstructed": 1080,
+    "reference_covered": 1080,
+    "reference_price_matches": 1080,
+    "reference_price_mismatches": 0,
+    "reference_size_comparisons": 2156,
+    "reference_size_mismatch_anchors": 582,
+    "replayed_deltas": 30862,
+    "two_sided": 1080
+  },
+  "decision_snapshot_audit": {
+    "authoritative_base_present": 1080,
+    "endpoints": 1080,
+    "intervening_full_snapshot_violations": 0,
+    "latest_full_snapshot_rule": 1080,
+    "strictly_later_full_snapshots": 0
+  },
+  "decisions": {
+    "m2h_overall_pass": true
+  },
+  "determinism": {
+    "deterministic_rebuild": true,
+    "independent_rebuilds": 2,
+    "same_repeatable_read_snapshot": true,
+    "summary_identical": true,
+    "tape_identical": true
+  },
+  "edge_calculated": false,
+  "engineering_dataset": {
+    "configuration_covered": 1080,
+    "distinct_games": 9,
+    "endpoints": 2160,
+    "sharp_collector_run_id": 11691,
+    "tape_rows": 1080,
+    "unique_market_mapping": 1080,
+    "unique_outcome_token_mapping": 1080
+  },
+  "execution_500ms_endpoint": {
+    "anchors": 1080,
+    "base_sources": {
+      "rest_book": 728,
+      "ws_book": 352
+    },
+    "connection_mixing": 0,
+    "crossed": 0,
+    "generation_mixing": 0,
+    "lookahead": 0,
+    "reconstructed": 1080,
+    "reference_covered": 1080,
+    "reference_price_matches": 1080,
+    "reference_price_mismatches": 0,
+    "reference_size_comparisons": 2156,
+    "reference_size_mismatch_anchors": 588,
+    "replayed_deltas": 30932,
+    "two_sided": 1080
+  },
+  "execution_500ms_snapshot_audit": {
+    "authoritative_base_present": 1080,
+    "endpoints": 1080,
+    "intervening_full_snapshot_violations": 0,
+    "latest_full_snapshot_rule": 1080,
+    "strictly_later_full_snapshots": 0
+  },
+  "frozen_m2_builder_sha256": "324ccba8cc74d0853de640d5758c3cc77c7fbba30cad81022adac138e5022ab8",
+  "interpretation": "M2h validates the authoritative snapshot-reset synchronized replay model only. Latest full snapshots are authoritative; subsequent price_change events are absolute level updates. Stale TOB sizes and reproduction of later ws_book snapshots are not ground-truth acceptance tests. No edge, signal, threshold, resolution, fill, trade, calibration, OOS, or PnL result is computed.",
+  "nonbinding_legacy_size_diagnostic": {
+    "decision_reference_size_comparisons": 2156,
+    "decision_reference_size_mismatch_anchors": 582,
+    "execution_reference_size_comparisons": 2156,
+    "execution_reference_size_mismatch_anchors": 588,
+    "used_for_m2h_acceptance": false
+  },
+  "parent_m2g_commit": "4078edf8a52703c64409a353574896d7bf0a698e",
+  "performance_data_inspected": false,
+  "pnl_calculated": false,
+  "resolutions_inspected": false,
+  "signal_calculated": false,
+  "tape_sha256": "c234267e3342601c9706c39d7d4c20c93eaeea1df5b0ca0a5513cf67221be75f",
+  "threshold_selected": false,
+  "trades_simulated": false,
+  "version": "H2-v2-M2h-VALIDATION-1"
+}

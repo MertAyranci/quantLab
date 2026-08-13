@@ -1,0 +1,104 @@
+{
+  "version": "H2-v2-M2h-CONCLUSION-1",
+  "milestone": "H2-v2 M2h — authoritative snapshot-reset synchronized replay",
+
+  "parent_m2g_commit": "4078edf8a52703c64409a353574896d7bf0a698e",
+
+  "result": "PASS",
+
+  "interpretation": "REPLAY_LAYER_VALIDATED",
+
+  "engineering_dataset": {
+    "sharp_collector_run_id": 11691,
+    "games": 9,
+    "tape_rows": 1080,
+    "decision_endpoints": 1080,
+    "execution_500ms_endpoints": 1080,
+    "total_endpoints": 2160
+  },
+
+  "mapping_and_configuration": {
+    "unique_market_mapping": "1080/1080",
+    "unique_outcome_token_mapping": "1080/1080",
+    "configuration_covered": "1080/1080"
+  },
+
+  "decision_endpoint": {
+    "reconstructed": "1080/1080",
+    "authoritative_base_present": "1080/1080",
+    "latest_full_snapshot_rule": "1080/1080",
+    "intervening_full_snapshot_violations": 0,
+    "reference_price_agreement": "1080/1080",
+    "generation_mixing": 0,
+    "connection_mixing": 0,
+    "lookahead": 0,
+    "crossed_books": 0
+  },
+
+  "execution_500ms_endpoint": {
+    "reconstructed": "1080/1080",
+    "authoritative_base_present": "1080/1080",
+    "latest_full_snapshot_rule": "1080/1080",
+    "intervening_full_snapshot_violations": 0,
+    "reference_price_agreement": "1080/1080",
+    "generation_mixing": 0,
+    "connection_mixing": 0,
+    "lookahead": 0,
+    "crossed_books": 0
+  },
+
+  "determinism": {
+    "independent_rebuilds": 2,
+    "same_repeatable_read_snapshot": true,
+    "deterministic_rebuild": true
+  },
+
+  "authoritative_replay_semantics": {
+    "full_snapshot_rule": "The latest ws_book or rest_book at or before endpoint T is authoritative full state.",
+    "price_change_rule": "Only causally subsequent same-generation price_change events through endpoint T mutate the selected full snapshot.",
+    "price_change_size_semantics": "Positive size replaces the price-level quantity; size zero removes the level.",
+    "last_trade_price_rule": "Execution metadata only; not directly applied as a book mutation.",
+    "lookahead_allowed": false,
+    "generation_crossing_allowed": false,
+    "trade_inference_allowed": false
+  },
+
+  "legacy_size_diagnostic": {
+    "decision_reference_size_mismatch_anchors": 582,
+    "execution_reference_size_mismatch_anchors": 588,
+    "used_for_m2h_acceptance": false,
+    "reason": "Prior frozen engineering milestones demonstrated that stale size-bearing TOB observations and reproduction of a later trade-triggered ws_book are not valid exact-size ground truth for the authoritative snapshot-reset replay model.",
+    "hidden_or_excluded": false
+  },
+
+  "relationship_to_prior_milestones": {
+    "M2": "UNCHANGED_FAIL",
+    "M2b": "UNCHANGED_FAIL",
+    "M2c": "UNCHANGED_TRADE_TRIGGER_NOT_SUPPORTED",
+    "M2d": "UNCHANGED_BLOCKED_BY_RAW_RETENTION",
+    "M2e": "UNCHANGED_PASS",
+    "M2f": "UNCHANGED_PARTIAL_LOCALIZATION",
+    "M2g": "UNCHANGED_PARTIAL_TRADE_ACCOUNTING",
+    "M2h": "PASS"
+  },
+
+  "artifacts": {
+    "contract_sha256": "ea0ce05b254a7da951303c1538609926716dfb7200cf23b50ae67570d2aefe43",
+    "frozen_m2_builder_sha256": "324ccba8cc74d0853de640d5758c3cc77c7fbba30cad81022adac138e5022ab8",
+    "m2h_builder_sha256": "94876180e1eed3fbd30bde1d8bc10df8e67e444967c9864d737e8cf0fa4709d9",
+    "tape_sha256": "c234267e3342601c9706c39d7d4c20c93eaeea1df5b0ca0a5513cf67221be75f",
+    "validation_sha256": "c6883a4994cee12e0da9a5c7621c27a5046b76e43363e9679e2b2fc6bfa0d1ed"
+  },
+
+  "replay_engineering_status": "COMPLETE",
+
+  "next_stage": "H2-v2 strategy calibration using the frozen synchronized replay infrastructure",
+
+  "performance_data_inspected": false,
+  "resolutions_inspected": false,
+  "edge_calculated": false,
+  "signal_calculated": false,
+  "threshold_selected": false,
+  "trades_simulated": false,
+  "pnl_calculated": false
+}
