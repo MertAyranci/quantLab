@@ -1,0 +1,109 @@
+{
+  "amendment": {
+    "field": "h2_v2.external_fair_value.target_max_source_age_seconds",
+    "new_value_seconds": 25,
+    "performance_driven": false,
+    "previous_value_seconds": 10,
+    "reason": "The selected aggregate exchange feed refreshes pregame exchange prices on approximately a 20-second cadence. A sustained 10-poll feasibility audit observed source update intervals around 21 seconds across Betfair, Matchbook and Smarkets. The change is based only on source feasibility and was made before H2-v2 outcomes, PnL or signal-threshold analysis."
+  },
+  "explicit_non_decisions": [
+    "No trading edge threshold is selected in M1.",
+    "No optimal polling cadence for calibration is selected in M1.",
+    "No maker versus taker decision is revised in M1.",
+    "RN1 is not added to the H2-v2 primary model.",
+    "No H2-v2 PnL is calculated in M1."
+  ],
+  "frozen_at_utc": "2026-08-12T22:16:08.450983+00:00",
+  "frozen_before_h2_v2_performance_observation": true,
+  "m1_collection": {
+    "expected_max_sharp_api_calls": 60,
+    "initial_live_validation_minutes": 30,
+    "pnl_calculation_allowed": false,
+    "purpose": "Validate synchronized sharp and Polymarket CLOB research data quality only.",
+    "reason_for_30s_m1_cadence": "M1 is an engineering/data-quality test. Thirty seconds provides repeated observations while conserving API credits. This cadence does not freeze the later calibration signal evaluation cadence.",
+    "sharp_poll_interval_seconds": 30,
+    "signals_allowed": false,
+    "threshold_selection_allowed": false,
+    "trading_allowed": false
+  },
+  "m1_success_requirements": {
+    "joint": [
+      "sharp and PM observations can be aligned by local capture time",
+      "no signal or PnL logic is required for M1"
+    ],
+    "polymarket": [
+      "both outcome tokens mapped correctly",
+      "live bid and ask captured",
+      "top-of-book sizes captured",
+      "full book snapshot available",
+      "market fee schedule available"
+    ],
+    "sharp": [
+      "at least two valid fresh exchange families on >=80% of eligible snapshots",
+      "back+lay parsing valid",
+      "source and local timestamps preserved",
+      "no in-play observations admitted"
+    ]
+  },
+  "parent": {
+    "file": "h2_v1_m8_decision.json",
+    "sha256": "315c600526eeb935ad6d7511290b6a38d9c1469cafe2e217e6b097509bf711bc"
+  },
+  "polymarket": {
+    "historical_trade_print_substitution_allowed": false,
+    "required": [
+      "best bid",
+      "best ask",
+      "best bid size",
+      "best ask size",
+      "full book snapshots",
+      "book deltas where available",
+      "venue event timestamp where available",
+      "local capture timestamp",
+      "tick size",
+      "market-specific fee schedule"
+    ],
+    "source": "existing quantLab live CLOB WebSocket"
+  },
+  "sharp_source": {
+    "bookmakers": [
+      "betfair_ex_uk",
+      "matchbook",
+      "smarkets"
+    ],
+    "consensus": "median of all valid fresh family probabilities",
+    "family_formula": "(1/back_decimal + 1/lay_decimal) / 2",
+    "family_probability": "probability-space midpoint of best back and best lay",
+    "market": "h2h",
+    "maximum_source_age_seconds": 25,
+    "pregame_only": true,
+    "pregame_rule": "capture_time < canonical commence_time",
+    "provider": "The Odds API",
+    "required_fresh_families": 2,
+    "required_market_components": [
+      "h2h",
+      "h2h_lay"
+    ],
+    "sport": "baseball_mlb",
+    "stale_carry_forward": false,
+    "timestamps": {
+      "local": "local response receive time",
+      "source": "bookmaker.last_update"
+    },
+    "valid_family_requirements": [
+      "bookmaker is one of the three frozen exchange families",
+      "both h2h and h2h_lay exist",
+      "exactly two common team outcomes exist",
+      "back and lay prices are positive valid decimal odds",
+      "source timestamp exists",
+      "source age is between 0 and 25 seconds inclusive"
+    ]
+  },
+  "synchronization": {
+    "clock": "UTC",
+    "do_not_replace_source_time_with_capture_time": true,
+    "preserve_source_timestamps": true,
+    "primary_alignment_clock": "local capture time"
+  },
+  "version": "H2-v2-M1-DATA-CONTRACT-1"
+}

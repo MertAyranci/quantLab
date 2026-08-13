@@ -65,7 +65,8 @@ SILENCE_S = 30
 RECONCILE_S = 300
 HEALTHCHECK_URL = os.getenv("WS_HEALTHCHECK_URL", "")
 WATCHLIST_FILE = REPO / "config" / "watchlist.txt"
-WATCHLIST_CRYPTO_FILE = REPO / "config" / "watchlist_crypto.txt"   # ADD THIS
+WATCHLIST_CRYPTO_FILE = REPO / "config" / "watchlist_crypto.txt"
+WATCHLIST_H2_V2_FILE = REPO / "config" / "watchlist_h2_v2.txt"
 WATCHLIST_RELOAD_S = 60          # re-read the harvester's file this often
 
 logging.basicConfig(level=logging.INFO,
@@ -108,7 +109,8 @@ class WSCollector:
         self.watchlist_size = watchlist_size
         self.http = httpx.Client(headers=UA, timeout=30)
         self.buf = BufferWriter()
-        self.tokens: list[str] = []          # venue token ids (YES side)
+        self.tokens: list[str] = []
+        self.h2_v2_tokens: set[str] = set()
         self.generation: dict[str, int] = {}
         self.last_tob: dict[str, tuple] = {} # token -> (bid, ask) venue strings
         self.last_snap_t: dict[str, float] = {}
@@ -120,43 +122,111 @@ class WSCollector:
 
     # ---- watchlist ---------------------------------------------------------
 
+    def _read_token_file(self, path):
+        if not path.exists():
+            return []
+
+        return [
+            ln.strip()
+            for ln in path.read_text().splitlines()
+            if ln.strip()
+            and not ln.lstrip().startswith("#")
+        ]
+
+    def _read_watchlist_files(self):
+        base = self._read_token_file(
+            WATCHLIST_FILE
+        )
+
+        crypto = self._read_token_file(
+            WATCHLIST_CRYPTO_FILE
+        )
+
+        h2_v2 = self._read_token_file(
+            WATCHLIST_H2_V2_FILE
+        )
+
+        # Keep explicit membership for provenance.
+        self.h2_v2_tokens = set(h2_v2)
+
+        return list(
+            dict.fromkeys(
+                base
+                + crypto
+                + h2_v2
+            )
+        )
+
     def fetch_watchlist(self):
-        # Prefer the harvester's file; fall back to volume-ranked if absent.
-        if WATCHLIST_FILE.exists():
-            toks = [ln.strip() for ln in WATCHLIST_FILE.read_text().splitlines()
-                    if ln.strip() and not ln.startswith("#")]
-            if toks:
-                self.tokens = toks
-                for t in toks:
-                    self.generation.setdefault(t, 0)
-                log.info("watchlist: %d tokens from harvester file", len(toks))
-                return
-        # fallback: top-N by 24h volume (original behavior)
-        r = self.http.get(f"{GAMMA}/markets",
-                          params={"active": "true", "closed": "false",
-                                  "order": "volume24hr", "ascending": "false",
-                                  "limit": self.watchlist_size})
+        # Use all explicit research watchlists when present.
+        toks = self._read_watchlist_files()
+
+        if toks:
+            self.tokens = toks
+
+            for t in toks:
+                self.generation.setdefault(
+                    t,
+                    0,
+                )
+
+            log.info(
+                "watchlist: %d configured tokens "
+                "(%d H2-v2)",
+                len(toks),
+                len(self.h2_v2_tokens),
+            )
+
+            return
+
+        # Fallback: top-N by 24h volume.
+        r = self.http.get(
+            f"{GAMMA}/markets",
+            params={
+                "active": "true",
+                "closed": "false",
+                "order": "volume24hr",
+                "ascending": "false",
+                "limit": self.watchlist_size,
+            },
+        )
+
         r.raise_for_status()
+
         toks = []
+
         for m in r.json():
             try:
-                ids = json.loads(m.get("clobTokenIds") or "[]")
+                ids = json.loads(
+                    m.get("clobTokenIds")
+                    or "[]"
+                )
+
                 if ids:
-                    toks.append(str(ids[0]))
-            except (json.JSONDecodeError, TypeError):
+                    toks.append(
+                        str(ids[0])
+                    )
+
+            except (
+                json.JSONDecodeError,
+                TypeError,
+            ):
                 continue
+
         self.tokens = toks
+
         for t in toks:
-            self.generation.setdefault(t, 0)
-        log.info("watchlist: %d tokens (volume fallback)", len(toks))
-#----- for crypto watchlist -----------------------------------------------
-    def _read_watchlist_files(self):
-        toks = []
-        for f in (WATCHLIST_FILE, WATCHLIST_CRYPTO_FILE):
-            if f.exists():
-                toks += [ln.strip() for ln in f.read_text().splitlines()
-                         if ln.strip() and not ln.startswith("#")]
-        return list(dict.fromkeys(toks))
+            self.generation.setdefault(
+                t,
+                0,
+            )
+
+        log.info(
+            "watchlist: %d tokens "
+            "(volume fallback)",
+            len(toks),
+        )
+
     # ---- resync tokens --------------------------------------------------
 
     def resync_tokens(self, tokens, reason):
@@ -210,7 +280,11 @@ class WSCollector:
             "ingest_sequence": self.seq,
             "change_index": change_index,
             "book_generation": self.generation.get(token, 0) if token else None,
-            "watchlist_rule": "vol24h_top",
+            "watchlist_rule": (
+                "h2_v2"
+                if token in self.h2_v2_tokens
+                else "vol24h_top"
+            ),
             "payload": payload,
         })
         self.counts[kind] = self.counts.get(kind, 0) + 1

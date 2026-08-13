@@ -1,0 +1,197 @@
+{
+  "bookmaker_coverage": [
+    {
+      "bookmaker": "betfair_ex_uk",
+      "fresh_rows": 320,
+      "median_paired_age_s": 11.2605185,
+      "paired_rows": 320,
+      "rows": 1400
+    },
+    {
+      "bookmaker": "matchbook",
+      "fresh_rows": 1102,
+      "median_paired_age_s": 11.670228,
+      "paired_rows": 1102,
+      "rows": 1400
+    },
+    {
+      "bookmaker": "smarkets",
+      "fresh_rows": 1400,
+      "median_paired_age_s": 11.849412000000001,
+      "paired_rows": 1400,
+      "rows": 1400
+    }
+  ],
+  "consensus_integrity": {
+    "bad_eligibility_rows": 0,
+    "bad_family_count_rows": 0,
+    "consensus_rows": 1400
+  },
+  "contract_sha256": "c539abbf046e173d3f50f57b071d483bcb549b034cf9e7716151fe1752d1143b",
+  "decisions": {
+    "m1_overall_pass": false,
+    "polymarket_data_plane_pass": true,
+    "sharp_coverage_pass": false,
+    "sharp_data_plane_pass": false,
+    "sharp_integrity_pass": true
+  },
+  "interpretation": "M1 is an engineering/data-feasibility validation only. No signal, threshold, trade, or PnL was evaluated.",
+  "per_game_coverage": [
+    {
+      "away_team": "Cincinnati Reds",
+      "commence_time": "2026-08-12T23:40:35+00:00",
+      "eligible_snapshots": 40,
+      "home_team": "Chicago White Sox",
+      "odds_game_id": 1914,
+      "snapshots": 40
+    },
+    {
+      "away_team": "Kansas City Royals",
+      "commence_time": "2026-08-13T02:10:00+00:00",
+      "eligible_snapshots": 60,
+      "home_team": "Los Angeles Dodgers",
+      "odds_game_id": 1915,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Texas Rangers",
+      "commence_time": "2026-08-13T02:11:00+00:00",
+      "eligible_snapshots": 60,
+      "home_team": "Los Angeles Angels",
+      "odds_game_id": 2177,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Cleveland Guardians",
+      "commence_time": "2026-08-13T17:11:00+00:00",
+      "eligible_snapshots": 60,
+      "home_team": "Detroit Tigers",
+      "odds_game_id": 2178,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Pittsburgh Pirates",
+      "commence_time": "2026-08-13T17:11:00+00:00",
+      "eligible_snapshots": 60,
+      "home_team": "Miami Marlins",
+      "odds_game_id": 2179,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Seattle Mariners",
+      "commence_time": "2026-08-13T17:36:00+00:00",
+      "eligible_snapshots": 60,
+      "home_team": "New York Yankees",
+      "odds_game_id": 2180,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Cincinnati Reds",
+      "commence_time": "2026-08-13T18:11:00+00:00",
+      "eligible_snapshots": 60,
+      "home_team": "Chicago White Sox",
+      "odds_game_id": 2181,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Boston Red Sox",
+      "commence_time": "2026-08-13T19:08:00+00:00",
+      "eligible_snapshots": 60,
+      "home_team": "Toronto Blue Jays",
+      "odds_game_id": 2182,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Chicago Cubs",
+      "commence_time": "2026-08-13T20:06:00+00:00",
+      "eligible_snapshots": 60,
+      "home_team": "Washington Nationals",
+      "odds_game_id": 2183,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Philadelphia Phillies",
+      "commence_time": "2026-08-13T23:30:00+00:00",
+      "eligible_snapshots": 31,
+      "home_team": "Minnesota Twins",
+      "odds_game_id": 2184,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Texas Rangers",
+      "commence_time": "2026-08-14T02:08:00+00:00",
+      "eligible_snapshots": 0,
+      "home_team": "Los Angeles Angels",
+      "odds_game_id": 2203,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Milwaukee Brewers",
+      "commence_time": "2026-08-14T02:10:00+00:00",
+      "eligible_snapshots": 0,
+      "home_team": "Los Angeles Dodgers",
+      "odds_game_id": 2185,
+      "snapshots": 60
+    }
+  ],
+  "polymarket_config": {
+    "markets": 17,
+    "with_fee_curve": 17,
+    "with_min_order": 17,
+    "with_tick": 17,
+    "with_two_tokens": 17
+  },
+  "polymarket_mapping": {
+    "markets": 17,
+    "matches": 17
+  },
+  "polymarket_tokens": {
+    "distinct_tokens": 34,
+    "tokens": 34
+  },
+  "polymarket_window": {
+    "delta_rows": 871180,
+    "first_delta": "2026-08-12T23:20:10.567115+00:00",
+    "full_book_rows": 1814,
+    "last_delta": "2026-08-12T23:50:02.187232+00:00",
+    "tokens_with_delta": 34,
+    "tokens_with_full_book": 34,
+    "tokens_with_sized_tob": 34
+  },
+  "sharp_game_eligibility_rate": "0.787142857143",
+  "sharp_game_snapshots": {
+    "asymmetric_or_bad_games": 0,
+    "eligible_game_snapshots": 551,
+    "game_snapshots": 700,
+    "max_outcomes_per_game": 2,
+    "min_outcomes_per_game": 2
+  },
+  "sharp_integrity": {
+    "bad_freshness_rows": 0,
+    "bad_midpoint_rows": 0,
+    "bad_source_age_rows": 0,
+    "fresh_rows": 2822,
+    "incomplete_pair_rows": 0,
+    "inplay_rows": 0,
+    "paired_rows": 2822,
+    "quote_rows": 4200
+  },
+  "sharp_outcome_eligibility_rate": "0.787142857143",
+  "sharp_outcomes": {
+    "eligible_outcomes": 1102,
+    "games": 12,
+    "outcome_snapshots": 1400,
+    "polls": 60
+  },
+  "sharp_required_rate": "0.800000000000",
+  "sharp_run": {
+    "credits_consumed": 60,
+    "final_credits_remaining": 428,
+    "first_poll": "2026-08-12T23:20:10.566152+00:00",
+    "last_poll": "2026-08-12T23:49:57.187578+00:00",
+    "polls": 60,
+    "span_seconds": "1786.621426"
+  },
+  "sharp_run_id": 11587,
+  "version": "H2-v2-M1-VALIDATION-1"
+}

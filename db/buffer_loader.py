@@ -53,6 +53,7 @@ REPO = Path(__file__).resolve().parent.parent
 BUF_DIR = REPO / "data" / "buffer" / "ws"
 DONE_DIR = BUF_DIR / "done"
 DEEP_TOKENS_FILE = REPO / "config" / "deep_tokens.txt"
+H2_V2_TOKENS_FILE = REPO / "config" / "watchlist_h2_v2.txt"
 POLL_S = 20
 HEALTHCHECK_URL = os.getenv("LOADER_HEALTHCHECK_URL", "")
 
@@ -95,10 +96,29 @@ def iso(s):
 
 
 def load_deep_tokens() -> set[str]:
-    if not DEEP_TOKENS_FILE.exists():
-        return set()
-    return {ln.strip() for ln in DEEP_TOKENS_FILE.read_text().splitlines()
-            if ln.strip() and not ln.startswith("#")}
+    """Tokens whose price_change events must be persisted as book deltas.
+
+    H2-v2 tokens are always Tier-2/deep capture because the H2-v2 M1
+    data contract requires every real-time book update, not periodic
+    snapshots only.
+    """
+    tokens = set()
+
+    for path in (
+        DEEP_TOKENS_FILE,
+        H2_V2_TOKENS_FILE,
+    ):
+        if not path.exists():
+            continue
+
+        tokens.update(
+            ln.strip()
+            for ln in path.read_text().splitlines()
+            if ln.strip()
+            and not ln.lstrip().startswith("#")
+        )
+
+    return tokens
 
 
 class BufferLoader(Backloader):
