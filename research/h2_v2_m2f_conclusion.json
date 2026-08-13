@@ -1,0 +1,122 @@
+{
+  "version": "H2-v2-M2f-CONCLUSION-1",
+  "milestone": "H2-v2 M2f — fresh raw-to-DB quantity-reduction diagnosis",
+
+  "parent_m2e_commit": "0449d1a7ffbdaf268e802020b8da6536ae7c7ef5",
+
+  "result": "PARTIAL_LOCALIZATION",
+
+  "analysis_window": {
+    "minutes": 30,
+    "start_inclusive": "2026-08-13T17:02:16.066267+00:00",
+    "end_inclusive": "2026-08-13T17:32:16.066267+00:00",
+    "eligible_pairs": 1184,
+    "distinct_tokens": 14
+  },
+
+  "integrity": {
+    "raw_frames": 228255,
+    "raw_frame_hash_failures": 0,
+    "raw_frame_parse_failures": 0,
+
+    "raw_to_normalized_expected_events": 364169,
+    "raw_to_normalized_exact_matches": 364169,
+    "raw_to_normalized_bad_sequence_frames": 0,
+
+    "normalized_ws_book_rows": 1268,
+    "normalized_ws_book_exact_db_matches": 1268,
+
+    "normalized_price_change_rows": 359296,
+    "normalized_price_change_exact_db_matches": 359296
+  },
+
+  "pair_classifications": {
+    "RAW_FRAME_INTEGRITY_FAILURE": 0,
+    "COLLECTOR_NORMALIZATION_LOSS": 0,
+    "NORMALIZED_TO_DB_LOSS": 0,
+    "EXACT_REPLAY_MATCH": 948,
+    "TRADE_BOOK_TRANSITION_SUPPORTED": 112,
+    "UNEXPLAINED_SOURCE_TRANSITION": 124
+  },
+
+  "replay": {
+    "mismatch_pairs": 236,
+    "mismatch_levels": 350,
+
+    "mismatch_types": {
+      "size": 268,
+      "presence": 82
+    },
+
+    "mismatch_directions": {
+      "checkpoint_lower": 268,
+      "checkpoint_removed_level": 82
+    },
+
+    "mismatch_sides": {
+      "B": 175,
+      "S": 175
+    }
+  },
+
+  "interpretation": {
+    "fresh_divergence_reproduced": true,
+
+    "raw_frame_loss_supported": false,
+    "collector_normalization_loss_supported": false,
+    "normalized_to_database_loss_supported": false,
+
+    "trade_book_transition_hypothesis": "PARTIALLY_SUPPORTED",
+
+    "trade_book_transition_supported_pairs": 112,
+
+    "unexplained_source_transition_pairs": 124,
+
+    "full_causal_localization_achieved": false,
+
+    "conclusion": "In the frozen 30-minute fresh capture, exact websocket frames were preserved, collector normalization was lossless, and normalized ws_book and price_change records were persisted exactly to Postgres. Nevertheless, 236 eligible consecutive ws_book intervals could not be reconstructed exactly from intervening price_change events. All 350 level mismatches represented quantity reduction or level removal at the checkpoint. 112 mismatch pairs satisfy the preregistered trade-book-transition support rule, while 124 mismatch pairs remain unexplained source transitions. Therefore the divergence is not attributable to the instrumented collector or buffer-loader/database pipeline, but the trade-driven book-transition hypothesis is not a complete explanation.",
+
+    "replay_implication": "The observed websocket price_change stream alone cannot be treated as sufficient evidence for exact full-book quantity reconstruction between ws_book checkpoints."
+  },
+
+  "protocol_deviations": {
+    "original_minimum_checker_oom_killed": true,
+    "original_minimum_checker_oom_time_minutes": 54.697,
+
+    "capture_overrun_seconds_approx": 76.062,
+
+    "records_after_frozen_30_minute_window_used": false,
+    "records_after_frozen_60_minute_boundary_used": false,
+
+    "effect_on_diagnostic_window": "NONE"
+  },
+
+  "artifacts": {
+    "contract_sha256": "7f97e5ec6c7b4268123d176bb664642753955e0be049b025bdeda3700fe89115",
+    "original_minimum_checker_sha256": "8f83f47e0f7df491aeec68a03f71c9456ef07ad39b6e28e7ae901ad36e0a34fc",
+    "streaming_minimum_checker_sha256": "3418e71964bbb6e88d5fedafda7f8b4025f401a9390701756d3dcbc79d8493e3",
+    "minimum_result_sha256": "ef6de5c8b67c54ca9acd2517a99e540c58c7d59d4e37a7a1461636ac9ccf5eac",
+    "analysis_freeze_sha256": "e2d472b938b5bdeda44faff880b33a058926d84399144f29f6377d8b6b342e93",
+    "diagnostic_source_sha256": "4765245376aff83586e30ca829d843ecfa150b1e1111fb94a6aa0f9321dd8933",
+    "pair_diagnostics_sha256": "e3a8d9bb0a8be854a6d901d332a2e9a03e50dabc3ce7ca3fcadac1ad6f233f9b",
+    "mismatch_diagnostics_sha256": "5b832360ead66ea024951d7bb35c02308f5e9559d2c2caa45a2538d54ce596f9",
+    "summary_sha256": "1c4de294b462075aea0a4c5d7b89526feaf7849661344d3d64208c71da01df59"
+  },
+
+  "prior_milestones": {
+    "M2": "UNCHANGED_FAIL",
+    "M2b": "UNCHANGED_FAIL",
+    "M2c": "UNCHANGED_TRADE_TRIGGER_NOT_SUPPORTED",
+    "M2d": "UNCHANGED_BLOCKED_BY_RAW_RETENTION",
+    "M2e": "UNCHANGED_PASS"
+  },
+
+  "performance_data_inspected": false,
+  "resolutions_inspected": false,
+  "edge_calculated": false,
+  "threshold_selected": false,
+  "trades_simulated": false,
+  "pnl_calculated": false,
+
+  "next_milestone": "H2-v2 M2g — unexplained source-transition semantics diagnosis"
+}

@@ -1,0 +1,98 @@
+{
+  "analysis_window": {
+    "end_inclusive": "2026-08-13T17:32:16.066267+00:00",
+    "minutes": 30,
+    "start_inclusive": "2026-08-13T17:02:16.066267+00:00"
+  },
+  "capture_id": "h2_v2_m2f_20260813T170210Z",
+  "classification_priority": [
+    "RAW_FRAME_INTEGRITY_FAILURE",
+    "COLLECTOR_NORMALIZATION_LOSS",
+    "NORMALIZED_TO_DB_LOSS",
+    "EXACT_REPLAY_MATCH",
+    "TRADE_BOOK_TRANSITION_SUPPORTED",
+    "UNEXPLAINED_SOURCE_TRANSITION"
+  ],
+  "edge_calculated": false,
+  "frozen_evidence": {
+    "distinct_tokens": 14,
+    "eligible_pairs": 1184
+  },
+  "frozen_nonreproduction_rule": {
+    "classification_if_triggered": "FRESH_DIVERGENCE_NOT_REPRODUCED",
+    "triggered": false
+  },
+  "input_hashes": {
+    "analysis_freeze": "e2d472b938b5bdeda44faff880b33a058926d84399144f29f6377d8b6b342e93",
+    "buffer_loader": "7831201e80325f060551ffc4274180512ebee556be6aede2bc51729db6f053e3",
+    "capture_manifest": "57f4c1a8f175a51c425a13972a7a6645561ad442460dc34702556ef7dadcff25",
+    "capture_normalized": "728a9bca260fdb88ca9808a07fd7a3d049608aa9a2f910430cb57b6e0ec9eb82",
+    "capture_raw": "f682edd032854aa52f8480faac5291204e3215bffd2c772bdc558a8694f6319d",
+    "collector": "50f4ee810ae38974f3156431b6596980c514c8d17ca11f4c8cc341ff058951c0",
+    "contract": "7f97e5ec6c7b4268123d176bb664642753955e0be049b025bdeda3700fe89115",
+    "m2b_validator": "95e1faf114bb6d05297be93b909bcbf072a8e7718a47260bc7fb69acaa387506",
+    "minimum_result": "ef6de5c8b67c54ca9acd2517a99e540c58c7d59d4e37a7a1461636ac9ccf5eac",
+    "original_minimum_checker": "8f83f47e0f7df491aeec68a03f71c9456ef07ad39b6e28e7ae901ad36e0a34fc",
+    "streaming_minimum_checker": "3418e71964bbb6e88d5fedafda7f8b4025f401a9390701756d3dcbc79d8493e3",
+    "watchlist": "928e000c50bd69c3792685a12571e89b1c259d241d9174c0b4a9444e53e8d766"
+  },
+  "milestone": "H2-v2 M2f \u2014 fresh raw-to-DB quantity-reduction diagnosis",
+  "normalized_to_db": {
+    "db_price_change_rows_indexed": 359296,
+    "db_ws_book_rows_indexed": 1268,
+    "price_change": {
+      "exact_db_matches": 359296,
+      "non_exact": 0,
+      "total": 359296
+    },
+    "ws_book": {
+      "exact_db_matches": 1268,
+      "non_exact": 0,
+      "total": 1268
+    }
+  },
+  "pair_classifications": {
+    "EXACT_REPLAY_MATCH": 948,
+    "TRADE_BOOK_TRANSITION_SUPPORTED": 112,
+    "UNEXPLAINED_SOURCE_TRANSITION": 124
+  },
+  "performance_data_inspected": false,
+  "pnl_calculated": false,
+  "protocol_deviation": {
+    "capture_overrun_data_used": false,
+    "records_after_30_minutes_used": false
+  },
+  "raw_frame_integrity": {
+    "frames": 228255,
+    "hash_failures": 0,
+    "parse_failures": 0
+  },
+  "raw_to_normalized": {
+    "bad_sequence_frames": 0,
+    "expected_exactly_matched": 364169,
+    "expected_h2_v2_events": 364169,
+    "expected_non_exact": 0,
+    "normalized_exactly_matched": 364169,
+    "normalized_non_exact": 0,
+    "normalized_ws_records": 364169
+  },
+  "replay": {
+    "mismatch_directions": {
+      "checkpoint_lower": 268,
+      "checkpoint_removed_level": 82
+    },
+    "mismatch_levels": 350,
+    "mismatch_pairs": 236,
+    "mismatch_sides": {
+      "B": 175,
+      "S": 175
+    },
+    "mismatch_types": {
+      "presence": 82,
+      "size": 268
+    }
+  },
+  "resolutions_inspected": false,
+  "trades_simulated": false,
+  "version": "H2-v2-M2f-DIAGNOSTIC-1"
+}

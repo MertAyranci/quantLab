@@ -1,0 +1,134 @@
+{
+  "version": "H2-v2-M2f-CONTRACT-1",
+  "milestone": "H2-v2 M2f — fresh raw-to-DB quantity-reduction diagnosis",
+
+  "parent_m2e_commit": "0449d1a7ffbdaf268e802020b8da6536ae7c7ef5",
+
+  "purpose": "Use a fresh immutable websocket evidence capture to localize the quantity-reduction divergence observed in H2-v2 M2/M2b without inspecting strategy performance.",
+
+  "scope": {
+    "engineering_only": true,
+    "fresh_capture": true,
+    "historical_m2b_results_unchanged": true,
+    "performance_data_allowed": false,
+    "resolutions_allowed": false
+  },
+
+  "frozen_prior_observation": {
+    "m2b_pairs": 142,
+    "m2b_failed_pairs": 58,
+    "m2b_size_mismatches": 114,
+    "m2c_direction": "checkpoint_lower_than_replay",
+    "m2c_bid_mismatches": 57,
+    "m2c_ask_mismatches": 57
+  },
+
+  "primary_hypothesis": {
+    "name": "trade_book_transition_without_price_change",
+    "statement": "Trade-driven book quantity mutations may be represented by websocket book snapshots without a corresponding price_change carrying the quantity reduction.",
+    "basis": "Polymarket documents book as emitted on subscription and when a trade affects the book, while price_change is documented for new order placement and cancellation.",
+    "documentation": "https://docs.polymarket.com/market-data/websocket/market-channel"
+  },
+
+  "alternative_mechanisms": [
+    "collector_normalization_loss",
+    "normalized_to_database_persistence_loss",
+    "price_change_size_semantics_mismatch",
+    "other_unmodeled_websocket_event",
+    "fresh_divergence_not_reproduced",
+    "insufficient_fresh_evidence"
+  ],
+
+  "capture_plan": {
+    "instrumentation": "M2e immutable websocket evidence",
+    "capture_id_rule": "h2_v2_m2f_YYYYMMDDTHHMMSSZ",
+    "initial_duration_minutes": 30,
+    "maximum_duration_minutes": 60,
+    "extension_rule": "If the frozen evidence minimum is not met after 30 minutes, continue the same capture without analysis until 60 minutes total.",
+    "stop_rule": "Stop after 30 minutes if minimum evidence is met; otherwise stop at 60 minutes.",
+    "analysis_before_capture_stop": false
+  },
+
+  "eligible_checkpoint_pair": {
+    "base_event": "ws_book",
+    "checkpoint_event": "next ws_book for the same token",
+    "watchlist_rule": "h2_v2",
+    "same_connection_required": true,
+    "same_book_generation_required": true,
+    "at_least_one_intervening_price_change_for_token": true,
+    "base_raw_frame_provenance_required": true,
+    "checkpoint_raw_frame_provenance_required": true,
+    "raw_frame_hash_valid_required": true,
+    "consecutive_ws_book_required": true,
+    "use_all_eligible_pairs": true
+  },
+
+  "minimum_evidence": {
+    "eligible_pairs": 50,
+    "distinct_tokens": 4,
+    "maximum_capture_minutes": 60,
+    "failure_disposition": "INSUFFICIENT_FRESH_EVIDENCE"
+  },
+
+  "reconciliation_tests": {
+    "raw_frame_integrity": "Recompute SHA256 over exact UTF-8 raw frame and require equality with stored raw_frame_sha256.",
+
+    "raw_to_normalized": "Every relevant H2-v2 raw event must map exactly to the expected normalized evidence record using connection_id, raw_frame_sequence, raw_frame_sha256, ingest_sequence and change_index.",
+
+    "normalized_to_database": "Every normalized price_change must map exactly to book_deltas and every normalized ws_book checkpoint must map exactly to book_snapshots using token, connection_id, ingest_sequence, change_index, book_generation and event fields.",
+
+    "replay": "Starting from the base ws_book full state, apply intervening price_change level sizes using the same absolute-level replacement convention used by M2/M2b, then compare exact price-level membership and size against the next ws_book checkpoint.",
+
+    "raw_event_interval": "For every replay mismatch, inspect all same-token raw websocket events between the two ws_book boundary frames."
+  },
+
+  "per_pair_classification_priority": [
+    "RAW_FRAME_INTEGRITY_FAILURE",
+    "COLLECTOR_NORMALIZATION_LOSS",
+    "NORMALIZED_TO_DB_LOSS",
+    "EXACT_REPLAY_MATCH",
+    "TRADE_BOOK_TRANSITION_SUPPORTED",
+    "UNEXPLAINED_SOURCE_TRANSITION"
+  ],
+
+  "trade_book_transition_rule": {
+    "required_conditions": [
+      "raw-to-normalized reconciliation passes",
+      "normalized-to-database reconciliation passes",
+      "replay differs from terminal ws_book size",
+      "same-token last_trade_price raw event occurs after the base ws_book frame and before or at the checkpoint ws_book frame"
+    ],
+    "interpretation": "Supports, but does not by itself prove, that the checkpoint book mutation is trade-driven rather than a dropped price_change."
+  },
+
+  "fresh_nonreproduction_rule": {
+    "classification": "FRESH_DIVERGENCE_NOT_REPRODUCED",
+    "condition": "Frozen minimum evidence is met and every eligible pair is an exact replay match."
+  },
+
+  "diagnostic_disposition": {
+    "no_pass_rate_threshold": true,
+    "report_all_pair_classifications": true,
+    "report_all_mismatch_directions": true,
+    "no_posthoc_exclusions": true,
+    "m2_result_may_not_be_changed": true,
+    "m2b_result_may_not_be_changed": true,
+    "m2c_result_may_not_be_changed": true,
+    "m2d_result_may_not_be_changed": true
+  },
+
+  "prohibited": [
+    "edge calculation",
+    "signal calculation",
+    "threshold selection",
+    "trade simulation",
+    "fill simulation",
+    "PnL calculation",
+    "market resolution inspection",
+    "calibration",
+    "OOS strategy testing",
+    "changing evidence minimum after capture",
+    "extending capture beyond 60 minutes",
+    "selecting only favorable checkpoint pairs"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "analysis_window": {
+    "end_inclusive": "2026-08-13T17:32:16.066267+00:00",
+    "minutes": 30,
+    "selection_reason": "Frozen minimum evidence was met in the preregistered first 30-minute window.",
+    "start_inclusive": "2026-08-13T17:02:16.066267+00:00"
+  },
+  "capture_hashes": {
+    "manifest": "57f4c1a8f175a51c425a13972a7a6645561ad442460dc34702556ef7dadcff25",
+    "normalized_h2_v2": "728a9bca260fdb88ca9808a07fd7a3d049608aa9a2f910430cb57b6e0ec9eb82",
+    "raw_frames": "f682edd032854aa52f8480faac5291204e3215bffd2c772bdc558a8694f6319d"
+  },
+  "capture_id": "h2_v2_m2f_20260813T170210Z",
+  "db_readiness": {
+    "price_changes": {
+      "max_capture_time": "2026-08-13T17:32:16.056181+00:00",
+      "min_capture_time": "2026-08-13T17:02:16.801803+00:00",
+      "rows": 359296
+    },
+    "ws_books": {
+      "max_capture_time": "2026-08-13T17:32:07.135173+00:00",
+      "min_capture_time": "2026-08-13T17:02:16.787769+00:00",
+      "rows": 1268
+    }
+  },
+  "diagnostic_not_yet_run": true,
+  "edge_calculated": false,
+  "input_hashes": {
+    "buffer_loader": "7831201e80325f060551ffc4274180512ebee556be6aede2bc51729db6f053e3",
+    "h2_v2_watchlist": "928e000c50bd69c3792685a12571e89b1c259d241d9174c0b4a9444e53e8d766",
+    "m2b_replay_validator": "95e1faf114bb6d05297be93b909bcbf072a8e7718a47260bc7fb69acaa387506",
+    "m2e_collector": "50f4ee810ae38974f3156431b6596980c514c8d17ca11f4c8cc341ff058951c0",
+    "m2f_contract": "7f97e5ec6c7b4268123d176bb664642753955e0be049b025bdeda3700fe89115",
+    "minimum_result": "ef6de5c8b67c54ca9acd2517a99e540c58c7d59d4e37a7a1461636ac9ccf5eac",
+    "original_minimum_checker": "8f83f47e0f7df491aeec68a03f71c9456ef07ad39b6e28e7ae901ad36e0a34fc",
+    "streaming_minimum_checker": "3418e71964bbb6e88d5fedafda7f8b4025f401a9390701756d3dcbc79d8493e3"
+  },
+  "milestone": "H2-v2 M2f \u2014 fresh raw-to-DB quantity-reduction diagnosis",
+  "minimum_evidence": {
+    "distinct_tokens": 14,
+    "eligible_pairs": 1184,
+    "minimum_met": true,
+    "raw_hash_failures": 0
+  },
+  "parent_m2e_commit": "0449d1a7ffbdaf268e802020b8da6536ae7c7ef5",
+  "performance_data_inspected": false,
+  "pnl_calculated": false,
+  "protocol_deviation": {
+    "capture_overrun_seconds_approx": 76.06232118606567,
+    "records_after_30_minutes_used": false,
+    "records_after_60_minutes_used": false
+  },
+  "replay_performed": false,
+  "trades_simulated": false,
+  "version": "H2-v2-M2f-ANALYSIS-FREEZE-1",
+  "watchlist": {
+    "token_count": 34,
+    "unique_token_count": 34
+  }
+}

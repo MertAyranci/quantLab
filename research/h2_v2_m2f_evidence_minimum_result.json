@@ -1,0 +1,63 @@
+{
+  "capture_hashes": {
+    "manifest": "57f4c1a8f175a51c425a13972a7a6645561ad442460dc34702556ef7dadcff25",
+    "normalized_h2_v2": "728a9bca260fdb88ca9808a07fd7a3d049608aa9a2f910430cb57b6e0ec9eb82",
+    "raw_frames": "f682edd032854aa52f8480faac5291204e3215bffd2c772bdc558a8694f6319d"
+  },
+  "capture_id": "h2_v2_m2f_20260813T170210Z",
+  "capture_start": "2026-08-13T17:02:16.066267+00:00",
+  "cutoff_30": "2026-08-13T17:32:16.066267+00:00",
+  "cutoff_60": "2026-08-13T18:02:16.066267+00:00",
+  "disposition": "STOP_AT_30_MINUTES",
+  "edge_calculated": false,
+  "frozen_analysis_window_minutes": 30,
+  "frozen_thresholds_unchanged": true,
+  "original_checker_runtime_result": "OOM_KILLED_AT_54.697_MINUTES",
+  "original_checker_sha256": "8f83f47e0f7df491aeec68a03f71c9456ef07ad39b6e28e7ae901ad36e0a34fc",
+  "performance_data_inspected": false,
+  "pnl_calculated": false,
+  "protocol_deviation": {
+    "approx_evidence_file_mtime_overrun_seconds": 76.06232118606567,
+    "instrumented_capture_exceeded_60_minutes": true,
+    "reason": "sudo authentication retry delayed service stop",
+    "records_after_60_minutes_excluded": true
+  },
+  "replay_performed": false,
+  "rows_after_frozen_60_minute_boundary": {
+    "normalized_h2_v2": 27898,
+    "raw_frames": 18245,
+    "used_for_eligibility": false
+  },
+  "trades_simulated": false,
+  "version": "H2-v2-M2f-EVIDENCE-MINIMUM-STREAMING-1",
+  "window_30": {
+    "consecutive_ws_book_pairs": 1252,
+    "delta_bearing_pairs": 1184,
+    "distinct_eligible_tokens": 14,
+    "eligible_pairs": 1184,
+    "minimum_met": true,
+    "minimum_pairs_required": 50,
+    "minimum_tokens_required": 4,
+    "normalized_h2_v2_records": 364265,
+    "provenance_valid_pairs": 1184,
+    "raw_frames": 228255,
+    "raw_hash_failures": 0,
+    "same_connection_generation_pairs": 1184,
+    "window_minutes": 30
+  },
+  "window_60": {
+    "consecutive_ws_book_pairs": 2792,
+    "delta_bearing_pairs": 2646,
+    "distinct_eligible_tokens": 14,
+    "eligible_pairs": 2646,
+    "minimum_met": true,
+    "minimum_pairs_required": 50,
+    "minimum_tokens_required": 4,
+    "normalized_h2_v2_records": 958949,
+    "provenance_valid_pairs": 2646,
+    "raw_frames": 602930,
+    "raw_hash_failures": 0,
+    "same_connection_generation_pairs": 2646,
+    "window_minutes": 60
+  }
+}
