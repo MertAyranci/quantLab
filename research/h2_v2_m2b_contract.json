@@ -1,0 +1,115 @@
+{
+  "endpoint_requirements_inherited_from_m2": {
+    "configuration": "1080/1080",
+    "connection_mixing": 0,
+    "crossed_books": 0,
+    "decision_reconstruction": "1080/1080",
+    "decision_reference_price_agreement": "1080/1080",
+    "execution_500ms_reconstruction": "1080/1080",
+    "execution_reference_price_agreement": "1080/1080",
+    "games": 9,
+    "generation_mixing": 0,
+    "lookahead": 0,
+    "market_mapping": "1080/1080",
+    "outcome_token_mapping": "1080/1080",
+    "tape_rows": 1080
+  },
+  "engineering_dataset": {
+    "expected_anchor_rows": 1080,
+    "expected_games": 9,
+    "performance_use": false,
+    "sharp_collector_run_id": 11691,
+    "target_tokens": 18
+  },
+  "forbidden_in_m2b": [
+    "edge calculation",
+    "edge distribution inspection",
+    "candidate threshold evaluation",
+    "trade selection",
+    "paper fills",
+    "PnL calculation",
+    "resolution outcome use",
+    "strategy calibration",
+    "OOS strategy testing"
+  ],
+  "m2b_interpretation": {
+    "does_not_change_m2_result": true,
+    "does_not_establish_trading_edge": true,
+    "pass_means": "The synchronized M2 decision tape is engineering-valid under the corrected independently preregistered replay-size validation method."
+  },
+  "milestone": "H2-v2 M2b \u2014 replay-validation remediation",
+  "parent": {
+    "artifact_sha256": {
+      "m2_builder": "324ccba8cc74d0853de640d5758c3cc77c7fbba30cad81022adac138e5022ab8",
+      "m2_contract": "4a09e3124bd0e05624a577916b10a712802bcc1096f6218a765c3830cf239cc4",
+      "m2_failure_diagnosis": "481ef1eb7116da2bf83490253080e400cd10265fb03d6e465fca5bc1a92bb8b7",
+      "m2_tape": "88a1bd4cbaf3254850c0dc1c4c2c305e18db68700a5e90d7e86f64a74706d312",
+      "m2_validation": "06983e20c4fcb1d09254221e99213a2e8497088263fb20d95955a884e7005f5e"
+    },
+    "m2_commit": "1eb30e3ac345341aa2dd420fc407e44f3733e573",
+    "m2_failure_cause": "Latest size-bearing TOB was an invalid endpoint size ground truth after later same-level deltas.",
+    "m2_result": "FAIL",
+    "retroactively_change_m2": false
+  },
+  "primary_checkpoint_test": {
+    "base_sources": [
+      "ws_book",
+      "rest_book"
+    ],
+    "capacity_observed_before_validation": {
+      "clean_boundary_delta_pairs": 102,
+      "consecutive_pairs": 268,
+      "generation_boundary_pairs": 108,
+      "intermediate_generation_contamination": 0,
+      "same_generation_delta_pairs": 142,
+      "same_generation_pairs": 160
+    },
+    "checkpoint_source": "ws_book",
+    "delta_bearing_required": true,
+    "outcome_match_information_inspected_before_freeze": false,
+    "pair_definition": "Consecutive H2-v2 full-book snapshots for the same target token within the engineering window.",
+    "purpose": "Independently validate exact price-level and size replay semantics.",
+    "same_generation_required": true
+  },
+  "primary_success_rule": {
+    "ask_level_mismatches": 0,
+    "bid_level_mismatches": 0,
+    "connection_contamination": 0,
+    "full_book_exact_match_rate": "100%",
+    "generation_contamination": 0,
+    "lookahead": 0,
+    "minimum_checkpoint_pairs": 100,
+    "minimum_distinct_tokens": 9,
+    "require_both_base_sources": true,
+    "sequence_violations": 0,
+    "size_mismatches": 0,
+    "use_all_eligible_pairs": true
+  },
+  "replay_rule": {
+    "base": "Start from every price/size level in the earlier full-book snapshot.",
+    "comparison": "After replay, normalized complete bid and ask maps must exactly equal the checkpoint ws_book maps, including every non-zero price level and exact Decimal size.",
+    "delta_semantics": {
+      "B": "size > 0 sets/replaces bid level; size = 0 removes it",
+      "S": "size > 0 sets/replaces ask level; size = 0 removes it"
+    },
+    "generation": "Replay only deltas with the same book_generation as base and checkpoint.",
+    "no_lookahead": true,
+    "order": [
+      "ingest_sequence ASC",
+      "change_index ASC",
+      "capture_time ASC"
+    ],
+    "price_tolerance_mc": 0,
+    "rest_base": "Checkpoint connection_id defines the WS continuation. Replay same-generation deltas on that connection with capture_time > base.capture_time and ingest_sequence < checkpoint.ingest_sequence.",
+    "size_tolerance": "0",
+    "ws_base": "Base and checkpoint must share connection_id. Replay deltas on that connection with base.ingest_sequence < delta.ingest_sequence < checkpoint.ingest_sequence."
+  },
+  "secondary_diagnostic_only": {
+    "generation_boundary_pairs": "May be reported separately but cannot determine M2b PASS/FAIL because REST checkpoint timing is asynchronous to WS ordering."
+  },
+  "version": "H2-v2-M2b-CONTRACT-1",
+  "window": {
+    "end": "maximum decision_time among eligible run-11691 anchors + 500ms",
+    "start": "minimum decision_time among eligible run-11691 anchors"
+  }
+}

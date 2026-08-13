@@ -1,0 +1,59 @@
+{
+  "version": "H2-v2-M2b-FAILURE-DIAGNOSIS-1",
+  "milestone": "H2-v2 M2b — replay-validation remediation",
+  "m2b_result": "FAIL",
+
+  "parent_m2_commit": "1eb30e3ac345341aa2dd420fc407e44f3733e573",
+
+  "artifacts": {
+    "contract_sha256": "86babc92e1a32bbe95361bd66a24d09b0c729082589ea8cd7a5ea18e8bbfdb4c",
+    "validator_sha256": "95e1faf114bb6d05297be93b909bcbf072a8e7718a47260bc7fb69acaa387506",
+    "checkpoint_results_sha256": "c058cd37fbdfed83f7c2909577ecd270f6608ce0d738af84cb486baab58dc66c",
+    "validation_sha256": "72af20049ef04a0f2ffbc2aeb9cc567b454a10ed7724700581c23f197864444d"
+  },
+
+  "evidence": {
+    "eligible_checkpoint_pairs": 142,
+    "distinct_tokens": 10,
+    "base_sources": {
+      "rest_book": 26,
+      "ws_book": 116
+    },
+    "replayed_deltas": 7504,
+    "minimum_evidence_pass": true
+  },
+
+  "result": {
+    "exact_full_book_matches": 84,
+    "failed_pairs": 58,
+    "exact_match_rate": "0.5915492957746478873239436620",
+
+    "bid_level_mismatches": 0,
+    "ask_level_mismatches": 0,
+    "size_mismatches": 114,
+
+    "generation_contamination": 0,
+    "connection_contamination": 0,
+    "sequence_violations": 0,
+    "lookahead": 0,
+
+    "replay_validation_pass": false,
+    "m2b_overall_pass": false
+  },
+
+  "localization": {
+    "price_level_set_failure_observed": false,
+    "exact_size_state_failure_observed": true,
+    "interpretation": "Across the preregistered checkpoint test, reconstructed bid and ask price-level membership matched the later ws_book checkpoints, but exact sizes did not match on 58 of 142 pairs. The cause of those size divergences has not been investigated in M2b."
+  },
+
+  "methodological_disposition": {
+    "change_frozen_m2b_criteria": false,
+    "rerun_modified_validator": false,
+    "retroactively_mark_m2b_pass": false,
+    "investigate_failure_inside_m2b": false,
+    "next_step": "Close M2b as FAIL. Any investigation of the exact size-state divergence must occur in a separately defined subsequent engineering milestone before any edge, threshold, trade, fill, PnL, calibration, or OOS work."
+  },
+
+  "performance_data_inspected": false
+}
