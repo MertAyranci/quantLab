@@ -1,0 +1,110 @@
+{
+  "version": "H2-v2-M2g-CONCLUSION-1",
+  "milestone": "H2-v2 M2g — unexplained source-transition semantics diagnosis",
+
+  "parent_m2f_commit": "43aa0ecf30b7ce30a3a64e449ef7ccd862df94da",
+
+  "result": "PARTIAL_TRADE_ACCOUNTING",
+
+  "frozen_population": {
+    "pairs": 124,
+    "source_classification": "M2f UNEXPLAINED_SOURCE_TRANSITION",
+    "posthoc_exclusions": 0
+  },
+
+  "integrity": {
+    "raw_frames_reverified": 228255,
+    "raw_hash_failures": 0,
+    "same_market_trade_events_indexed": 618
+  },
+
+  "pair_classifications": {
+    "INVALID_PAIR_METADATA": 0,
+    "DIRECT_TRADE_ACCOUNTING_SUPPORTED": 1,
+    "TRADE_CANDIDATE_BUT_INCOMPLETE_ACCOUNTING": 109,
+    "NO_ELIGIBLE_TRADE_CANDIDATE": 14
+  },
+
+  "nonexclusive_mechanisms": {
+    "same_token_exact_checkpoint_timestamp": 0,
+    "same_market_different_token_exact_checkpoint_timestamp": 0,
+    "same_token_event_time_interval_out_of_ingest_order": 0,
+    "same_market_different_token_ingest_interval": 110,
+    "same_market_different_token_event_time_interval": 110,
+    "pairs_with_multiple_candidate_mechanisms": 110
+  },
+
+  "level_accounting": {
+    "mismatch_levels": 184,
+    "levels_with_price_alignment": 2,
+    "levels_with_accounting_alignment": 2,
+    "levels_size_covered": 1,
+    "levels_directly_supported": 1
+  },
+
+  "candidate_count_distribution": {
+    "0": 14,
+    "1": 103,
+    "2": 6,
+    "3": 1
+  },
+
+  "interpretation": {
+    "same_token_out_of_ingest_order_supported": false,
+
+    "same_token_out_of_ingest_order_pairs": 0,
+
+    "same_market_complementary_trade_candidates_common": true,
+
+    "same_market_complementary_candidate_pairs": 110,
+
+    "same_market_complementary_candidates_generally_account_for_missing_levels": false,
+
+    "directly_accounted_pairs": 1,
+
+    "directly_accounted_pair_fraction": "1/124",
+
+    "directly_accounted_levels": 1,
+
+    "directly_accounted_level_fraction": "1/184",
+
+    "trade_candidates_without_complete_accounting": 109,
+
+    "pairs_without_any_eligible_trade_candidate": 14,
+
+    "full_trade_based_causal_localization_achieved": false,
+
+    "conclusion": "The preregistered M2g trade-semantics tests account completely for only 1 of the 124 frozen M2f unexplained source transitions. No same-token last_trade_price event was found inside the server-time interval while arriving outside the ingest interval, so the frozen out-of-ingest-order same-token hypothesis received no support. Same-market different-token trade candidates were present in 110 pairs, but only 2 of 184 mismatch levels had the required complementary price alignment and only 1 level was also size-covered. Therefore the presence of complementary-token trade events is generally temporal coincidence rather than sufficient accounting for the observed quantity reductions under the frozen rules.",
+
+    "replay_implication": "The remaining replay divergence cannot be repaired by simply incorporating same-token out-of-order last_trade_price events or complementary-token last_trade_price events under the preregistered deterministic accounting rules.",
+
+    "source_semantics_implication": "A substantial set of ws_book quantity reductions or level removals remains unaccounted for by the captured price_change and tested last_trade_price semantics."
+  },
+
+  "prior_milestones": {
+    "M2": "UNCHANGED_FAIL",
+    "M2b": "UNCHANGED_FAIL",
+    "M2c": "UNCHANGED_TRADE_TRIGGER_NOT_SUPPORTED",
+    "M2d": "UNCHANGED_BLOCKED_BY_RAW_RETENTION",
+    "M2e": "UNCHANGED_PASS",
+    "M2f": "UNCHANGED_PARTIAL_LOCALIZATION"
+  },
+
+  "artifacts": {
+    "contract_sha256": "ecab36dfe465b4a32486b2601a9c3356377e017cf4acb5e8973c994ee74e5f5c",
+    "diagnostic_source_sha256": "d5190b25c360a4569d22a574641f04361c15e32e6e3d7e0f342f7de4e2c8b179",
+    "pair_diagnostics_sha256": "61c36bf431f2710e5db9b05f60f3babb0db1de390495f8c90d3427c946e17113",
+    "level_diagnostics_sha256": "e1cb9d6b86945ada84fbb7328663ccc730ccda341a6385ae5a77c2095a5cbbf6",
+    "summary_sha256": "509af1489d3e6ae4191e3bcc6107baa0fc1cdf8812a78707af3ea48d635e5f19"
+  },
+
+  "performance_data_inspected": false,
+  "resolutions_inspected": false,
+  "edge_calculated": false,
+  "signal_calculated": false,
+  "threshold_selected": false,
+  "trades_simulated": false,
+  "pnl_calculated": false,
+
+  "next_milestone": "New engineering milestone required before changing replay semantics or acceptance criteria."
+}

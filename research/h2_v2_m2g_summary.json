@@ -1,0 +1,57 @@
+{
+  "candidate_count_distribution": {
+    "0": 14,
+    "1": 103,
+    "2": 6,
+    "3": 1
+  },
+  "capture": {
+    "capture_id": "h2_v2_m2f_20260813T170210Z",
+    "end_inclusive": "2026-08-13T17:32:16.066267+00:00",
+    "raw_frames_reverified": 228255,
+    "raw_hash_failures": 0,
+    "same_market_trade_events_indexed": 618,
+    "start_inclusive": "2026-08-13T17:02:16.066267+00:00",
+    "window_minutes": 30
+  },
+  "contract_sha256": "ecab36dfe465b4a32486b2601a9c3356377e017cf4acb5e8973c994ee74e5f5c",
+  "edge_calculated": false,
+  "invalid_pair_reasons": {},
+  "level_accounting": {
+    "levels_directly_supported": 1,
+    "levels_size_covered": 1,
+    "levels_with_accounting_alignment": 2,
+    "levels_with_price_alignment": 2,
+    "mismatch_levels": 184
+  },
+  "milestone": "H2-v2 M2g \u2014 unexplained source-transition semantics diagnosis",
+  "milestone_outcome": "PARTIAL_TRADE_ACCOUNTING",
+  "nonexclusive_mechanisms": {
+    "pairs_with_multiple_candidate_mechanisms": 110,
+    "same_market_different_token_event_time_interval": 110,
+    "same_market_different_token_exact_checkpoint_timestamp": 0,
+    "same_market_different_token_ingest_interval": 110,
+    "same_token_event_time_interval_out_of_ingest_order": 0,
+    "same_token_exact_checkpoint_timestamp": 0
+  },
+  "pair_classifications": {
+    "DIRECT_TRADE_ACCOUNTING_SUPPORTED": 1,
+    "INVALID_PAIR_METADATA": 0,
+    "NO_ELIGIBLE_TRADE_CANDIDATE": 14,
+    "TRADE_CANDIDATE_BUT_INCOMPLETE_ACCOUNTING": 109
+  },
+  "parent_m2f_commit": "43aa0ecf30b7ce30a3a64e449ef7ccd862df94da",
+  "performance_data_inspected": false,
+  "pnl_calculated": false,
+  "population": {
+    "pairs": 124,
+    "posthoc_exclusions": 0,
+    "selection": "M2f UNEXPLAINED_SOURCE_TRANSITION"
+  },
+  "resolutions_inspected": false,
+  "rules_unchanged_after_contract_freeze": true,
+  "signal_calculated": false,
+  "threshold_selected": false,
+  "trades_simulated": false,
+  "version": "H2-v2-M2g-DIAGNOSTIC-1"
+}

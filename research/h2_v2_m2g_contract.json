@@ -1,0 +1,195 @@
+{
+  "version": "H2-v2-M2g-CONTRACT-1",
+  "milestone": "H2-v2 M2g — unexplained source-transition semantics diagnosis",
+
+  "parent_m2f_commit": "43aa0ecf30b7ce30a3a64e449ef7ccd862df94da",
+
+  "goal": "Determine whether the 124 M2f UNEXPLAINED_SOURCE_TRANSITION pairs can be localized to trade events that were not captured by the M2f same-token ingest-interval rule, specifically through websocket arrival ordering or same-market complementary-token matching.",
+
+  "scope": {
+    "engineering_diagnostic_only": true,
+    "new_live_capture": false,
+    "use_existing_immutable_m2f_capture_only": true,
+    "analysis_window_minutes": 30,
+    "capture_id": "h2_v2_m2f_20260813T170210Z"
+  },
+
+  "population": {
+    "source": "research/h2_v2_m2f_pair_diagnostics.jsonl",
+    "selection_rule": "classification == UNEXPLAINED_SOURCE_TRANSITION",
+    "expected_pairs": 124,
+    "posthoc_pair_exclusions_allowed": false
+  },
+
+  "frozen_inputs": {
+    "m2f_contract_sha256": "7f97e5ec6c7b4268123d176bb664642753955e0be049b025bdeda3700fe89115",
+    "m2f_analysis_freeze_sha256": "e2d472b938b5bdeda44faff880b33a058926d84399144f29f6377d8b6b342e93",
+    "m2f_diagnostic_source_sha256": "4765245376aff83586e30ca829d843ecfa150b1e1111fb94a6aa0f9321dd8933",
+    "m2f_pair_diagnostics_sha256": "e3a8d9bb0a8be854a6d901d332a2e9a03e50dabc3ce7ca3fcadac1ad6f233f9b",
+    "m2f_mismatch_diagnostics_sha256": "5b832360ead66ea024951d7bb35c02308f5e9559d2c2caa45a2538d54ce596f9",
+    "m2f_summary_sha256": "1c4de294b462075aea0a4c5d7b89526feaf7849661344d3d64208c71da01df59",
+    "m2f_conclusion_sha256": "3fc2579987f761903326ef00eec13de930e855ed5336f83061998c65ce61884e",
+
+    "capture_manifest_sha256": "57f4c1a8f175a51c425a13972a7a6645561ad442460dc34702556ef7dadcff25",
+    "capture_raw_frames_sha256": "f682edd032854aa52f8480faac5291204e3215bffd2c772bdc558a8694f6319d",
+    "capture_normalized_h2_v2_sha256": "728a9bca260fdb88ca9808a07fd7a3d049608aa9a2f910430cb57b6e0ec9eb82"
+  },
+
+  "prior_frozen_result": {
+    "eligible_pairs": 1184,
+    "exact_replay_matches": 948,
+    "trade_book_transition_supported": 112,
+    "unexplained_source_transitions": 124,
+
+    "raw_frame_integrity_failures": 0,
+    "collector_normalization_losses": 0,
+    "normalized_to_database_losses": 0,
+
+    "mismatch_levels": 350,
+    "mismatch_direction_checkpoint_lower": 268,
+    "mismatch_direction_checkpoint_removed_level": 82
+  },
+
+  "primary_question": "Do trade events outside the M2f same-token ingest-window association rule account for the remaining 124 source transitions?",
+
+  "official_semantics_basis": {
+    "book": "Full orderbook snapshot; documented as emitted on subscription and when a trade affects the book.",
+    "price_change": "Price-level update documented for new-order and cancellation activity.",
+    "last_trade_price": "Trade execution event.",
+    "complementary_matching": "Binary outcome orders can match at complementary prices whose probabilities sum to 1."
+  },
+
+  "candidate_trade_event": {
+    "event_type": "last_trade_price",
+    "market_requirement": "Candidate raw trade event must have the same market identifier as the base/checkpoint ws_book pair.",
+
+    "asset_classes": [
+      "SAME_TOKEN",
+      "SAME_MARKET_DIFFERENT_TOKEN"
+    ],
+
+    "frozen_temporal_scopes": {
+      "INGEST_INTERVAL": {
+        "definition": "base raw frame_sequence exclusive through checkpoint raw frame_sequence inclusive",
+        "tolerance": 0
+      },
+
+      "BOOK_EVENT_TIME_INTERVAL": {
+        "definition": "base ws_book server timestamp exclusive through checkpoint ws_book server timestamp inclusive",
+        "candidate_may_arrive_outside_ingest_interval": true,
+        "tolerance_ms": 0
+      },
+
+      "EXACT_CHECKPOINT_TIMESTAMP": {
+        "definition": "trade server timestamp exactly equals checkpoint ws_book server timestamp",
+        "tolerance_ms": 0
+      }
+    },
+
+    "prohibited_candidate_windows": [
+      "arbitrary +/- milliseconds",
+      "arbitrary +/- frame counts",
+      "nearest-trade distance thresholds selected after observing results"
+    ]
+  },
+
+  "event_ordering_test": {
+    "same_token_out_of_order_candidate": "Same-token last_trade_price has server timestamp within the frozen BOOK_EVENT_TIME_INTERVAL but its raw frame lies outside the frozen INGEST_INTERVAL.",
+
+    "same_market_other_token_candidate": "Different-token last_trade_price has the same market identifier and falls within at least one frozen temporal scope.",
+
+    "exact_timestamp_candidate": "Any same-market last_trade_price whose server timestamp exactly equals checkpoint ws_book timestamp."
+  },
+
+  "level_accounting": {
+    "enabled": true,
+
+    "mismatch_reduction": {
+      "size_mismatch": "replayed_size - checkpoint_size",
+      "removed_level": "replayed_size"
+    },
+
+    "same_token_price_alignment": "trade_price_mc == mismatch_price_mc",
+
+    "same_market_different_token_price_alignment": "trade_price_mc + mismatch_price_mc == 1000",
+
+    "same_token_side_alignment": {
+      "ask_reduction": "trade side BUY",
+      "bid_reduction": "trade side SELL"
+    },
+
+    "same_market_different_token_side_alignment": "No side constraint because no official side-mapping assumption is frozen for complementary-token execution.",
+
+    "size_coverage_rule": "For an individual mismatch level, sum the sizes of eligible price-aligned candidate trade events. The level is size-covered only if aggregate candidate trade size is greater than or equal to the observed quantity reduction.",
+
+    "pair_direct_accounting_rule": "A pair is DIRECT_TRADE_ACCOUNTING_SUPPORTED only if every mismatch level in that pair is price-aligned and size-covered by eligible candidate trade events."
+  },
+
+  "pair_classifications": {
+    "priority": [
+      "INVALID_PAIR_METADATA",
+      "DIRECT_TRADE_ACCOUNTING_SUPPORTED",
+      "TRADE_CANDIDATE_BUT_INCOMPLETE_ACCOUNTING",
+      "NO_ELIGIBLE_TRADE_CANDIDATE"
+    ],
+
+    "INVALID_PAIR_METADATA": "Required base/checkpoint raw provenance, market identifier, or book timestamp is absent or inconsistent.",
+
+    "DIRECT_TRADE_ACCOUNTING_SUPPORTED": "At least one eligible trade candidate exists and every replay mismatch level satisfies the frozen price and size accounting rule.",
+
+    "TRADE_CANDIDATE_BUT_INCOMPLETE_ACCOUNTING": "One or more eligible candidate trades exist but the frozen level accounting rule does not fully cover the pair.",
+
+    "NO_ELIGIBLE_TRADE_CANDIDATE": "No last_trade_price event satisfies any frozen candidate scope."
+  },
+
+  "mechanism_reporting": {
+    "report_nonexclusive_counts": [
+      "same_token_exact_checkpoint_timestamp",
+      "same_market_different_token_exact_checkpoint_timestamp",
+      "same_token_event_time_interval_out_of_ingest_order",
+      "same_market_different_token_ingest_interval",
+      "same_market_different_token_event_time_interval",
+      "pairs_with_multiple_candidate_mechanisms"
+    ],
+
+    "report_candidate_count_distribution": true,
+    "report_level_price_alignment": true,
+    "report_level_size_coverage": true
+  },
+
+  "milestone_outcome": {
+    "COMPLETE_TRADE_ACCOUNTING": "124 of 124 pairs are DIRECT_TRADE_ACCOUNTING_SUPPORTED.",
+
+    "PARTIAL_TRADE_ACCOUNTING": "Between 1 and 123 pairs are DIRECT_TRADE_ACCOUNTING_SUPPORTED.",
+
+    "NO_TRADE_ACCOUNTING_SUPPORT": "0 pairs are DIRECT_TRADE_ACCOUNTING_SUPPORTED.",
+
+    "no_success_rate_threshold": true
+  },
+
+  "methodological_constraints": {
+    "do_not_modify_m2f": true,
+    "do_not_change_population_after_results": true,
+    "do_not_change_temporal_scopes_after_results": true,
+    "do_not_add_tolerance_windows_after_results": true,
+    "do_not_change_price_alignment_after_results": true,
+    "do_not_change_size_coverage_rule_after_results": true,
+
+    "inspect_all_124_pairs": true,
+
+    "performance_data_inspected": false,
+    "resolutions_inspected": false,
+    "edge_calculation_allowed": false,
+    "signal_calculation_allowed": false,
+    "threshold_selection_allowed": false,
+    "trade_simulation_allowed": false,
+    "pnl_calculation_allowed": false
+  },
+
+  "planned_artifacts": [
+    "research/h2_v2_m2g_pair_diagnostics.jsonl",
+    "research/h2_v2_m2g_level_diagnostics.jsonl",
+    "research/h2_v2_m2g_summary.json",
+    "research/h2_v2_m2g_conclusion.json"
+  ]
+}
