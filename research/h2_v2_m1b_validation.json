@@ -1,0 +1,182 @@
+{
+  "all_game_integrity": {
+    "all_game_snapshots": 660,
+    "asymmetric_or_bad_games": 0
+  },
+  "baseline_sha256": "9e2bd8564868557c7126eea60278f68ef8bffe1b51052c85b312f53252dadcb1",
+  "bookmaker_coverage_operational": [
+    {
+      "bookmaker": "betfair_ex_uk",
+      "fresh_snapshots": 120,
+      "paired_snapshots": 120,
+      "snapshots": 540
+    },
+    {
+      "bookmaker": "matchbook",
+      "fresh_snapshots": 540,
+      "paired_snapshots": 540,
+      "snapshots": 540
+    },
+    {
+      "bookmaker": "smarkets",
+      "fresh_snapshots": 540,
+      "paired_snapshots": 540,
+      "snapshots": 540
+    }
+  ],
+  "consensus_integrity": {
+    "bad_eligibility_rows": 0,
+    "bad_family_count_rows": 0,
+    "consensus_rows": 1320
+  },
+  "contract_sha256": "388bb7020403591a2cdd19343c17cb41ba48b1c44d38662a562da3bbe23614a3",
+  "decisions": {
+    "fresh_run_pass": true,
+    "m1b_overall_pass": true,
+    "minimum_evidence_pass": true,
+    "sharp_coverage_pass": true,
+    "sharp_integrity_pass": true
+  },
+  "fresh_run": {
+    "baseline_run_id": 11587,
+    "run_id": 11691,
+    "run_meta": {
+      "first_poll": "2026-08-13T00:57:05.576159+00:00",
+      "first_poll_id": 62,
+      "http_successes": 60,
+      "last_poll": "2026-08-13T01:26:51.961650+00:00",
+      "last_poll_id": 121,
+      "polls": 60,
+      "run_id": 11691,
+      "started_at": "2026-08-13T00:57:05.318330+00:00"
+    },
+    "summary": {
+      "credits_consumed": 60,
+      "final_credits_remaining": 368,
+      "first_poll": "2026-08-13T00:57:05.576159+00:00",
+      "first_poll_id": 62,
+      "http_successes": 60,
+      "last_poll": "2026-08-13T01:26:51.961650+00:00",
+      "last_poll_id": 121,
+      "polls": 60,
+      "span_seconds": "1786.385491"
+    }
+  },
+  "interpretation": "H2-v2 M1b is strictly a sharp-feed engineering and data-feasibility remediation validation. No signal, edge threshold, trade simulation, PnL, calibration, or OOS strategy result is evaluated.",
+  "operational_universe": {
+    "definition": "0 < time_to_game <= 23h",
+    "distinct_games": 9,
+    "eligibility_rate": "1.000000000000",
+    "eligible_game_snapshots": 540,
+    "game_snapshots": 540,
+    "max_hours_to_game": "23",
+    "max_observed_hours_to_game": "22.5484510669444444",
+    "min_observed_hours_to_game": "0.71889954166666666667",
+    "minimum_games": 3,
+    "minimum_snapshots": 100,
+    "polls_with_operational_games": 60,
+    "required_rate": "0.800000000000"
+  },
+  "per_game_operational": [
+    {
+      "away_team": "Kansas City Royals",
+      "closest_observed_h": "0.71889954166666666667",
+      "commence_time": "2026-08-13T02:10:00+00:00",
+      "eligible_snapshots": 60,
+      "furthest_observed_h": "1.2151177336111111",
+      "home_team": "Los Angeles Dodgers",
+      "odds_game_id": 1915,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Texas Rangers",
+      "closest_observed_h": "0.73556620833333333333",
+      "commence_time": "2026-08-13T02:11:00+00:00",
+      "eligible_snapshots": 60,
+      "furthest_observed_h": "1.2317844002777778",
+      "home_team": "Los Angeles Angels",
+      "odds_game_id": 2177,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Cleveland Guardians",
+      "closest_observed_h": "15.7355662083333333",
+      "commence_time": "2026-08-13T17:11:00+00:00",
+      "eligible_snapshots": 60,
+      "furthest_observed_h": "16.2317844002777778",
+      "home_team": "Detroit Tigers",
+      "odds_game_id": 2178,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Pittsburgh Pirates",
+      "closest_observed_h": "15.7355662083333333",
+      "commence_time": "2026-08-13T17:11:00+00:00",
+      "eligible_snapshots": 60,
+      "furthest_observed_h": "16.2317844002777778",
+      "home_team": "Miami Marlins",
+      "odds_game_id": 2179,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Seattle Mariners",
+      "closest_observed_h": "16.1522328750000000",
+      "commence_time": "2026-08-13T17:36:00+00:00",
+      "eligible_snapshots": 60,
+      "furthest_observed_h": "16.6484510669444444",
+      "home_team": "New York Yankees",
+      "odds_game_id": 2180,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Cincinnati Reds",
+      "closest_observed_h": "16.7355662083333333",
+      "commence_time": "2026-08-13T18:11:00+00:00",
+      "eligible_snapshots": 60,
+      "furthest_observed_h": "17.2317844002777778",
+      "home_team": "Chicago White Sox",
+      "odds_game_id": 2181,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Boston Red Sox",
+      "closest_observed_h": "17.6855662083333333",
+      "commence_time": "2026-08-13T19:08:00+00:00",
+      "eligible_snapshots": 60,
+      "furthest_observed_h": "18.1817844002777778",
+      "home_team": "Toronto Blue Jays",
+      "odds_game_id": 2182,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Chicago Cubs",
+      "closest_observed_h": "18.6522328750000000",
+      "commence_time": "2026-08-13T20:06:00+00:00",
+      "eligible_snapshots": 60,
+      "furthest_observed_h": "19.1484510669444444",
+      "home_team": "Washington Nationals",
+      "odds_game_id": 2183,
+      "snapshots": 60
+    },
+    {
+      "away_team": "Philadelphia Phillies",
+      "closest_observed_h": "22.0522328750000000",
+      "commence_time": "2026-08-13T23:30:00+00:00",
+      "eligible_snapshots": 60,
+      "furthest_observed_h": "22.5484510669444444",
+      "home_team": "Minnesota Twins",
+      "odds_game_id": 2184,
+      "snapshots": 60
+    }
+  ],
+  "quote_integrity": {
+    "bad_freshness_rows": 0,
+    "bad_midpoint_rows": 0,
+    "bad_source_age_rows": 0,
+    "incomplete_pair_rows": 0,
+    "inplay_rows": 0,
+    "quote_rows": 3960
+  },
+  "validator_sha256": "42e0f7e27ac6238287cdcd1bad7bd98ded739d49dbbb5cd8fcda097923fc7fb4",
+  "version": "H2-v2-M1b-VALIDATION-1"
+}

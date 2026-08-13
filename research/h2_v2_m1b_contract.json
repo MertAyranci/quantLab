@@ -1,0 +1,110 @@
+{
+  "decision_rule": {
+    "failure_action": "Do not proceed to calibration. Investigate replacement/additional sharp source without modifying this M1b result.",
+    "pass_if_all": [
+      "60 successful polls",
+      "at least 100 operational game-poll snapshots",
+      "at least 3 distinct operational games",
+      "operational eligibility rate >= 0.80",
+      "all integrity requirements pass"
+    ]
+  },
+  "diagnosis": {
+    "failure_class": "external_source_operability",
+    "interpretation": "M1 sharp coverage failure was concentrated in game horizons where Matchbook had not yet become available through the provider. Paired observations were fresh whenever present.",
+    "matchbook": {
+      "23_24h_fresh": 31,
+      "23_24h_total": 40,
+      "gt_24h_observed_fresh": 0,
+      "le_22h_fresh": 520,
+      "le_22h_total": 520,
+      "le_23h_fresh": 520,
+      "le_23h_total": 520,
+      "observed_transition": {
+        "closest_not_fresh_hours": "23.928",
+        "furthest_fresh_hours": "23.920",
+        "game": "Philadelphia Phillies @ Minnesota Twins"
+      }
+    },
+    "performance_data_inspected": false,
+    "pnl_inspected": false,
+    "signal_data_inspected": false,
+    "smarkets": {
+      "coverage": "1.0",
+      "fresh_game_snapshots": 700,
+      "total_game_snapshots": 700
+    },
+    "thresholds_inspected": false
+  },
+  "forbidden_in_m1b": [
+    "signal construction",
+    "edge thresholds",
+    "trade simulation",
+    "PnL calculation",
+    "strategy calibration",
+    "OOS strategy testing"
+  ],
+  "fresh_validation": {
+    "eligibility_definition": "A game-poll snapshot is eligible iff both outcome consensus rows are eligible, each based on at least two complete fresh exchange families.",
+    "integrity_requirements": [
+      "zero in-play quote rows",
+      "zero incomplete paired rows",
+      "zero bad source-age rows",
+      "zero bad midpoint rows",
+      "zero bad freshness rows",
+      "zero bad consensus eligibility rows",
+      "zero asymmetric outcome eligibility within a game-poll"
+    ],
+    "minimum_distinct_operational_games": 3,
+    "minimum_eligibility_rate": "0.80",
+    "minimum_operational_game_snapshots": 100,
+    "poll_interval_seconds": 30,
+    "polls": 60,
+    "required_http_successes": 60
+  },
+  "milestone": "H2-v2 M1b \u2014 sharp feed remediation",
+  "parent": {
+    "m1_commit": "7624d23ddc4191daaaa0e5a3a04801dbfcf66598",
+    "m1_eligibility_rate": "0.787142857143",
+    "m1_eligible_game_snapshots": 551,
+    "m1_game_snapshots": 700,
+    "m1_polymarket_data_plane_pass": true,
+    "m1_required_rate": "0.80",
+    "m1_result": "FAIL",
+    "m1_sharp_coverage_pass": false,
+    "m1_sharp_integrity_pass": true,
+    "m1_validation_sha256": "bcb7d8aeaba14e83813ca56a2b87523739b762a1b8a11594f0d4a51e74de6cec"
+  },
+  "remediation": {
+    "collector_behavior": "Collector continues storing all strictly pregame observations. The operational horizon is applied only by the M1b validator.",
+    "time_to_game": {
+      "lower_bound_hours": 0,
+      "lower_bound_inclusive": false,
+      "reason": "Observed Matchbook publication transition occurred around 23.92 hours. A 23-hour upper bound provides approximately 55 minutes of safety margin from that observed boundary.",
+      "upper_bound_hours": 23,
+      "upper_bound_inclusive": true
+    },
+    "type": "operational_universe"
+  },
+  "sharp_data_contract": {
+    "bookmakers": [
+      "betfair_ex_uk",
+      "matchbook",
+      "smarkets"
+    ],
+    "consensus": "median",
+    "family_probability_formula": "(1/back_decimal + 1/lay_decimal) / 2",
+    "market": "h2h",
+    "max_source_age_seconds": 25,
+    "pregame_only": true,
+    "provider": "The Odds API",
+    "required_components": [
+      "h2h",
+      "h2h_lay"
+    ],
+    "required_fresh_families": 2,
+    "sport": "baseball_mlb",
+    "stale_carry_forward": false
+  },
+  "version": "H2-v2-M1b-CONTRACT-1"
+}
