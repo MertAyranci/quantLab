@@ -1,0 +1,91 @@
+{
+  "version": "H2-v2-M2d-BLOCKED-1",
+  "milestone": "H2-v2 M2d — raw WS quantity-reduction provenance",
+
+  "parent_m2c_commit": "141d0158a938b2be9d1be59c5be5b6c5fe2f7268",
+
+  "result": "BLOCKED_BY_RAW_RETENTION",
+
+  "historical_target": {
+    "date_utc": "2026-08-13",
+    "m2_window_approx_utc": "00:57-01:27",
+    "m2b_checkpoint_pairs": 142,
+    "m2b_failed_pairs": 58,
+    "m2b_size_mismatches": 114
+  },
+
+  "evidence": {
+    "active_buffer_search": {
+      "location": "data/buffer/ws",
+      "matching_raw_jsonl_files": 0
+    },
+
+    "local_recovery_search": {
+      "searched_home": true,
+      "searched_mnt": true,
+      "searched_var_backups": true,
+      "matching_raw_jsonl_files": 0
+    },
+
+    "local_backup_directory": {
+      "location": "backups",
+      "raw_jsonl_or_archive_found": false,
+      "only_observed_file": "backups/backup.log"
+    },
+
+    "database_receipts": {
+      "parsed_files_present": true,
+      "relevant_files_confirmed_parsed": true,
+      "receipt_payload_contents_preserved": false,
+      "receipt_fields": [
+        "file_path",
+        "parsed_at",
+        "row_counts",
+        "parser_sha"
+      ]
+    },
+
+    "database_raw_ref": {
+      "present": true,
+      "example": "data/buffer/ws/20260813_0057.jsonl",
+      "contains_payload": false
+    },
+
+    "scheduled_azure_backup": {
+      "script": "scripts/backup_to_azure.sh",
+      "schedule_utc": "02:30 daily",
+      "day_rule": "yesterday",
+      "raw_source": "/home/lab/quantLab/data/raw/$DAY",
+      "raw_blob_name": "raw_$DAY.tar.gz",
+      "postgres_blob_name": "pg_$DAY.sql.gz",
+      "includes_data_buffer_ws": false
+    }
+  },
+
+  "conclusion": {
+    "historical_raw_ws_payload_available": false,
+    "raw_to_db_reconciliation_possible": false,
+
+    "causal_localization_possible_from_historical_sample": false,
+
+    "not_demonstrated": [
+      "venue failed to emit quantity reductions",
+      "collector failed to record quantity reductions",
+      "buffer loader dropped quantity reductions",
+      "database normalization changed quantity semantics",
+      "price_change size semantics were interpreted incorrectly"
+    ],
+
+    "reason": "The original websocket JSONL payloads required to distinguish these mechanisms are no longer available and were not covered by the scheduled Azure backup."
+  },
+
+  "methodological_disposition": {
+    "m2_result_changed": false,
+    "m2b_result_changed": false,
+    "m2c_result_changed": false,
+
+    "performance_data_inspected": false,
+
+    "next_step": "Use a separate fresh engineering capture with immutable raw websocket retention and reconcile raw frame -> collector record -> loader output -> database delta -> subsequent full-book checkpoint."
+  }
+}
