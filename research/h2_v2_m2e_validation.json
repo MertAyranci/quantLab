@@ -1,0 +1,119 @@
+{
+  "all_tests_passed": true,
+  "collector_sha256": "50f4ee810ae38974f3156431b6596980c514c8d17ca11f4c8cc341ff058951c0",
+  "contract_sha256": "12f0d82a1798864a5a0ec16e86f8bac7b3f8ecd327a9aa77c5b75512a74b67dd",
+  "database_schema_changed": false,
+  "live_collector_restarted": false,
+  "milestone": "H2-v2 M2e \u2014 immutable WS evidence instrumentation",
+  "performance_data_inspected": false,
+  "results": [
+    {
+      "detail": {
+        "evidence_created": false,
+        "production_records": 1
+      },
+      "name": "disabled mode writes no M2e evidence",
+      "pass": true
+    },
+    {
+      "detail": {
+        "exact_match": true,
+        "raw_length": 65
+      },
+      "name": "raw frame is preserved exactly",
+      "pass": true
+    },
+    {
+      "detail": {
+        "sha256": "ab994449278477c59b690f5fd2adc4be134e87a7f21cfc6f4e4cdea7c3d7d1bf"
+      },
+      "name": "raw frame SHA256 is exact",
+      "pass": true
+    },
+    {
+      "detail": {
+        "conn_A": [
+          1,
+          2
+        ],
+        "conn_B": [
+          1
+        ]
+      },
+      "name": "frame_sequence is monotonic per connection",
+      "pass": true
+    },
+    {
+      "detail": {
+        "change_index": 0,
+        "frame_sequence": 1,
+        "ingest_sequence": 1,
+        "normalized_records": 1
+      },
+      "name": "single price_change maps to correct provenance",
+      "pass": true
+    },
+    {
+      "detail": {
+        "change_indexes": [
+          0,
+          1
+        ],
+        "normalized_records": 2,
+        "raw_frames": 1
+      },
+      "name": "multi-change price_change shares frame provenance and retains change_index",
+      "pass": true
+    },
+    {
+      "detail": {
+        "frame_sequence": 1,
+        "kind": "ws_book"
+      },
+      "name": "ws_book maps to correct provenance",
+      "pass": true
+    },
+    {
+      "detail": {
+        "frame_sequence": 1,
+        "kind": "last_trade_price"
+      },
+      "name": "last_trade_price maps to correct provenance",
+      "pass": true
+    },
+    {
+      "detail": {
+        "normalized_rest_records": 1,
+        "raw_frames": 0,
+        "raw_provenance": null
+      },
+      "name": "REST resync evidence has null raw-frame provenance",
+      "pass": true
+    },
+    {
+      "detail": {
+        "exact_equal": true,
+        "production_keys": [
+          "book_generation",
+          "capture_time",
+          "change_index",
+          "connection_id",
+          "ingest_sequence",
+          "kind",
+          "payload",
+          "token",
+          "watchlist_rule"
+        ],
+        "records_compared": 2
+      },
+      "name": "normal production buffer record remains unchanged by instrumentation",
+      "pass": true
+    }
+  ],
+  "synthetic_tests_only": true,
+  "tests_failed": 0,
+  "tests_passed": 10,
+  "tests_required": 10,
+  "validator_sha256": "f9c2b895f879e24ec500a5454297202e6def22500aaaa7b44616364eb409fc16",
+  "version": "H2-v2-M2e-VALIDATION-1"
+}

@@ -1,0 +1,105 @@
+{
+  "version": "H2-v2-M2e-CONTRACT-1",
+  "milestone": "H2-v2 M2e — immutable WS evidence instrumentation",
+
+  "parent_m2d_commit": "b8e214b1b833f37f207250d52fc18526b186a03d",
+
+  "purpose": "Build and validate opt-in instrumentation that preserves exact websocket frames and their corresponding normalized H2-v2 collector records before database loading.",
+
+  "scope": {
+    "engineering_only": true,
+    "fresh_strategy_performance": false,
+    "historical_m2b_diagnosis": false,
+    "live_root_cause_diagnosis": false
+  },
+
+  "instrumentation_requirements": {
+    "disabled_by_default": true,
+
+    "existing_production_semantics_unchanged_when_disabled": true,
+
+    "raw_frame_evidence": {
+      "required": true,
+      "written_before_collector_normalization": true,
+      "fields": [
+        "capture_time",
+        "connection_id",
+        "frame_sequence",
+        "raw_frame_sha256",
+        "raw"
+      ],
+      "frame_sequence_rule": "monotonic per websocket connection starting at 1",
+      "hash_rule": "sha256 of exact UTF-8 websocket text frame"
+    },
+
+    "normalized_evidence": {
+      "required": true,
+      "h2_v2_only": true,
+      "written_before_buffer_loader": true,
+      "fields_include": [
+        "kind",
+        "token",
+        "capture_time",
+        "connection_id",
+        "ingest_sequence",
+        "change_index",
+        "book_generation",
+        "watchlist_rule",
+        "payload",
+        "raw_frame_sequence",
+        "raw_frame_sha256"
+      ]
+    },
+
+    "rest_events": {
+      "permitted": true,
+      "raw_frame_sequence": null,
+      "raw_frame_sha256": null
+    },
+
+    "evidence_location": "data/evidence/h2_v2_m2e/<capture_id>/",
+
+    "normal_buffer_location_unchanged": "data/buffer/ws/",
+
+    "database_schema_changes_allowed": false,
+
+    "normal_buffer_record_schema_changes_allowed": false
+  },
+
+  "required_validation": {
+    "synthetic_tests_only": true,
+
+    "tests": [
+      "disabled mode writes no M2e evidence",
+      "raw frame is preserved exactly",
+      "raw frame SHA256 is exact",
+      "frame_sequence is monotonic per connection",
+      "single price_change maps to correct provenance",
+      "multi-change price_change records share frame provenance and retain distinct change_index",
+      "ws_book maps to correct provenance",
+      "last_trade_price maps to correct provenance",
+      "REST resync evidence has null raw-frame provenance",
+      "normal production buffer record remains unchanged by instrumentation"
+    ],
+
+    "all_tests_must_pass": true
+  },
+
+  "acceptance": {
+    "pass_if": "All frozen synthetic validation tests pass and instrumentation is opt-in with no database/schema or normal-buffer semantic change.",
+    "fail_if": "Any required provenance mapping fails, disabled mode changes behavior, or normal production buffer records are modified."
+  },
+
+  "prohibited": [
+    "edge calculation",
+    "threshold selection",
+    "trade simulation",
+    "fill simulation",
+    "PnL calculation",
+    "resolution inspection",
+    "M2 or M2b rescue",
+    "post-hoc change of M2e acceptance criteria"
+  ],
+
+  "next_milestone_if_pass": "H2-v2 M2f — fresh raw-to-DB quantity-reduction diagnosis"
+}

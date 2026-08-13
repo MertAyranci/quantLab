@@ -31,9 +31,11 @@ reconnect. Healthcheck ping (WS_HEALTHCHECK_URL) once per minute while flowing.
 
 import argparse
 import asyncio
+import hashlib
 import json
 import logging
 import os
+import re
 import time
 import uuid
 from datetime import datetime, timezone
@@ -56,6 +58,7 @@ if _dsn:
 
 REPO = Path(__file__).resolve().parents[2]
 BUF_DIR = REPO / "data" / "buffer" / "ws"
+M2E_EVIDENCE_ROOT = REPO / "data" / "evidence" / "h2_v2_m2e"
 GAMMA = "https://gamma-api.polymarket.com"
 CLOB = "https://clob.polymarket.com"
 WS_URI = "wss://ws-subscriptions-clob.polymarket.com/ws/market"
@@ -82,6 +85,168 @@ def utcnow():
     return datetime.now(timezone.utc)
 
 
+class M2eEvidenceWriter:
+    """Opt-in immutable evidence stream for H2-v2 replay diagnostics.
+
+    This writer is deliberately separate from data/buffer/ws. It never changes
+    the normal loader-facing record schema.
+
+    One capture_id creates exactly one new directory:
+        data/evidence/h2_v2_m2e/<capture_id>/
+
+    Existing capture directories are never reopened or overwritten.
+    """
+
+    _CAPTURE_RE = re.compile(r"^[A-Za-z0-9._-]+$")
+
+    def __init__(
+        self,
+        capture_id: str,
+        root: Path | None = None,
+    ):
+        if not capture_id or not self._CAPTURE_RE.fullmatch(capture_id):
+            raise ValueError(
+                "M2e capture_id must contain only A-Z, a-z, 0-9, '.', '_' or '-'"
+            )
+
+        self.capture_id = capture_id
+        self.root = Path(root) if root is not None else M2E_EVIDENCE_ROOT
+        self.capture_dir = self.root / capture_id
+
+        # Evidence captures are append-during-capture but never reused.
+        self.capture_dir.mkdir(
+            parents=True,
+            exist_ok=False,
+        )
+
+        self.raw_path = self.capture_dir / "raw_frames.jsonl"
+        self.normalized_path = (
+            self.capture_dir
+            / "normalized_h2_v2.jsonl"
+        )
+        self.manifest_path = self.capture_dir / "manifest.json"
+
+        self._raw_fh = self.raw_path.open(
+            "x",
+            encoding="utf-8",
+            buffering=1,
+        )
+        self._normalized_fh = self.normalized_path.open(
+            "x",
+            encoding="utf-8",
+            buffering=1,
+        )
+
+        manifest = {
+            "version": "H2-v2-M2e-EVIDENCE-1",
+            "capture_id": capture_id,
+            "created_at": utcnow().isoformat(),
+            "raw_frames": self.raw_path.name,
+            "normalized_h2_v2": self.normalized_path.name,
+        }
+
+        with self.manifest_path.open(
+            "x",
+            encoding="utf-8",
+        ) as fh:
+            json.dump(
+                manifest,
+                fh,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            fh.write("\n")
+
+        self._connection_id = None
+        self._frame_sequence = 0
+
+    def start_connection(
+        self,
+        connection_id: str,
+    ):
+        self._connection_id = connection_id
+        self._frame_sequence = 0
+
+    def write_raw_frame(
+        self,
+        *,
+        connection_id: str,
+        capture_time: str,
+        raw: str,
+    ) -> tuple[int, str]:
+        if not isinstance(raw, str):
+            raise TypeError(
+                "M2e evidence supports exact UTF-8 websocket text frames only"
+            )
+
+        if connection_id != self._connection_id:
+            self.start_connection(
+                connection_id
+            )
+
+        self._frame_sequence += 1
+
+        digest = hashlib.sha256(
+            raw.encode("utf-8")
+        ).hexdigest()
+
+        rec = {
+            "capture_time": capture_time,
+            "connection_id": connection_id,
+            "frame_sequence": self._frame_sequence,
+            "raw_frame_sha256": digest,
+            "raw": raw,
+        }
+
+        self._raw_fh.write(
+            json.dumps(
+                rec,
+                separators=(",", ":"),
+            )
+            + "\n"
+        )
+
+        return (
+            self._frame_sequence,
+            digest,
+        )
+
+    def write_normalized(
+        self,
+        record: dict,
+        *,
+        raw_frame_sequence: int | None,
+        raw_frame_sha256: str | None,
+    ):
+        if (
+            record.get("watchlist_rule")
+            != "h2_v2"
+        ):
+            return
+
+        evidence_record = dict(record)
+
+        evidence_record[
+            "raw_frame_sequence"
+        ] = raw_frame_sequence
+
+        evidence_record[
+            "raw_frame_sha256"
+        ] = raw_frame_sha256
+
+        self._normalized_fh.write(
+            json.dumps(
+                evidence_record,
+                separators=(",", ":"),
+            )
+            + "\n"
+        )
+
+    def flush(self):
+        self._raw_fh.flush()
+        self._normalized_fh.flush()
+
+
 class BufferWriter:
     """Minute-rotated JSONL files; loader consumes files whose minute has passed."""
 
@@ -105,10 +270,29 @@ class BufferWriter:
 
 
 class WSCollector:
-    def __init__(self, watchlist_size: int):
+    def __init__(
+        self,
+        watchlist_size: int,
+        *,
+        evidence_capture_id: str | None = None,
+        evidence_root: Path | None = None,
+        buffer_writer=None,
+    ):
         self.watchlist_size = watchlist_size
         self.http = httpx.Client(headers=UA, timeout=30)
-        self.buf = BufferWriter()
+        self.buf = (
+            buffer_writer
+            if buffer_writer is not None
+            else BufferWriter()
+        )
+        self.evidence = (
+            M2eEvidenceWriter(
+                evidence_capture_id,
+                root=evidence_root,
+            )
+            if evidence_capture_id
+            else None
+        )
         self.tokens: list[str] = []
         self.h2_v2_tokens: set[str] = set()
         self.generation: dict[str, int] = {}
@@ -119,6 +303,22 @@ class WSCollector:
         self.last_msg_t = 0.0
         self.counts: dict[str, int] = {}
         self.last_hc = 0.0
+
+    def _begin_connection(
+        self,
+        connection_id: str | None = None,
+    ):
+        self.conn_id = (
+            connection_id
+            if connection_id is not None
+            else str(uuid.uuid4())
+        )
+        self.seq = 0
+
+        if self.evidence:
+            self.evidence.start_connection(
+                self.conn_id
+            )
 
     # ---- watchlist ---------------------------------------------------------
 
@@ -271,8 +471,19 @@ class WSCollector:
 
     # ---- buffer records ----------------------------------------------------
 
-    def emit(self, kind: str, token: str | None, payload: dict, change_index=0):
-        self.buf.write({
+    def emit(
+        self,
+        kind: str,
+        token: str | None,
+        payload: dict,
+        change_index=0,
+        *,
+        raw_frame_sequence: int | None = None,
+        raw_frame_sha256: str | None = None,
+    ):
+        # IMPORTANT: this is the existing production buffer schema.
+        # M2e provenance is written only to the separate evidence stream.
+        record = {
             "kind": kind,
             "token": token,
             "capture_time": utcnow().isoformat(),
@@ -286,7 +497,19 @@ class WSCollector:
                 else "vol24h_top"
             ),
             "payload": payload,
-        })
+        }
+
+        self.buf.write(
+            record
+        )
+
+        if self.evidence:
+            self.evidence.write_normalized(
+                record,
+                raw_frame_sequence=raw_frame_sequence,
+                raw_frame_sha256=raw_frame_sha256,
+            )
+
         self.counts[kind] = self.counts.get(kind, 0) + 1
 
     # ---- REST resync / reconciliation --------------------------------------
@@ -356,8 +579,23 @@ class WSCollector:
     # ---- WS message handling ------------------------------------------------
 
     def handle(self, raw: str):
+        raw_frame_sequence = None
+        raw_frame_sha256 = None
+
+        # Capture exact websocket text before JSON parsing / normalization.
+        if self.evidence:
+            (
+                raw_frame_sequence,
+                raw_frame_sha256,
+            ) = self.evidence.write_raw_frame(
+                connection_id=self.conn_id,
+                capture_time=utcnow().isoformat(),
+                raw=raw,
+            )
+
         if raw == "PONG":
             return
+
         try:
             msgs = json.loads(raw)
         except json.JSONDecodeError:
@@ -373,35 +611,70 @@ class WSCollector:
                 changes = d.get("price_changes") or d.get("changes") or [d]
                 for ci, ch in enumerate(changes):
                     tok = str(ch.get("asset_id")) if ch.get("asset_id") else token
-                    self.emit("price_change", tok,
-                              {**ch,
-                               "market": d.get("market"),
-                               "timestamp": d.get("timestamp")}, ci)
+                    self.emit(
+                        "price_change",
+                        tok,
+                        {
+                            **ch,
+                            "market": d.get("market"),
+                            "timestamp": d.get("timestamp"),
+                        },
+                        ci,
+                        raw_frame_sequence=raw_frame_sequence,
+                        raw_frame_sha256=raw_frame_sha256,
+                    )
                     if ch.get("best_bid") or ch.get("best_ask"):
                         self.last_tob[tok] = (ch.get("best_bid"), ch.get("best_ask"))
             elif et == "book":
-                self.emit("ws_book", token, d)
+                self.emit(
+                    "ws_book",
+                    token,
+                    d,
+                    raw_frame_sequence=raw_frame_sequence,
+                    raw_frame_sha256=raw_frame_sha256,
+                )
                 bids, asks = d.get("bids") or [], d.get("asks") or []
                 bb = max((Decimal(l["price"]) for l in bids), default=None)
                 ba = min((Decimal(l["price"]) for l in asks), default=None)
                 self.last_tob[token] = (str(bb) if bb is not None else None,
                                         str(ba) if ba is not None else None)
             elif et == "best_bid_ask":
-                self.emit("best_bid_ask", token, d)
+                self.emit(
+                    "best_bid_ask",
+                    token,
+                    d,
+                    raw_frame_sequence=raw_frame_sequence,
+                    raw_frame_sha256=raw_frame_sha256,
+                )
                 self.last_tob[token] = (d.get("best_bid"), d.get("best_ask"))
-            elif et in ("last_trade_price", "tick_size_change",
-                        "market_resolved", "new_market"):
-                self.emit(et, token, d)
+            elif et in (
+                "last_trade_price",
+                "tick_size_change",
+                "market_resolved",
+                "new_market",
+            ):
+                self.emit(
+                    et,
+                    token,
+                    d,
+                    raw_frame_sequence=raw_frame_sequence,
+                    raw_frame_sha256=raw_frame_sha256,
+                )
             else:
-                self.emit("unknown", token, d)
+                self.emit(
+                    "unknown",
+                    token,
+                    d,
+                    raw_frame_sequence=raw_frame_sequence,
+                    raw_frame_sha256=raw_frame_sha256,
+                )
 
     # ---- main loop -----------------------------------------------------------
 
     async def run(self):
         self.fetch_watchlist()
         while True:
-            self.conn_id = str(uuid.uuid4())
-            self.seq = 0
+            self._begin_connection()
             try:
                 async with websockets.connect(WS_URI, max_size=None) as ws:
                     await ws.send(json.dumps({
@@ -427,6 +700,8 @@ class WSCollector:
                             last_reconcile = now
                         if now - last_stats >= 60:
                             self.buf.flush()
+                            if self.evidence:
+                                self.evidence.flush()
                             log.info("1m stats: %s", self.counts)
                             self.counts = {}
                             last_stats = now
@@ -445,15 +720,30 @@ class WSCollector:
             except Exception as e:
                 log.warning("connection ended (%s) — reconnecting in 5s", e)
                 self.buf.flush()
+                if self.evidence:
+                    self.evidence.flush()
                 await asyncio.sleep(5)
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--watchlist-size", type=int, default=50)
+    ap.add_argument(
+        "--m2e-evidence-capture-id",
+        default=None,
+        help=(
+            "Opt-in H2-v2 immutable evidence capture ID. "
+            "Disabled when omitted."
+        ),
+    )
     args = ap.parse_args()
     try:
-        asyncio.run(WSCollector(args.watchlist_size).run())
+        asyncio.run(
+            WSCollector(
+                args.watchlist_size,
+                evidence_capture_id=args.m2e_evidence_capture_id,
+            ).run()
+        )
     except KeyboardInterrupt:
         log.info("shutdown requested — flushing buffers and exiting cleanly")
 

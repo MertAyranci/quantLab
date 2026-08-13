@@ -1,0 +1,48 @@
+{
+  "artifacts": {
+    "collector_sha256": "50f4ee810ae38974f3156431b6596980c514c8d17ca11f4c8cc341ff058951c0",
+    "contract_sha256": "12f0d82a1798864a5a0ec16e86f8bac7b3f8ecd327a9aa77c5b75512a74b67dd",
+    "validation_sha256": "9e29bc76574368c10bc30f5a96641e420e86b810d0c950b79aab4baf712ca3f8",
+    "validator_sha256": "f9c2b895f879e24ec500a5454297202e6def22500aaaa7b44616364eb409fc16"
+  },
+  "demonstrated": [
+    "instrumentation is disabled by default",
+    "exact websocket text frame is retained",
+    "raw frame SHA256 is exact",
+    "frame_sequence is monotonic per websocket connection",
+    "single price_change provenance is preserved",
+    "multi-change price_change shares raw-frame provenance while retaining change_index",
+    "ws_book provenance is preserved",
+    "last_trade_price provenance is preserved",
+    "REST resync records have null raw-frame provenance",
+    "normal production buffer record schema and contents are unchanged by instrumentation"
+  ],
+  "methodology": {
+    "edge_calculated": false,
+    "m2_result_changed": false,
+    "m2b_result_changed": false,
+    "m2c_result_changed": false,
+    "m2d_result_changed": false,
+    "performance_data_inspected": false,
+    "pnl_calculated": false,
+    "resolutions_inspected": false,
+    "trades_simulated": false
+  },
+  "milestone": "H2-v2 M2e \u2014 immutable WS evidence instrumentation",
+  "next_milestone": "H2-v2 M2f \u2014 fresh raw-to-DB quantity-reduction diagnosis",
+  "parent_m2d_commit": "b8e214b1b833f37f207250d52fc18526b186a03d",
+  "production_disposition": {
+    "database_schema_changed": false,
+    "instrumentation_enabled_on_live_collector": false,
+    "live_collector_restarted_during_m2e": false,
+    "normal_buffer_schema_changed": false
+  },
+  "result": "PASS",
+  "validation": {
+    "all_tests_passed": true,
+    "synthetic_tests_failed": 0,
+    "synthetic_tests_passed": 10,
+    "synthetic_tests_required": 10
+  },
+  "version": "H2-v2-M2e-CONCLUSION-1"
+}
