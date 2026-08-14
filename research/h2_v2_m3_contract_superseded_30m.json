@@ -1,0 +1,281 @@
+{
+  "version": "H2-v2-M3-CONTRACT-1",
+
+  "milestone": "H2-v2 M3 — prospective calibration acquisition system",
+
+  "parent_m2h_commit": "935b44af95e8f22ea89cfd69d4263272c86fe74b",
+
+  "purpose": "Build and freeze the prospective acquisition system that will supply the 60-market H2-v2 calibration cohort without inspecting strategy performance.",
+
+  "replay_dependency": {
+    "status": "VALIDATED",
+    "m2h_result": "PASS",
+    "m2h_tape_sha256": "c234267e3342601c9706c39d7d4c20c93eaeea1df5b0ca0a5513cf67221be75f",
+    "m2h_validation_sha256": "c6883a4994cee12e0da9a5c7621c27a5046b76e43363e9679e2b2fc6bfa0d1ed",
+    "m2h_conclusion_sha256": "c992fb70d32247e3e19102a5c708a4084385c16f7407b00ae8690adf851092da"
+  },
+
+  "historical_operational_preflight": {
+    "latest_historical_poll_id": 121,
+    "latest_historical_collector_run_id": 11691,
+    "credits_remaining_at_preflight": 368,
+    "credit_cost_last_poll": 1,
+    "historical_sharp_polls": 121,
+    "historical_fully_eligible_games": 16,
+    "historical_mapped_games": 17,
+    "historical_configured_markets": 17,
+    "historical_h2_v2_watchlist_tokens": 34
+  },
+
+  "calibration_target": {
+    "unit": "MLB game / canonical Polymarket moneyline market",
+    "markets": 60,
+    "positions_per_market_later": 1,
+    "performance_evaluation_in_m3": false
+  },
+
+  "prospective_boundary": {
+    "activation_must_occur_after_m3_code_freeze": true,
+
+    "activation_record_required": true,
+
+    "historical_game_exclusion_rule": "Any odds_game_id having any H2-v2 sharp consensus observation before the prospective activation timestamp is permanently excluded from the 60-market calibration cohort.",
+
+    "historical_engineering_games_may_enter_calibration": false,
+
+    "first_calibration_observation_rule": "Only scheduled M3 acquisition polls strictly after the prospective activation timestamp may contribute data to calibration."
+  },
+
+  "sharp_poll_schedule": {
+    "cadence_minutes": 30,
+
+    "utc_alignment": [
+      "minute 00 of every UTC hour",
+      "minute 30 of every UTC hour"
+    ],
+
+    "polls_per_cycle": 1,
+
+    "catch_up_polling_after_missed_cycle": false,
+
+    "manual_extra_polls_count_toward_calibration": false,
+
+    "source_max_age_seconds": 25,
+
+    "required_fresh_exchange_families": 2,
+
+    "exchange_families": [
+      "betfair_ex_uk",
+      "matchbook",
+      "smarkets"
+    ],
+
+    "stale_carry_forward": false,
+
+    "pregame_only": true,
+
+    "operational_horizon": "0 < time_to_game <= 23 hours",
+
+    "quota_safety_floor_credits": 50,
+
+    "stop_new_sharp_requests_at_or_below_floor": true
+  },
+
+  "cycle_identity": {
+    "every_scheduled_cycle_must_be_persisted": true,
+
+    "required_fields": [
+      "cycle_id",
+      "scheduled_for",
+      "started_at",
+      "finished_at",
+      "git_commit",
+      "sharp_poll_id",
+      "sharp_collector_run_id",
+      "sharp_http_success",
+      "credits_before",
+      "credits_after",
+      "mapper_success",
+      "config_refresh_success",
+      "watchlist_refresh_success",
+      "cohort_enrollment_success",
+      "cycle_status"
+    ],
+
+    "reason": "Only cryptographically frozen scheduled acquisition cycles may later contribute calibration observations."
+  },
+
+  "cycle_order": {
+    "step_1": "Check quota and acquisition-system health.",
+
+    "step_2": "Using already-known games from prior sharp polls, refresh unique Polymarket mappings, missing market configuration, and the H2-v2 websocket watchlist.",
+
+    "step_3": "Execute exactly one scheduled sharp poll.",
+
+    "step_4": "Record the resulting sharp poll ID and collector run ID as belonging to this scheduled cycle.",
+
+    "step_5": "Evaluate infrastructure-only calibration-cohort eligibility for previously captured scheduled polls. No fair-value edge may be computed.",
+
+    "step_6": "Run mapping/config/watchlist refresh again so games newly discovered in the current sharp poll are prepared for future scheduled cycles."
+  },
+
+  "mapping_rule": {
+    "existing_certified_mapper_semantics_preserved": true,
+
+    "requirements": [
+      "exact normalized MLB team set",
+      "moneyline market",
+      "exactly two CLOB tokens",
+      "active market",
+      "closed == false",
+      "accepting orders == true",
+      "Polymarket game start within 600 seconds of Odds API commence time",
+      "exactly one eligible candidate"
+    ],
+
+    "ambiguous_mapping_allowed": false,
+
+    "automatic_remapping_of_existing_certified_game": false
+  },
+
+  "market_configuration": {
+    "must_support_growing_market_set": true,
+
+    "fixed_historical_17_market_assumption_allowed": false,
+
+    "configuration_required_before_an_observation_can_be_calibration_eligible": true,
+
+    "required_fields": [
+      "minimum order size",
+      "minimum tick size",
+      "fee rate",
+      "fee exponent",
+      "taker-only flag",
+      "CLOB token identity"
+    ]
+  },
+
+  "watchlist": {
+    "refresh_automatically": true,
+
+    "atomic_file_update_required": true,
+
+    "target_file": "config/watchlist_h2_v2.txt",
+
+    "newly_mapped_tokens_must_be_subscribed_before_their_market_can_be_calibration_eligible": true,
+
+    "existing_h2_v2_tokens_must_not_be silently_removed": true
+  },
+
+  "calibration_market_infrastructure_eligibility": {
+    "edge_values_may_be_used": false,
+
+    "resolution_may_be_used": false,
+
+    "requirements": [
+      "game is not historically excluded",
+      "scheduled M3 sharp poll occurs after activation",
+      "game is strictly pregame",
+      "0 < time_to_game <= 23 hours",
+      "both MLB outcomes have eligible sharp consensus rows in the same scheduled poll",
+      "exactly one certified Polymarket market mapping exists",
+      "exactly two correctly identified outcome tokens exist",
+      "complete market configuration existed before the candidate observation",
+      "both H2-v2 tokens were already under websocket collection before the candidate observation",
+      "authoritative decision-time book reconstruction is available for both outcome tokens",
+      "authoritative decision+500ms book reconstruction is available for both outcome tokens",
+      "no lookahead",
+      "no generation mixing",
+      "no connection mixing",
+      "no crossed reconstructed book"
+    ]
+  },
+
+  "cohort_enrollment": {
+    "market_unit_not_outcome_unit": true,
+
+    "first_eligible_observation_only": true,
+
+    "immutable_after_enrollment": true,
+
+    "maximum_markets": 60,
+
+    "enrollment_order": [
+      "first infrastructure-eligible scheduled poll capture time ASC",
+      "game commence time ASC",
+      "odds_game_id ASC"
+    ],
+
+    "once_rank_assigned_it_may_not_change": true,
+
+    "stop_enrollment_after_rank_60": true,
+
+    "market_cannot_be_replaced_after_later_resolution_or_performance_is_known": true
+  },
+
+  "future_calibration_data": {
+    "all_valid_scheduled_observations_for_the_enrolled_60_markets_may_be_retained": true,
+
+    "economic_entry_rule_not_evaluated_in_m3": true,
+
+    "candidate_edge_thresholds_not_evaluated_in_m3": true,
+
+    "future_thresholds_remain": [
+      0.005,
+      0.01,
+      0.015,
+      0.02,
+      0.025,
+      0.03,
+      0.04,
+      0.05
+    ],
+
+    "future_no_go_rule_preserved": "If no candidate threshold with at least 20 calibration trades has positive calibration mean net PnL, do not start confirmatory OOS without declaring a new hypothesis."
+  },
+
+  "m3_acceptance": {
+    "database_migration_valid": true,
+    "orchestrator_dry_run_pass": true,
+    "scheduled-cycle provenance_test_pass": true,
+    "dynamic_mapping_test_pass": true,
+    "dynamic_config_test_pass": true,
+    "atomic_watchlist_refresh_test_pass": true,
+    "cohort_enrollment_test_pass": true,
+    "historical_exclusion_test_pass": true,
+    "quota_floor_test_pass": true,
+
+    "live_calibration_edge_required": false,
+    "60_markets_required_before_m3_code_freeze": false
+  },
+
+  "prohibited": [
+    "No fair-value gap inspection",
+    "No edge calculation",
+    "No candidate threshold evaluation",
+    "No calibration PnL",
+    "No resolution inspection",
+    "No Brier score",
+    "No win-rate calculation",
+    "No trade selection",
+    "No OOS data use",
+    "No posthoc cadence change based on market opportunities",
+    "No historical engineering game may enter the calibration cohort"
+  ],
+
+  "planned_code_artifacts": [
+    "db/migrations/012_h2_v2_calibration_acquisition.sql",
+    "collectors/odds/h2_v2_m3_orchestrator.py",
+    "collectors/polymarket/h2_v2_m3_config_refresh.py",
+    "collectors/polymarket/h2_v2_m3_watchlist_refresh.py",
+    "research/h2_v2_m3_enroll.py",
+    "research/h2_v2_m3_validate.py",
+    "ops/systemd/h2-v2-m3-acquisition.service",
+    "ops/systemd/h2-v2-m3-acquisition.timer"
+  ],
+
+  "planned_research_artifacts": [
+    "research/h2_v2_m3_validation.json",
+    "research/h2_v2_m3_conclusion.json"
+  ]
+}

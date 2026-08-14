@@ -1,0 +1,118 @@
+{
+  "version": "H2-v2-M3a-CONCLUSION-1",
+
+  "milestone": "H2-v2 M3a — development-set economic feasibility",
+
+  "parent_m2h_commit": "935b44af95e8f22ea89cfd69d4263272c86fe74b",
+
+  "result": "NOT_PROMISING_FOR_M3B",
+
+  "interpretation": "STRUCTURAL_EXECUTABLE_SIGNAL_GATE_FAILED",
+
+  "development_set": {
+    "games": 9,
+    "markets": 9,
+    "tape_rows": 1080,
+    "liquidity_valid_rows": 1080,
+    "permanently_excluded_from_formal_calibration": true,
+    "permanently_excluded_from_confirmatory_oos": true
+  },
+
+  "progression_gate": {
+    "threshold": 0.01,
+    "required_distinct_markets": 3,
+    "observed_distinct_markets": 0,
+    "passed": false,
+    "uses_resolution": false,
+    "uses_realized_pnl": false
+  },
+
+  "execution_edge_market_incidence": {
+    "0.005": 0,
+    "0.01": 0,
+    "0.015": 0,
+    "0.02": 0,
+    "0.025": 0,
+    "0.03": 0,
+    "0.04": 0,
+    "0.05": 0
+  },
+
+  "edge_distribution": {
+    "positive_decision_edge_rows": 0,
+    "positive_execution_edge_rows": 0,
+    "decision_edge_median": -0.0182645524195530409887799545,
+    "execution_edge_median": -0.0182645524195530409887799545,
+    "execution_edge_p90": -0.0078182545186908796412888247,
+    "execution_edge_p95": -0.003081107740393454679168965,
+    "execution_edge_max": -0.0007514087375046279155868195
+  },
+
+  "latency_interpretation": {
+    "positive_decision_edges_available_for_survival_test": 0,
+    "positive_edges_after_500ms": 0,
+    "conclusion": "The M3a failure is not attributable to the prespecified 500 ms paper-execution delay because no positive after-fee decision-time edge existed in the development set."
+  },
+
+  "threshold_economics": {
+    "candidate_thresholds": [
+      0.005,
+      0.01,
+      0.015,
+      0.02,
+      0.025,
+      0.03,
+      0.04,
+      0.05
+    ],
+    "trades_at_every_threshold": 0,
+    "formal_threshold_selected": false,
+    "realized_pnl_based_decision": false
+  },
+
+  "resolution_coverage": {
+    "resolved_markets": 7,
+    "ambiguous_markets": 0,
+    "unresolved_markets": 2,
+    "resolution_inference_used": false,
+    "material_to_progression_gate": false
+  },
+
+  "decision": {
+    "run_m3b_targeted_high_frequency_pilot": false,
+    "purchase_large_odds_api_quota_for_current_h2_v2_design": false,
+    "start_formal_60_market_calibration": false,
+    "start_100_market_oos": false
+  },
+
+  "scientific_boundary": {
+    "current_h2_v2_absolute_fair_value_design_supported": false,
+    "all_external_market_latency_hypotheses_rejected": false,
+    "direct_exchange_feed_hypotheses_rejected": false,
+    "reason": "M3a tested the frozen absolute external-fair-value versus executable-ask hypothesis using the existing Odds API-based development dataset. It did not test every possible external-market change signal, direct-feed architecture, or alternative strategy."
+  },
+
+  "next_research_direction": {
+    "status": "REQUIRES_NEW_PREREGISTERED_HYPOTHESIS",
+    "allowed_topics": [
+      "sharp-market change or innovation rather than absolute fair-value level",
+      "direct Betfair, Matchbook, or Smarkets feed latency",
+      "cross-market or logical arbitrage",
+      "maker execution",
+      "other independently preregistered strategy"
+    ],
+    "may_rescue_h2_v2_posthoc": false
+  },
+
+  "artifacts": {
+    "superseded_m3_contract_sha256": "f79a4141c9844c84d63d91258c379de4ca81caf54c2cf0b85615cf769212fdf1",
+    "m3_supersession_sha256": "74a90bbb56b9fbdca490c2f703444506b7d83e64d034eb7905bd8c63eb7a3f76",
+    "m3a_contract_sha256": "9a63e51ae695009330ab90f542f8cb7fe6e1ae1ede7759f721f4bb5954dfd3bc",
+    "m3a_analyzer_sha256": "809368e4e3b9142e813c89043b18331fd45fd0e6b6b70ee4874d7d92a59a3863",
+    "row_diagnostics_sha256": "a98632fb1894236b28aa8caf5d0e9df5f3b4dcf4cf450bdb429f84b146824996",
+    "threshold_summary_sha256": "0210cff7074563e7f61e32d3b9e4ab2599fedddfff6e98792b67be14b354fb15",
+    "summary_sha256": "2c92aa9cd7470398597bed6fe67504270b029b31dff4dcb8bba09a4ae4f2b3b6"
+  },
+
+  "m3a_status": "COMPLETE"
+}

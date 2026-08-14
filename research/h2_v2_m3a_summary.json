@@ -1,0 +1,193 @@
+{
+  "analyzer_sha256": "809368e4e3b9142e813c89043b18331fd45fd0e6b6b70ee4874d7d92a59a3863",
+  "configuration_gate": {
+    "markets_checked": 9,
+    "passed": true,
+    "position_size_shares": "5",
+    "taker_only_required": true
+  },
+  "contract_sha256": "9a63e51ae695009330ab90f542f8cb7fe6e1ae1ede7759f721f4bb5954dfd3bc",
+  "development_set": {
+    "distinct_games": 9,
+    "distinct_markets": 9,
+    "formal_calibration_eligible": false,
+    "formal_oos_eligible": false,
+    "market_ids": [
+      1769614,
+      1769616,
+      1769618,
+      1769620,
+      1769625,
+      1769651,
+      1769658,
+      1817541,
+      1817542
+    ],
+    "tape_rows": 1080
+  },
+  "formal_threshold_selected": false,
+  "interpretation_boundary": "M3a is exploratory development evidence only. Its nine markets are permanently excluded from formal H2-v2 calibration and confirmatory OOS.",
+  "latency": {
+    "decision_edge_distribution": {
+      "count": 1080,
+      "max": "-0.0007514087375046279155868195",
+      "mean": "-0.01804207525055745961329120937629629629630",
+      "median": "-0.018264552419553040988779954500",
+      "min": "-0.0336796774193548387096774194",
+      "p10": "-0.029242459498959037074825242500",
+      "p25": "-0.025168104873334897547972608600",
+      "p75": "-0.010442476697476697476697476700",
+      "p90": "-0.007818254518690879641288824700",
+      "p95": "-0.00308110774039345467916896500",
+      "p99": "-0.00308110774039345467916896500"
+    },
+    "edge_decay_distribution": {
+      "count": 1080,
+      "max": "0.000000000000000000000000000",
+      "mean": "0.0000000000000000000000000000",
+      "median": "0.000000000000000000000000000000",
+      "min": "0.000000000000000000000000000",
+      "p10": "0.000000000000000000000000000000",
+      "p25": "0.000000000000000000000000000000",
+      "p75": "0.000000000000000000000000000000",
+      "p90": "0.000000000000000000000000000000",
+      "p95": "0.000000000000000000000000000000",
+      "p99": "0.000000000000000000000000000000"
+    },
+    "execution_edge_distribution": {
+      "count": 1080,
+      "max": "-0.0007514087375046279155868195",
+      "mean": "-0.01804207525055745961329120937629629629630",
+      "median": "-0.018264552419553040988779954500",
+      "min": "-0.0336796774193548387096774194",
+      "p10": "-0.029242459498959037074825242500",
+      "p25": "-0.025168104873334897547972608600",
+      "p75": "-0.010442476697476697476697476700",
+      "p90": "-0.007818254518690879641288824700",
+      "p95": "-0.00308110774039345467916896500",
+      "p99": "-0.00308110774039345467916896500"
+    },
+    "positive_decision_edge_rows": 0,
+    "positive_decision_edge_rows_remaining_positive_after_500ms": 0,
+    "positive_decision_edge_survival_fraction": null,
+    "threshold_crossing_survival": {
+      "0.005": {
+        "decision_crossing_rows": 0,
+        "survival_fraction": null,
+        "surviving_execution_rows": 0
+      },
+      "0.01": {
+        "decision_crossing_rows": 0,
+        "survival_fraction": null,
+        "surviving_execution_rows": 0
+      },
+      "0.015": {
+        "decision_crossing_rows": 0,
+        "survival_fraction": null,
+        "surviving_execution_rows": 0
+      },
+      "0.02": {
+        "decision_crossing_rows": 0,
+        "survival_fraction": null,
+        "surviving_execution_rows": 0
+      },
+      "0.025": {
+        "decision_crossing_rows": 0,
+        "survival_fraction": null,
+        "surviving_execution_rows": 0
+      },
+      "0.03": {
+        "decision_crossing_rows": 0,
+        "survival_fraction": null,
+        "surviving_execution_rows": 0
+      },
+      "0.04": {
+        "decision_crossing_rows": 0,
+        "survival_fraction": null,
+        "surviving_execution_rows": 0
+      },
+      "0.05": {
+        "decision_crossing_rows": 0,
+        "survival_fraction": null,
+        "surviving_execution_rows": 0
+      }
+    }
+  },
+  "liquidity": {
+    "liquidity_invalid_rows": 0,
+    "liquidity_valid_rows": 1080,
+    "total_rows": 1080
+  },
+  "market_level_execution_edge_incidence": {
+    "0.005": {
+      "fraction_of_9": "0",
+      "market_count": 0,
+      "market_ids": []
+    },
+    "0.01": {
+      "fraction_of_9": "0",
+      "market_count": 0,
+      "market_ids": []
+    },
+    "0.015": {
+      "fraction_of_9": "0",
+      "market_count": 0,
+      "market_ids": []
+    },
+    "0.02": {
+      "fraction_of_9": "0",
+      "market_count": 0,
+      "market_ids": []
+    },
+    "0.025": {
+      "fraction_of_9": "0",
+      "market_count": 0,
+      "market_ids": []
+    },
+    "0.03": {
+      "fraction_of_9": "0",
+      "market_count": 0,
+      "market_ids": []
+    },
+    "0.04": {
+      "fraction_of_9": "0",
+      "market_count": 0,
+      "market_ids": []
+    },
+    "0.05": {
+      "fraction_of_9": "0",
+      "market_count": 0,
+      "market_ids": []
+    }
+  },
+  "progression_gate": {
+    "name": "STRUCTURAL_EXECUTABLE_SIGNAL",
+    "observed_distinct_markets": 0,
+    "required_distinct_markets": 3,
+    "result": "NOT_PROMISING_FOR_M3B",
+    "threshold": "0.01",
+    "uses_realized_pnl": false,
+    "uses_resolution": false
+  },
+  "resolutions": {
+    "ambiguous_market_ids": [],
+    "ambiguous_markets": 0,
+    "resolved_market_ids": [
+      1769614,
+      1769616,
+      1769618,
+      1769620,
+      1769658,
+      1817541,
+      1817542
+    ],
+    "resolved_markets": 7,
+    "unresolved_market_ids": [
+      1769625,
+      1769651
+    ],
+    "unresolved_markets": 2,
+    "winner_inference_used": false
+  },
+  "version": "H2-v2-M3a-SUMMARY-1"
+}

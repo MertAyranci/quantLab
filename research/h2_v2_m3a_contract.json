@@ -1,0 +1,263 @@
+{
+  "version": "H2-v2-M3a-CONTRACT-1",
+
+  "milestone": "H2-v2 M3a — development-set economic feasibility",
+
+  "parent_m2h_commit": "935b44af95e8f22ea89cfd69d4263272c86fe74b",
+
+  "purpose": "Use the permanently burned M2h engineering markets to determine whether a sufficiently frequent and executable external-sharp-versus-Polymarket dislocation exists to justify spending existing quota on a targeted high-frequency pilot. M3a is exploratory development analysis and cannot establish H2-v2 profitability.",
+
+  "cost": {
+    "new_odds_api_calls": 0,
+    "new_live_collection": false,
+    "paid_subscription_required": false
+  },
+
+  "frozen_inputs": {
+    "m2h_tape": "research/h2_v2_m2h_tape.jsonl",
+    "m2h_tape_sha256": "c234267e3342601c9706c39d7d4c20c93eaeea1df5b0ca0a5513cf67221be75f",
+
+    "m2h_validation": "research/h2_v2_m2h_validation.json",
+    "m2h_validation_sha256": "c6883a4994cee12e0da9a5c7621c27a5046b76e43363e9679e2b2fc6bfa0d1ed",
+
+    "m2h_conclusion": "research/h2_v2_m2h_conclusion.json",
+    "m2h_conclusion_sha256": "c992fb70d32247e3e19102a5c708a4084385c16f7407b00ae8690adf851092da",
+
+    "sharp_collector_run_id": 11691,
+
+    "expected_tape_rows": 1080,
+    "expected_distinct_games": 9
+  },
+
+  "development_set": {
+    "definition": "Exactly the nine distinct odds_game_id values present in the frozen M2h tape.",
+
+    "replacement_allowed": false,
+    "posthoc_exclusion_allowed": false,
+
+    "permanently_excluded_from_formal_calibration": true,
+    "permanently_excluded_from_confirmatory_oos": true,
+
+    "reason": "These markets were repeatedly used to engineer and validate the H2-v2 data and replay infrastructure."
+  },
+
+  "strategy_semantics": {
+    "direction": "BUY only",
+
+    "fair_probability": "consensus_prob from the sharp observation at decision time",
+
+    "decision_price": "decision_best_ask_mc / 1000",
+
+    "executable_price": "execution_best_ask_mc / 1000",
+
+    "paper_execution_latency_ms": 500,
+
+    "position_size_shares": 5,
+
+    "maximum_positions_per_market_per_threshold": 1,
+
+    "exit": "hold to binary market resolution",
+
+    "winner_payout_per_share": 1,
+    "loser_payout_per_share": 0
+  },
+
+  "fee_model": {
+    "role": "taker",
+
+    "fee_rate_source": "market-specific fee_rate captured in the frozen M2h tape",
+
+    "formula_per_share": "fee_rate * p * (1 - p)",
+
+    "p": "corresponding executable share price between 0 and 1",
+
+    "decision_fee_uses_decision_price": true,
+    "execution_fee_uses_execution_price": true,
+
+    "builder_fee": 0,
+
+    "required_pre_analysis_checks": [
+      "fee_rate is present for every row",
+      "fee_exponent is present for every row",
+      "taker_only is present for every row",
+      "captured fee configuration is internally consistent across a market",
+      "no economic outputs are produced if the captured configuration indicates the frozen fee formula is inappropriate"
+    ]
+  },
+
+  "row_level_diagnostics": {
+    "decision_edge_formula": "consensus_prob - decision_ask - decision_fee_per_share",
+
+    "execution_edge_formula": "consensus_prob - execution_ask - execution_fee_per_share",
+
+    "latency_edge_decay_formula": "decision_edge - execution_edge",
+
+    "liquidity_valid": [
+      "execution_best_ask_size >= 5 shares",
+      "minimum_order_size <= 5 shares",
+      "execution book reconstructed",
+      "execution book not crossed"
+    ]
+  },
+
+  "candidate_thresholds": [
+    0.005,
+    0.01,
+    0.015,
+    0.02,
+    0.025,
+    0.03,
+    0.04,
+    0.05
+  ],
+
+  "threshold_trade_rule": {
+    "signal": "execution_edge >= candidate threshold",
+
+    "liquidity_gate_required": true,
+
+    "entry_selection": "For each market and each candidate threshold independently, select the earliest chronological observation at which a liquidity-valid outcome satisfies the threshold.",
+
+    "same_timestamp_multiple_outcomes": "Choose the outcome with the larger execution_edge.",
+
+    "exact_edge_tie": "Choose ascending token_id deterministically.",
+
+    "later_signals_after_entry": "ignored",
+
+    "one_position_per_market": true,
+
+    "thresholds_are_counterfactual_strategies": true,
+
+    "formal_threshold_selection_in_m3a": false
+  },
+
+  "resolution_analysis": {
+    "allowed": true,
+
+    "development_only": true,
+
+    "resolution_may_change_structural_signal_gate": false,
+
+    "pnl_formula_per_share": "resolution_payout - execution_price - execution_fee_per_share",
+
+    "five_share_pnl_formula": "5 * pnl_per_share",
+
+    "second_trading_fee": false,
+
+    "if_resolution_is_missing_or_ambiguous": "Do not infer it. Report incomplete economic outcomes while still completing non-resolution structural diagnostics."
+  },
+
+  "required_reports": {
+    "market_level_signal_incidence": [
+      "markets ever reaching execution edge >= 0.5%",
+      "markets ever reaching execution edge >= 1.0%",
+      "markets ever reaching execution edge >= 1.5%",
+      "markets ever reaching execution edge >= 2.0%",
+      "markets ever reaching execution edge >= 2.5%",
+      "markets ever reaching execution edge >= 3.0%",
+      "markets ever reaching execution edge >= 4.0%",
+      "markets ever reaching execution edge >= 5.0%"
+    ],
+
+    "latency": [
+      "decision-edge versus execution-edge distribution",
+      "count of positive decision edges remaining positive after 500ms",
+      "count of threshold crossings surviving to the execution endpoint"
+    ],
+
+    "threshold_economics_if_resolved": [
+      "number of development trades",
+      "distinct markets traded",
+      "market-equal mean net PnL per share",
+      "median net PnL per trade",
+      "total fixed-five-share net PnL",
+      "win rate",
+      "mean predicted execution edge"
+    ]
+  },
+
+  "m3a_progression_gate": {
+    "name": "STRUCTURAL_EXECUTABLE_SIGNAL",
+
+    "threshold": 0.01,
+
+    "required_distinct_markets": 3,
+
+    "definition": "At least three of the nine frozen development markets must contain at least one liquidity-valid observation with execution_edge >= 1.0%.",
+
+    "uses_resolution": false,
+    "uses_realized_pnl": false,
+
+    "if_pass": "PROMISING_FOR_M3B",
+
+    "if_fail": "NOT_PROMISING_FOR_M3B",
+
+    "reason": "The immediate funding decision is whether an executable dislocation appears repeatedly across independent development markets. Nine-market realized PnL is too small and noisy to be the primary gate."
+  },
+
+  "secondary_nonbinding_evidence": {
+    "markets_ever_reaching_2pct_execution_edge": true,
+    "latency_survival": true,
+    "exploratory_threshold_pnl": true,
+
+    "may_override_progression_gate": false
+  },
+
+  "if_promising_for_m3b": {
+    "next_experiment": "Targeted development-only high-frequency sharp collection using existing quota.",
+
+    "planned_poll_interval_seconds": 10,
+
+    "paid_subscription_required_before_m3b": false,
+
+    "formal_60_market_calibration_starts": false
+  },
+
+  "if_not_promising_for_m3b": {
+    "do_not_purchase_large_quota_for_current_h2_v2_design": true,
+
+    "do_not_start_formal_calibration": true,
+
+    "next_action": "Reassess the hypothesis, sharp-feed latency, fair-value construction, or direct-exchange-feed architecture as a new preregistered experiment."
+  },
+
+  "formal_h2_v2_design_unchanged": {
+    "calibration_markets": 60,
+    "oos_markets": 100,
+
+    "formal_candidate_thresholds": [
+      0.005,
+      0.01,
+      0.015,
+      0.02,
+      0.025,
+      0.03,
+      0.04,
+      0.05
+    ],
+
+    "formal_calibration_no_go_rule": "If no candidate threshold with at least 20 trades has positive calibration mean net PnL, do not start confirmatory OOS without declaring a new hypothesis.",
+
+    "formal_threshold_may_be_selected_in_m3a": false
+  },
+
+  "prohibited": [
+    "Do not count the nine development markets toward the 60-market calibration.",
+    "Do not count the nine development markets toward the 100-market OOS.",
+    "Do not select a production threshold from M3a.",
+    "Do not alter the candidate threshold grid after M3a.",
+    "Do not alter the M3a progression gate after seeing results.",
+    "Do not exclude an unfavorable development market.",
+    "Do not call M3a evidence proof of profitability.",
+    "Do not buy additional API quota as part of M3a.",
+    "Do not make new Odds API calls as part of M3a."
+  ],
+
+  "planned_artifacts": [
+    "research/h2_v2_m3a_analyze.py",
+    "research/h2_v2_m3a_row_diagnostics.jsonl",
+    "research/h2_v2_m3a_threshold_summary.json",
+    "research/h2_v2_m3a_summary.json",
+    "research/h2_v2_m3a_conclusion.json"
+  ]
+}

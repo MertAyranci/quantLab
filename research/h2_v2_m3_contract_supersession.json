@@ -1,0 +1,26 @@
+{
+  "version": "H2-v2-M3-CONTRACT-SUPERSESSION-1",
+
+  "superseded_contract": "research/h2_v2_m3_contract_superseded_30m.json",
+
+  "superseded_contract_sha256": "f79a4141c9844c84d63d91258c379de4ca81caf54c2cf0b85615cf769212fdf1",
+
+  "superseded_before_activation": true,
+  "superseded_before_commit": true,
+  "superseded_before_any_m3_calibration_collection": true,
+
+  "calibration_edge_inspected": false,
+  "calibration_pnl_inspected": false,
+  "calibration_resolutions_inspected": false,
+  "candidate_thresholds_evaluated": false,
+
+  "reason": "The proposed 30-minute polling cadence was identified before activation as inconsistent with testing a timely external-sharp-to-Polymarket repricing lag. It would primarily test persistent dislocations rather than timely detection of sharp-market changes.",
+
+  "replacement_sequence": [
+    "M3a: zero-cost development-set economic feasibility using permanently burned M2h engineering markets",
+    "M3b only if M3a structural signal gate passes: targeted high-frequency acquisition using existing credits",
+    "Paid prospective 60-market calibration only if the pilot evidence justifies the acquisition cost"
+  ],
+
+  "performance_based_change": false
+}
