@@ -1,0 +1,105 @@
+{
+  "study": "RN1-F18",
+  "status": "FROZEN_PROSPECTIVE_CANDIDATE",
+  "created_after": "RN1-F17",
+  "discovery_sample": {
+    "markets": 42,
+    "sport": "MLB",
+    "market_type": "pregame/live moneyline binary",
+    "purpose": "development_only",
+    "reuse_for_confirmatory_test": false
+  },
+  "candidate_mechanism": {
+    "name": "aggressive-flow maker protection",
+    "claim": "Strong aggressive order flow against proposed maker inventory predicts incremental short-horizon adverse selection.",
+    "intended_use": "cancel_or_withhold_vulnerable_passive_liquidity",
+    "not_claimed": [
+      "profitable standalone market-making strategy",
+      "profitable taker strategy",
+      "baseball outcome prediction",
+      "RN1-specific informational advantage"
+    ]
+  },
+  "frozen_signal": {
+    "inventory_axis": "common binary p1 exposure direction",
+    "flow_source": "non-self Polymarket taker trades",
+    "flow_weight": "base notional",
+    "flow_window_seconds": 30,
+    "decision_lead_seconds": 5,
+    "flow_window_relative_to_decision": "[-30s,-1s]",
+    "imbalance_formula": "signed aggressive notional / total aggressive notional",
+    "adverse_threshold": -0.75,
+    "trigger": "imbalance <= -0.75 relative to proposed maker inventory direction"
+  },
+  "frozen_primary_outcome": {
+    "horizon_seconds": 15,
+    "price_measure": "first same-aggressor-side public market print at or after target",
+    "future_print_max_delay_seconds": 10,
+    "markout_sign": "positive means movement in maker inventory direction",
+    "comparison": "flagged maker opportunity minus matched unflagged maker opportunity",
+    "primary_aggregation": "market-equal mean markout difference",
+    "success_direction": "negative"
+  },
+  "matched_control_specification": {
+    "flag_required": false,
+    "same_market": true,
+    "same_inventory_direction": true,
+    "same_game_phase": true,
+    "price_distance_max": 0.05,
+    "size_ratio_min": 0.5,
+    "size_ratio_max": 2.0,
+    "time_distance_min_seconds": 120,
+    "time_distance_max_seconds": 900,
+    "maximum_controls_per_flagged_event": 3,
+    "control_reuse": false,
+    "settlement_information_used_for_matching": false
+  },
+  "secondary_outcomes": {
+    "event_equal_mean_difference": true,
+    "market_median_difference": true,
+    "market_sign_count": true,
+    "market_bootstrap_ci": true,
+    "leave_one_market_out": true,
+    "decluster_seconds": 60,
+    "declustered_market_equal_difference": true,
+    "raw_flagged_15s_markout": true
+  },
+  "prospective_data_design": {
+    "selection": "all eligible MLB moneyline games, not windows selected around RN1 activity",
+    "full_market_windows_required": true,
+    "rn1_wallet_monitoring": true,
+    "market_wide_taker_tape_required": true,
+    "authoritative_clob_book_required_for_later_execution_stage": true,
+    "paid_external_odds_required": false,
+    "settlement_required_for_primary_test": false
+  },
+  "confirmatory_sample": {
+    "target_full_games": 100,
+    "minimum_matched_flagged_events": 50,
+    "minimum_markets_with_usable_matched_pairs": 20,
+    "stop_rule": "evaluate only after target games are complete; do not stop early for performance"
+  },
+  "confirmatory_success_rule": {
+    "minimum_sample_requirements_must_pass": true,
+    "primary_market_equal_markout_difference_must_be_negative": true,
+    "declustered_market_equal_markout_difference_must_be_negative": true,
+    "strong_confirmation": "market-bootstrap 95% CI upper bound for primary market-equal difference < 0"
+  },
+  "prohibited_changes_before_confirmatory_readout": [
+    "adverse threshold",
+    "30-second flow window",
+    "5-second decision lead",
+    "15-second primary horizon",
+    "flow weighting",
+    "inventory direction definition",
+    "primary aggregation",
+    "game-phase filtering",
+    "price filtering",
+    "size filtering based on OOS performance",
+    "early stopping based on results"
+  ],
+  "execution_boundary": {
+    "confirmatory_test_is_not_full_strategy_pnl": true,
+    "next_stage_if_confirmed": "paired protected-vs-unprotected shadow maker replay using authoritative CLOB depth, queue state, cancellation latency, tick size, minimum order size and actual market-specific fee/rebate configuration"
+  }
+}
