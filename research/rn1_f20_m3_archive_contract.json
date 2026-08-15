@@ -1,0 +1,46 @@
+{
+  "study": "RN1-F20-M3",
+  "status": "FROZEN_VERIFIED_AZURE_ARCHIVAL",
+  "parent": "RN1-F20-M2",
+  "parent_commit": "39ab68a79ab2cae994c5db03eede15847f88f4d4",
+  "registry_sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b",
+  "f20_root": "data/prospective/rn1_f19/clob_f20_m1",
+  "azure": {
+    "container": "quantlab-backups",
+    "blob_prefix": "rn1_f20_m1",
+    "overwrite_existing_blob": false
+  },
+  "eligibility": {
+    "utc_day_must_be_strictly_before_current_utc_day": true,
+    "raw_day_directory_required": true,
+    "normalized_day_directory_required": true,
+    "current_utc_day_never_archived": true
+  },
+  "archive": {
+    "members": [
+      "raw/YYYYMMDD",
+      "normalized/YYYYMMDD"
+    ],
+    "format": "tar.gz",
+    "deterministic": true,
+    "temporary_suffix": ".part",
+    "minimum_free_space_after_estimated_archive_bytes": 4294967296
+  },
+  "verification_before_local_delete": {
+    "local_tar_integrity": true,
+    "remote_blob_exists": true,
+    "remote_byte_size_equals_local": true,
+    "remote_sha256_equals_local": true,
+    "remote_tar_integrity": true,
+    "remote_member_list_equals_local": true
+  },
+  "deletion_rule": "Never remove local raw or normalized day directories until every remote verification passes.",
+  "analysis_boundary": {
+    "inspect_prices": false,
+    "calculate_f18_signal": false,
+    "calculate_markout": false,
+    "inspect_winner": false,
+    "use_settlement": false,
+    "calculate_pnl": false
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "analysis_boundary": {
+    "f18_signal_calculated": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "prices_inspected": false,
+    "settlement_used": false,
+    "winner_inspected": false
+  },
+  "code": {
+    "archiver_sha256": "2fd993f520216f7df727d274b6e953d858476fdf31379770a5fed005b04830a1",
+    "contract_sha256": "8112ddb2db2e8fe6b863b33b6c38140901099dbbb33b806e3cc27942ecd8a8f6",
+    "service_sha256": "9f3b0851bbb50ce3bc80fee1217a0f62a18d470bc3a4c52ff6deae54d4b656dd",
+    "timer_sha256": "64dec3fc1428e550445583242a5ef6e5ddb74faf7174eb91e83086c2bc3f57ee"
+  },
+  "safety": {
+    "current_day_delete": false,
+    "delete_before_remote_verification": false,
+    "minimum_post_archive_free_bytes": 4294967296,
+    "overwrite_remote_blob": false
+  },
+  "services": {
+    "archive_schedule": "daily 00:45 UTC",
+    "archive_timer_active": true,
+    "archive_timer_enabled": true,
+    "capture_service_active": true,
+    "health_timer_active": true
+  },
+  "status": "PASS_ARCHIVER_ARMED",
+  "study": "RN1-F20-M3",
+  "validation": {
+    "azure_self_test": "PASS",
+    "current_day_archival_forbidden": true,
+    "current_day_normalized_preserved": true,
+    "current_day_raw_preserved": true,
+    "current_utc_day": "20260815",
+    "remote_member_match_tested": true,
+    "remote_sha256_match_tested": true,
+    "remote_size_match_tested": true,
+    "remote_tar_integrity_tested": true,
+    "self_test_blob_cleanup": true
+  }
+}

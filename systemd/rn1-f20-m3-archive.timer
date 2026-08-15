@@ -1,0 +1,11 @@
+[Unit]
+Description=Archive completed RN1 F20 UTC days to Azure
+
+[Timer]
+OnCalendar=*-*-* 00:45:00 UTC
+Persistent=true
+AccuracySec=1min
+Unit=rn1-f20-m3-archive.service
+
+[Install]
+WantedBy=timers.target

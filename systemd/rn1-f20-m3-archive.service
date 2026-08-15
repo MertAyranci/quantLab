@@ -1,0 +1,14 @@
+[Unit]
+Description=RN1 F20-M3 verified Azure archival
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=lab
+Group=lab
+WorkingDirectory=/home/lab/quantLab
+ExecStart=/home/lab/quantLab/.venv/bin/python /home/lab/quantLab/scripts/rn1_f20_m3_archive.py
+
+NoNewPrivileges=true
+PrivateTmp=true
