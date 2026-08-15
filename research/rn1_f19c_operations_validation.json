@@ -1,0 +1,43 @@
+{
+  "acquisition_state": {
+    "finalized_markets": 4,
+    "remaining_markets": 96,
+    "temporary_directories": 0
+  },
+  "analysis_boundary": {
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "signal_calculated": false,
+    "winner_used": false
+  },
+  "code": {
+    "contract_sha256": "69a5274d7f1e42344c374fef0b24083a61083beaacd5d613b1afd738a3c4f569",
+    "operator_sha256": "87785beeb300656ba9fb9a21bd6647d89c8513651577f9450299fe3c015c54b6",
+    "wrapper_sha256": "724769245e248f52af68537ead8415e2ce26e4175be4e77f41aba963f68a8b30"
+  },
+  "cron": {
+    "entry": "17 * * * * /home/lab/quantLab/scripts/rn1_f19c_hourly.sh >> /home/lab/quantLab/logs/rn1_f19c_hourly.log 2>&1",
+    "installed": true,
+    "matching_entries": 1
+  },
+  "latest_operational_receipt": {
+    "counters": {
+      "already_finalized": 4,
+      "future": 96
+    },
+    "path": "data/prospective/rn1_f19/ops/runs/run_20260815T152029.218633Z.json",
+    "sha256": "1809c61e2c4ec0b9d006afb310f65f94d4db6b9a9b184a618eeae751b0c98fd2",
+    "status": "PASS"
+  },
+  "purpose": "Freeze the completed 100-market prospective registry and blind hourly raw-acquisition operation without inspecting OOS performance.",
+  "registry": {
+    "immutable": true,
+    "rows": 100,
+    "sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b",
+    "unique_conditions": 100
+  },
+  "status": "PASS_OPERATIONS_ARMED",
+  "study": "RN1-F19c"
+}

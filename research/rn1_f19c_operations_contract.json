@@ -1,0 +1,41 @@
+{
+  "acquisition": {
+    "already_finalized_action": "SKIP",
+    "atomic_finalization_required": true,
+    "failed_market_action": "RECORD_AND_CONTINUE",
+    "gamma_closed_must_equal": true,
+    "minimum_hours_after_registered_game_start": 12,
+    "open_matured_market_action": "DEFER",
+    "reuse_frozen_f19b_acquisition_logic": true,
+    "two_pass_trade_stability_required": true
+  },
+  "analysis_boundary": {
+    "calculate_flow_signal": false,
+    "calculate_markout": false,
+    "calculate_pnl": false,
+    "classify_flagged_opportunities": false,
+    "early_performance_stopping": false,
+    "optimize_parameters": false,
+    "read_winner_for_analysis": false,
+    "use_settlement": false
+  },
+  "operations": {
+    "intended_cadence": "hourly",
+    "performance_independent_schedule": true,
+    "run_receipts": "data/prospective/rn1_f19/ops/runs"
+  },
+  "parent": "RN1-F19b",
+  "purpose": "Operate blind raw acquisition for the completed 100-market prospective OOS cohort.",
+  "registry": {
+    "allow_additions": false,
+    "allow_deletions": false,
+    "allow_replacements": false,
+    "immutable_after_completion": true,
+    "performance_based_registry_changes": false,
+    "required_rows": 100,
+    "required_unique_conditions": 100,
+    "sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b"
+  },
+  "status": "PROSPECTIVE_ACQUISITION_OPERATIONS",
+  "study": "RN1-F19c"
+}
