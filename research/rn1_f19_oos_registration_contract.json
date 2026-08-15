@@ -1,0 +1,39 @@
+{
+  "study": "RN1-F19",
+  "status": "PROSPECTIVE_OOS_REGISTRATION",
+  "parent": "RN1-F18",
+  "purpose": "Register unseen MLB moneyline markets prospectively before game start.",
+  "target_games": 100,
+  "selection": {
+    "sport": "MLB",
+    "sports_market_type": "moneyline",
+    "exactly_two_clob_tokens": true,
+    "active": true,
+    "closed": false,
+    "accepting_orders": true,
+    "registration_must_precede_game_start": true,
+    "selection_order": [
+      "game_start_time",
+      "condition_id"
+    ]
+  },
+  "exclusions": {
+    "rn1_f1_to_f17_discovery_markets": true,
+    "performance_based_selection": false,
+    "wallet_activity_based_selection": false,
+    "trade_activity_based_selection": false,
+    "volume_based_selection": false
+  },
+  "registry": "data/prospective/rn1_f19/registry.jsonl",
+  "raw_gamma_root": "data/prospective/rn1_f19/raw",
+  "registry_identity": "condition_id",
+  "immutability": "existing registry entries are never edited or deleted",
+  "analysis_boundary": {
+    "collect_trades": false,
+    "collect_wallet_activity": false,
+    "calculate_signal": false,
+    "calculate_markout": false,
+    "calculate_pnl": false,
+    "use_settlement": false
+  }
+}
