@@ -1,0 +1,12 @@
+[Unit]
+Description=Run RN1 F20-M2 health check every 10 minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=10min
+AccuracySec=30s
+Persistent=true
+Unit=rn1-f20-m2-health.service
+
+[Install]
+WantedBy=timers.target

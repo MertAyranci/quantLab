@@ -1,0 +1,14 @@
+[Unit]
+Description=RN1 F20-M2 venue-aware capture health check
+After=network-online.target rn1-f20-m1-clob.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=lab
+Group=lab
+WorkingDirectory=/home/lab/quantLab
+ExecStart=/home/lab/quantLab/.venv/bin/python /home/lab/quantLab/collectors/polymarket/rn1_f20_m2_health.py
+
+NoNewPrivileges=true
+PrivateTmp=true

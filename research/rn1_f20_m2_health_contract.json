@@ -1,0 +1,31 @@
+{
+  "study": "RN1-F20-M2",
+  "status": "FROZEN_OPERATIONAL_HEALTH_CLASSIFIER",
+  "parent": "RN1-F20-M1",
+  "parent_commit": "ef4a6089a9f542aef099ad85df3b2e62b8cad873",
+  "m1_contract_sha256": "2715a7ff43a7748ef826f359296374851dfb9246e8f8152fa960e9397c05ae13",
+  "registry_sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b",
+  "recent_capture_seconds": 480,
+  "classification": {
+    "HEALTHY_RECENT": "Token has normalized structural capture inside the recent horizon.",
+    "EXPECTED_CLOSED_SILENCE": "Token is missing recently, Gamma market is closed, and CLOB order book is unavailable with HTTP 404.",
+    "EXPECTED_PREOPEN_SILENCE": "Token is missing recently, registered start is still in the future, Gamma is not closed and not accepting orders, and CLOB order book is unavailable with HTTP 404.",
+    "CAPTURE_GAP": "Token is missing recently while its CLOB order book is available with HTTP 200.",
+    "UNEXPLAINED_VENUE_UNAVAILABLE": "Token is missing recently and cannot be classified as closed or pre-open expected silence.",
+    "STATUS_LOOKUP_FAILURE": "Required Gamma or CLOB status lookup could not be completed."
+  },
+  "health_success": {
+    "service_must_be_active": true,
+    "capture_gap_count_must_equal": 0,
+    "unexplained_venue_unavailable_count_must_equal": 0,
+    "status_lookup_failure_count_must_equal": 0
+  },
+  "analysis_boundary": {
+    "inspect_prices": false,
+    "calculate_f18_signal": false,
+    "calculate_markout": false,
+    "inspect_winner": false,
+    "use_settlement": false,
+    "calculate_pnl": false
+  }
+}

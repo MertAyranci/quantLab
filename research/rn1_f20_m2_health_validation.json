@@ -1,0 +1,36 @@
+{
+  "analysis_boundary": {
+    "f18_signal_calculated": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "prices_inspected": false,
+    "settlement_used": false,
+    "winner_inspected": false
+  },
+  "code": {
+    "checker_sha256": "4a19fc8899b9c06031c895e5831d192b8856c0ac527ca29bb9b09f0d9564c433",
+    "contract_sha256": "131703e8832b0b2d7711aec360a57654136a999d0e2e2a63217f2635788f8abe",
+    "service_sha256": "582e1356d2b2514b9d4b6abb8946e3b3216e3744b67cd53e42d11fab95c1305b",
+    "timer_sha256": "3f9ebe53bf93d7c2b0e54f67e06595d6624fb551a25d2d0c38c4f7947138342c"
+  },
+  "latest_receipt": {
+    "active_markets": 13,
+    "active_tokens": 26,
+    "classifications": {
+      "EXPECTED_CLOSED_SILENCE": 8,
+      "HEALTHY_RECENT": 18
+    },
+    "path": "data/prospective/rn1_f19/clob_f20_m1/health/runs/health_20260815T230322.833628Z.json",
+    "sha256": "992baedcdd80bbeb8be7c3a9259991b673980187bebda135dad41e4fa895d40d",
+    "status": "PASS"
+  },
+  "monitor": {
+    "cadence": "10 minutes",
+    "capture_service_active": true,
+    "timer_active": true,
+    "timer_enabled": true
+  },
+  "status": "PASS_HEALTH_MONITOR_ARMED",
+  "study": "RN1-F20-M2"
+}
