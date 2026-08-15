@@ -1,0 +1,20 @@
+[Unit]
+Description=RN1 F20-M1 prospective CLOB collector
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lab
+Group=lab
+WorkingDirectory=/home/lab/quantLab
+ExecStart=/home/lab/quantLab/.venv/bin/python /home/lab/quantLab/collectors/polymarket/rn1_f20_m1_clob_collector.py
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

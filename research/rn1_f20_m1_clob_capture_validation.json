@@ -1,0 +1,42 @@
+{
+  "analysis_boundary": {
+    "f18_signal_calculated": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "capture_universe": {
+    "excluded_pre_capture_markets": 4,
+    "markets": 96,
+    "tokens": 192
+  },
+  "code": {
+    "collector_sha256": "a19c4e52e6eba28ff97f4bef538ff80a23fc5db38f88b0d429d5acbd619d5b7a",
+    "contract_sha256": "2715a7ff43a7748ef826f359296374851dfb9246e8f8152fa960e9397c05ae13",
+    "systemd_unit_sha256": "f5e2a7bde200f3583a237e02a7aa04ee50631d1331a3b9d1021827f19760571a"
+  },
+  "current_structural_state": {
+    "active_markets": 1,
+    "connections_observed": 2,
+    "expected_active_tokens": 2,
+    "gzip_integrity": true,
+    "normalized_files": 6,
+    "normalized_records": 637,
+    "raw_files": 6,
+    "recent_expected_tokens": 2
+  },
+  "registry_sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b",
+  "service": {
+    "active": true,
+    "enabled": true
+  },
+  "status": "PASS_CAPTURE_ARMED",
+  "study": "RN1-F20-M1",
+  "window": {
+    "performance_based": false,
+    "seconds_after_start": 64800,
+    "seconds_before_start": 7200
+  }
+}
