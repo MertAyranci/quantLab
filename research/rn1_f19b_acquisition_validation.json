@@ -1,0 +1,201 @@
+{
+  "all_conditions_in_prospective_registry": true,
+  "all_gamma_closed_at_acquisition": true,
+  "collector_sha256": "5d9970659dc0d8d0d7f5ae9b1122c1d70a4060e4871b889eb135467ad0c10760",
+  "contract_sha256": "2e43aff44ec9bae5813fa2b1fd154c7b7b04872b02170542bd2e99bc55b2625f",
+  "finalized_markets": 4,
+  "markets": [
+    {
+      "acquired_at_utc": "2026-08-15T14:51:27.726184+00:00",
+      "condition_id": "0xdbbb10621b41c1ea374f3cfceab9a8bc2875ae511ce5bc542be5aa423a2bbb9e",
+      "game_start_time_utc": "2026-08-15T01:38:00+00:00",
+      "gamma_snapshot_sha256": "dcfd854f6e949edc2f1355070ff81dc633c3ea18437cecd0d21a0dcb0a72568d",
+      "manifest_path": "data/prospective/rn1_f19/acquisition/0xdbbb10621b41c1ea374f3cfceab9a8bc2875ae511ce5bc542be5aa423a2bbb9e/manifest.json",
+      "manifest_sha256": "dda98b544592a111c7841b2f4a2d4dd9c7cfe821b97ec16b68fc36508abf22a0",
+      "registered_at_utc": "2026-08-15T00:47:12.006951+00:00",
+      "slug": "mlb-kc-laa-2026-08-14",
+      "streams": {
+        "market_taker": {
+          "canonical_core_sha256": "51ea52752efdcd1664573e87074e5c5ea72ccde63ce90eca4e05d508cea8cba0",
+          "passes": [
+            {
+              "file_sha256": "56739df8d9761f63d485a5f31e92ac98631ddb15638a56e224dae8f4624765c5",
+              "pass": 1,
+              "path": "data/prospective/rn1_f19/acquisition/0xdbbb10621b41c1ea374f3cfceab9a8bc2875ae511ce5bc542be5aa423a2bbb9e/market_taker/pass_1.json"
+            },
+            {
+              "file_sha256": "3f5055f63e6755ff54c0b6d2aced5a8ad7992f6f49cd064b067a711088b8fcaf",
+              "pass": 2,
+              "path": "data/prospective/rn1_f19/acquisition/0xdbbb10621b41c1ea374f3cfceab9a8bc2875ae511ce5bc542be5aa423a2bbb9e/market_taker/pass_2.json"
+            }
+          ],
+          "row_count": 1658
+        },
+        "rn1_all": {
+          "canonical_core_sha256": "a495e735081f36008c03208c28d84d85066deee32a66c19ae5c18669f877493f",
+          "passes": [
+            {
+              "file_sha256": "08e8c7e9cfe4ae623d964b8a6f3f32033d7c87797d4bbc24c11fa47a3fdc0153",
+              "pass": 1,
+              "path": "data/prospective/rn1_f19/acquisition/0xdbbb10621b41c1ea374f3cfceab9a8bc2875ae511ce5bc542be5aa423a2bbb9e/rn1_all/pass_1.json"
+            },
+            {
+              "file_sha256": "a71075e86ac483bc0047a6027440201da38e688deded2c2f2bdf057bf2af1b0a",
+              "pass": 2,
+              "path": "data/prospective/rn1_f19/acquisition/0xdbbb10621b41c1ea374f3cfceab9a8bc2875ae511ce5bc542be5aa423a2bbb9e/rn1_all/pass_2.json"
+            }
+          ],
+          "row_count": 84
+        }
+      }
+    },
+    {
+      "acquired_at_utc": "2026-08-15T14:51:30.430968+00:00",
+      "condition_id": "0xf2bf720c68d59fafb47886b1acdba85da232c6b52c4423cc12a6c02d3cf6c189",
+      "game_start_time_utc": "2026-08-15T01:40:00+00:00",
+      "gamma_snapshot_sha256": "fa48400bff024dfdb3587e35be7c39b63cfc2c3e9b2b655389b2c3e9d911aeca",
+      "manifest_path": "data/prospective/rn1_f19/acquisition/0xf2bf720c68d59fafb47886b1acdba85da232c6b52c4423cc12a6c02d3cf6c189/manifest.json",
+      "manifest_sha256": "479fafe02165bef34891d815089ee29d70d1191d9ea9037d2807373ec47786ac",
+      "registered_at_utc": "2026-08-15T00:47:12.006951+00:00",
+      "slug": "mlb-tex-oak-2026-08-14",
+      "streams": {
+        "market_taker": {
+          "canonical_core_sha256": "35a90ddad82d721fd8fae74f97488a8f8870fc3702c1b270dfafc5fed8093bf8",
+          "passes": [
+            {
+              "file_sha256": "47f67222bd69c91d550eda3cddb28569aca4f1e77d7029f1c870b1bd9d56c35e",
+              "pass": 1,
+              "path": "data/prospective/rn1_f19/acquisition/0xf2bf720c68d59fafb47886b1acdba85da232c6b52c4423cc12a6c02d3cf6c189/market_taker/pass_1.json"
+            },
+            {
+              "file_sha256": "7ae85456a9154af66cf36c8f217a9b06f622917a4d4deb176e449f666f3898db",
+              "pass": 2,
+              "path": "data/prospective/rn1_f19/acquisition/0xf2bf720c68d59fafb47886b1acdba85da232c6b52c4423cc12a6c02d3cf6c189/market_taker/pass_2.json"
+            }
+          ],
+          "row_count": 1157
+        },
+        "rn1_all": {
+          "canonical_core_sha256": "6a53410e6a623fe18afcdaaea01f1b7924ba2631ac2da5cf07f7689e411c7899",
+          "passes": [
+            {
+              "file_sha256": "63b5e545351379b6042f82dc8ad187f64df43735e8c9685ac207375b72f71bd7",
+              "pass": 1,
+              "path": "data/prospective/rn1_f19/acquisition/0xf2bf720c68d59fafb47886b1acdba85da232c6b52c4423cc12a6c02d3cf6c189/rn1_all/pass_1.json"
+            },
+            {
+              "file_sha256": "e6513b1359e904e423048c125d6dd4cdcfaab871ec093a8205f58bd268284815",
+              "pass": 2,
+              "path": "data/prospective/rn1_f19/acquisition/0xf2bf720c68d59fafb47886b1acdba85da232c6b52c4423cc12a6c02d3cf6c189/rn1_all/pass_2.json"
+            }
+          ],
+          "row_count": 66
+        }
+      }
+    },
+    {
+      "acquired_at_utc": "2026-08-15T14:51:33.457746+00:00",
+      "condition_id": "0xc86108feec188547ff26fe9fae656323fdb2a954b0f9753bd5cb9c453428501b",
+      "game_start_time_utc": "2026-08-15T02:10:00+00:00",
+      "gamma_snapshot_sha256": "b801ff433e8e294f55d56dfafe57fec096be4d9ff842afbc86a5ca99a2fbe665",
+      "manifest_path": "data/prospective/rn1_f19/acquisition/0xc86108feec188547ff26fe9fae656323fdb2a954b0f9753bd5cb9c453428501b/manifest.json",
+      "manifest_sha256": "f1c940d57bdbb060ede2b7663edce68cebc8b84dcaf3376f20e4dddb2e57718a",
+      "registered_at_utc": "2026-08-15T00:47:12.006951+00:00",
+      "slug": "mlb-mil-lad-2026-08-14",
+      "streams": {
+        "market_taker": {
+          "canonical_core_sha256": "04b44530406251bcb60dbb098a6d337884700e2bd382e3b2a6113a0cef68d175",
+          "passes": [
+            {
+              "file_sha256": "2e21c04ade11f4672691381f6f4f65eadf8dcf9b46188cd0e88670910bef0ccd",
+              "pass": 1,
+              "path": "data/prospective/rn1_f19/acquisition/0xc86108feec188547ff26fe9fae656323fdb2a954b0f9753bd5cb9c453428501b/market_taker/pass_1.json"
+            },
+            {
+              "file_sha256": "de9b23790818c1c836fc86dc477f6a2ccd7ae4e5e80d634d75189bbd19f07213",
+              "pass": 2,
+              "path": "data/prospective/rn1_f19/acquisition/0xc86108feec188547ff26fe9fae656323fdb2a954b0f9753bd5cb9c453428501b/market_taker/pass_2.json"
+            }
+          ],
+          "row_count": 1500
+        },
+        "rn1_all": {
+          "canonical_core_sha256": "da821ce0b5842bd149ce74952a2c65e212f68c1fb336605b722b58179b8935bb",
+          "passes": [
+            {
+              "file_sha256": "1b268ac74657f830a2e9e2d6630387d61c15be2fa5993210fd8efffd80295c61",
+              "pass": 1,
+              "path": "data/prospective/rn1_f19/acquisition/0xc86108feec188547ff26fe9fae656323fdb2a954b0f9753bd5cb9c453428501b/rn1_all/pass_1.json"
+            },
+            {
+              "file_sha256": "3cd50d860593b7f80144f0e3fd23ddc7cb10edd3ee55ef609788cdde1decb3c7",
+              "pass": 2,
+              "path": "data/prospective/rn1_f19/acquisition/0xc86108feec188547ff26fe9fae656323fdb2a954b0f9753bd5cb9c453428501b/rn1_all/pass_2.json"
+            }
+          ],
+          "row_count": 49
+        }
+      }
+    },
+    {
+      "acquired_at_utc": "2026-08-15T14:51:36.089562+00:00",
+      "condition_id": "0x9a9d3bfbb23acafb8c574adba6bcacc7faffc1b9666b341b26112a94604930e3",
+      "game_start_time_utc": "2026-08-15T02:15:00+00:00",
+      "gamma_snapshot_sha256": "0f7ae32eba6fbcf2ff38837355221c6e4dd08e41fc126bccf11e0ee2de6bd1d9",
+      "manifest_path": "data/prospective/rn1_f19/acquisition/0x9a9d3bfbb23acafb8c574adba6bcacc7faffc1b9666b341b26112a94604930e3/manifest.json",
+      "manifest_sha256": "89e34738fecd83308e6689c4df88f4549e16bb96508abfeeed4bef6ff5a6d435",
+      "registered_at_utc": "2026-08-15T00:47:12.006951+00:00",
+      "slug": "mlb-col-sf-2026-08-14",
+      "streams": {
+        "market_taker": {
+          "canonical_core_sha256": "8eecc4d6843da29e601c4910764b3741e68a3a0c9ca53ef09f94f165015d86f8",
+          "passes": [
+            {
+              "file_sha256": "ce6af1a979ffffe2b50e69738ca493de6775ac50be3129b8fb0e633b4577fadf",
+              "pass": 1,
+              "path": "data/prospective/rn1_f19/acquisition/0x9a9d3bfbb23acafb8c574adba6bcacc7faffc1b9666b341b26112a94604930e3/market_taker/pass_1.json"
+            },
+            {
+              "file_sha256": "e8a59a06093b102678f84867d3511acca4476c1a6e91f978a28bf2858253bf64",
+              "pass": 2,
+              "path": "data/prospective/rn1_f19/acquisition/0x9a9d3bfbb23acafb8c574adba6bcacc7faffc1b9666b341b26112a94604930e3/market_taker/pass_2.json"
+            }
+          ],
+          "row_count": 1037
+        },
+        "rn1_all": {
+          "canonical_core_sha256": "9c7a5b0981f43507c31ecf0db15b2762af3b991efadd9c89de64a27be7df7ac3",
+          "passes": [
+            {
+              "file_sha256": "17a429fd86cbe8740644feb5cb055fba3cbb954a24b4d3fa5e4c7193eb445ca4",
+              "pass": 1,
+              "path": "data/prospective/rn1_f19/acquisition/0x9a9d3bfbb23acafb8c574adba6bcacc7faffc1b9666b341b26112a94604930e3/rn1_all/pass_1.json"
+            },
+            {
+              "file_sha256": "1f493aac82d4c9144182c7999b8e7b1e1b6cde95eed34fc27a9939ddf500ba53",
+              "pass": 2,
+              "path": "data/prospective/rn1_f19/acquisition/0x9a9d3bfbb23acafb8c574adba6bcacc7faffc1b9666b341b26112a94604930e3/rn1_all/pass_2.json"
+            }
+          ],
+          "row_count": 27
+        }
+      }
+    }
+  ],
+  "markout_calculated": false,
+  "minimum_hours_after_start": 12,
+  "performance_read": false,
+  "pnl_calculated": false,
+  "purpose": "Freeze integrity evidence for the first four prospectively registered OOS raw acquisitions without reading strategy performance.",
+  "registry_rows": 88,
+  "registry_sha256": "c5501f34e9a3d3dc3a90a66a14b588e057b71929954258b9dc5dd0ae4936f57d",
+  "settlement_used": false,
+  "signal_calculated": false,
+  "status": "PASS_INITIAL_RAW_ACQUISITION",
+  "study": "RN1-F19b",
+  "temporary_directories": 0,
+  "total_market_taker_rows": 5352,
+  "total_rn1_rows": 226,
+  "two_pass_stability": true,
+  "winner_used": false
+}
