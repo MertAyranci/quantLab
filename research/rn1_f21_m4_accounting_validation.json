@@ -1,0 +1,56 @@
+{
+  "accounting_semantics": {
+    "buy_gross_cash": "negative",
+    "buy_inventory": "positive",
+    "economic_interpretation": "accounting only; no inventory valuation or PnL",
+    "filled_notional": "filled shares * passive quote price",
+    "maker_fee": "cash cost",
+    "maker_rebate": "cash credit",
+    "pair_delta": "protected minus baseline",
+    "sell_gross_cash": "positive",
+    "sell_inventory": "negative"
+  },
+  "analysis_boundary": {
+    "f18_signal_calculated": false,
+    "flow_imbalance_calculated": false,
+    "inventory_valued": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "prospective_data_read": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "files": {
+    "accounting_engine_sha256": "d4a38d8e4d7daefcd33f1e5340de9ce2ad8fe8242e38fbf4c8004737ded6d2e8",
+    "contract_sha256": "b9d9258c6b6b3a2c8b79b8bbca198a8e46a197f83a35c730ed945a021a6d4a6c",
+    "tests_sha256": "0bc2747d49421bd02b8790c923033b7a23799a1aefb9fcb2987384eaa9621a72"
+  },
+  "parent": {
+    "commit": "e78fecc457cbfbc7388b47856a35304baa4807f8",
+    "protection_engine_sha256": "f19c96c130a388611dc674eb31b6da8395699428f8c50a8c0d48a667bd741d1e",
+    "study": "RN1-F21-M3",
+    "validation_sha256": "865d011291ed3a81924d77fa2dea79282f623ec6d80400ab16a2cab91a77a4a9"
+  },
+  "status": "PASS_MAKER_ACCOUNTING_FROZEN",
+  "study": "RN1-F21-M4",
+  "validation": {
+    "actual_venue_schedule_assumed": false,
+    "database_access": false,
+    "decimal_accounting": true,
+    "inventory_valued": false,
+    "m1_regression_passed": 19,
+    "m1_regression_total": 19,
+    "m2_regression_passed": 22,
+    "m2_regression_total": 22,
+    "m3_regression_passed": 19,
+    "m3_regression_total": 19,
+    "m4_tests_passed": 18,
+    "m4_tests_total": 18,
+    "net_cash_delta_is_pnl": false,
+    "network_access": false,
+    "prospective_data_access": false,
+    "synthetic_fee_inputs_only": true,
+    "synthetic_rebate_inputs_only": true
+  }
+}

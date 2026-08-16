@@ -1,0 +1,98 @@
+{
+  "accounting_semantics": {
+    "buy_gross_cash_delta": "-filled_notional",
+    "buy_inventory_delta": "+filled_shares",
+    "filled_notional": "filled_shares * passive_quote_price",
+    "maker_fee_cost": "filled_notional * maker_fee_bps / 10000",
+    "maker_rebate_credit": "filled_notional * maker_rebate_bps / 10000",
+    "net_cash_delta": "gross_cash_delta - maker_fee_cost + maker_rebate_credit",
+    "price_unit": "USDC per share",
+    "quantity_unit": "shares",
+    "sell_gross_cash_delta": "+filled_notional",
+    "sell_inventory_delta": "-filled_shares"
+  },
+  "analysis_boundary": {
+    "F18_signal_calculated": false,
+    "flow_imbalance_calculated": false,
+    "inventory_valued": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "prospective_data_read": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "fee_rebate_semantics": {
+    "actual_venue_schedule_assumed": false,
+    "fee_and_rebate_may_both_be_nonzero": true,
+    "fee_rounding_mode": "No venue rounding in M4; exact Decimal arithmetic.",
+    "maker_fee_bps": "Externally supplied synthetic nonnegative input.",
+    "maker_rebate_bps": "Externally supplied synthetic nonnegative input.",
+    "rebate_rounding_mode": "No venue rounding in M4; exact Decimal arithmetic."
+  },
+  "numeric_semantics": {
+    "binary_float_accumulation": false,
+    "construct_decimal_from": "string representation of inputs",
+    "implementation": "decimal.Decimal",
+    "venue_rounding": false
+  },
+  "pair_semantics": {
+    "accounting_delta_is_strategy_profit": false,
+    "avoided_filled_notional": "baseline filled notional - protected filled notional",
+    "avoided_filled_shares": "baseline filled shares - protected filled shares",
+    "inventory_difference": "protected inventory delta - baseline inventory delta",
+    "net_cash_difference": "protected net cash delta - baseline net cash delta",
+    "net_cash_difference_is_pnl": false,
+    "protected_fill_may_not_exceed_baseline_fill": true,
+    "same_accounting_config_for_baseline_and_protected": true
+  },
+  "parent": {
+    "commit": "e78fecc457cbfbc7388b47856a35304baa4807f8",
+    "passive_engine_sha256": "8acbdbd2364924419b5469fcd4ae5ba4fb1c8082d47713d8f42bd4331870e731",
+    "protection_engine_sha256": "f19c96c130a388611dc674eb31b6da8395699428f8c50a8c0d48a667bd741d1e",
+    "replay_engine_sha256": "1d762d0c69a554d4a3b776f01ad71123d6399d84c54ea719c3fccee0fd232214",
+    "study": "RN1-F21-M3",
+    "validation_sha256": "865d011291ed3a81924d77fa2dea79282f623ec6d80400ab16a2cab91a77a4a9",
+    "validation_status": "PASS_PROTECTION_CONTROL_FROZEN"
+  },
+  "purpose": "Add deterministic settlement-free maker accounting for shadow passive fills and protected-versus-unprotected execution pairs.",
+  "scope": {
+    "excluded": [
+      "actual Polymarket fee schedule discovery",
+      "actual maker rebate eligibility",
+      "venue-specific fee rounding",
+      "fee parameter calibration",
+      "rebate parameter calibration",
+      "F18 signal calculation",
+      "F19 prospective data",
+      "F20 CLOB data",
+      "real market replay",
+      "inventory valuation",
+      "mark-to-market",
+      "markout",
+      "hedging",
+      "settlement",
+      "winner information",
+      "realized PnL",
+      "unrealized PnL",
+      "economic strategy score"
+    ],
+    "included": [
+      "filled share quantity",
+      "filled notional",
+      "buy inventory increase",
+      "sell inventory decrease",
+      "buy cash outflow",
+      "sell cash inflow",
+      "maker fee cost",
+      "maker rebate credit",
+      "net cash movement",
+      "protected versus baseline accounting deltas",
+      "avoided filled shares",
+      "avoided filled notional",
+      "deterministic decimal arithmetic"
+    ]
+  },
+  "status": "FROZEN_MAKER_ACCOUNTING_SEMANTICS",
+  "study": "RN1-F21-M4"
+}
