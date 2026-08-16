@@ -1,0 +1,50 @@
+{
+  "analysis_boundary": {
+    "f18_signal_calculated": false,
+    "flow_imbalance_calculated": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "prospective_data_read": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "files": {
+    "contract_sha256": "6add52dbe2373a03865ba2a3743175c50f403f53757a473b52ff84841c29c117",
+    "controller_sha256": "f19c96c130a388611dc674eb31b6da8395699428f8c50a8c0d48a667bd741d1e",
+    "tests_sha256": "049822200b608fb1715985083318aa373e1be30d39058a873a3a757cb20d8692"
+  },
+  "latency_semantics": {
+    "cancel_effective": "alert + controller latency + frozen venue cancel latency",
+    "cancel_request": "alert + controller latency",
+    "controller_latency": "fixed nonnegative milliseconds",
+    "latency_calibrated_in_m3": false,
+    "request_after_replay_end": "not inserted"
+  },
+  "parent": {
+    "commit": "acf90355025dfd60ddf851678e0a9e9e60ef7a2a",
+    "passive_engine_sha256": "8acbdbd2364924419b5469fcd4ae5ba4fb1c8082d47713d8f42bd4331870e731",
+    "replay_engine_sha256": "1d762d0c69a554d4a3b776f01ad71123d6399d84c54ea719c3fccee0fd232214",
+    "study": "RN1-F21-M2",
+    "validation_sha256": "86c83200b92b2e9a6a789ccd13cba3ea5991f3e372be826395b026aa5d6cb06e"
+  },
+  "status": "PASS_PROTECTION_CONTROL_FROZEN",
+  "study": "RN1-F21-M3",
+  "validation": {
+    "baseline_unprotected": true,
+    "database_access": false,
+    "deterministic_controller": true,
+    "fill_before_cancel_supported": true,
+    "fill_during_cancel_flight_supported": true,
+    "first_alert_wins": true,
+    "m1_regression_passed": 19,
+    "m1_regression_total": 19,
+    "m2_regression_passed": 22,
+    "m2_regression_total": 22,
+    "m3_tests_passed": 19,
+    "m3_tests_total": 19,
+    "network_access": false,
+    "prospective_data_access": false,
+    "trade_at_cancel_effective_time_eligible": true
+  }
+}

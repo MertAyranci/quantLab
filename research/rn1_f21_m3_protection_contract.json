@@ -1,0 +1,109 @@
+{
+  "alert_semantics": {
+    "alert_after_replay_end": "reject",
+    "alert_before_order_submit": "reject",
+    "alert_timestamp_definition": "Timestamp at which the already-qualified protection alert is available to the local controller.",
+    "backdating_alert": false,
+    "calculate_alert_from_market_data": false,
+    "first_alert_wins": true,
+    "later_alerts_reset_cancel_timer": false
+  },
+  "analysis_boundary": {
+    "F18_signal_calculated": false,
+    "flow_imbalance_calculated": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "prospective_data_read": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "baseline_semantics": {
+    "baseline_receives_protection_cancel": false,
+    "external_cancel_requests_in_market_stream": "reject",
+    "reason": "Keep the control replay uncontaminated so any later comparison is protected versus identical unprotected execution.",
+    "same_market_event_stream": true,
+    "same_order_spec": true,
+    "same_shadow_config": true
+  },
+  "event_merge": {
+    "derived_cancel_inserted_chronologically": true,
+    "original_market_event_order_changed": false,
+    "out_of_order_market_input_repaired": false,
+    "same_timestamp_priority": "Inherited unchanged from frozen F21-M2"
+  },
+  "latency_semantics": {
+    "cancel_effective_timestamp": "alert_ts_ms + controller_latency_ms + ShadowConfig.cancel_latency_ms",
+    "cancel_request_timestamp": "alert_ts_ms + controller_latency_ms",
+    "controller_latency_ms": "Fixed delay from alert availability to cancel request.",
+    "controller_latency_must_be_nonnegative": true,
+    "request_after_replay_end": "No cancel request event is inserted; replay ends without pretending the request occurred.",
+    "venue_cancel_latency_source": "Frozen ShadowConfig.cancel_latency_ms from F21-M1"
+  },
+  "outputs": {
+    "alert_timestamp": true,
+    "baseline_replay": true,
+    "controlling_alert_id": true,
+    "derived_cancel_effective_timestamp": true,
+    "derived_cancel_request_timestamp": true,
+    "economic_score": false,
+    "pnl": false,
+    "protected_replay": true
+  },
+  "parent": {
+    "commit": "acf90355025dfd60ddf851678e0a9e9e60ef7a2a",
+    "contract_sha256": "f40d1553301932c39b4be779d09366adecfe2b1f73b4b31a8d693ab3b9bc49e5",
+    "passive_engine_sha256": "8acbdbd2364924419b5469fcd4ae5ba4fb1c8082d47713d8f42bd4331870e731",
+    "replay_engine_sha256": "1d762d0c69a554d4a3b776f01ad71123d6399d84c54ea719c3fccee0fd232214",
+    "study": "RN1-F21-M2",
+    "validation_sha256": "86c83200b92b2e9a6a789ccd13cba3ea5991f3e372be826395b026aa5d6cb06e",
+    "validation_status": "PASS_REPLAY_ENGINE_FROZEN"
+  },
+  "purpose": "Model the deterministic cancellation race after an already-qualified maker-protection alert becomes available to the controller.",
+  "race_semantics": {
+    "trade_after_cancel_request_before_cancel_effective": "eligible",
+    "trade_before_cancel_request": "eligible",
+    "trade_exactly_at_cancel_effective": "eligible",
+    "trade_strictly_after_cancel_effective": "not eligible",
+    "zero_controller_latency_grants_no_lookahead": true,
+    "zero_total_latency_same_timestamp_trade": "Trade remains eligible under frozen M1/M2 priority."
+  },
+  "scope": {
+    "excluded": [
+      "F18 signal calculation",
+      "flow imbalance calculation",
+      "signal threshold selection",
+      "F19 prospective data",
+      "F20 CLOB data",
+      "real market replay",
+      "latency calibration",
+      "latency optimization",
+      "fees",
+      "maker rebates",
+      "inventory economics",
+      "hedging",
+      "markout",
+      "PnL",
+      "settlement",
+      "winner information"
+    ],
+    "included": [
+      "already-qualified synthetic protection alert",
+      "alert availability timestamp",
+      "fixed controller latency",
+      "derived cancel-request timestamp",
+      "existing venue cancel latency",
+      "protected replay",
+      "identical unprotected baseline replay",
+      "fill-before-request",
+      "fill-during-cancel-flight",
+      "fill-at-cancel-effective timestamp",
+      "successful cancellation before later trade",
+      "pre-placement protection alert",
+      "first-alert-wins semantics",
+      "deterministic audit provenance"
+    ]
+  },
+  "status": "FROZEN_LATENCY_AWARE_PROTECTION_CONTROL",
+  "study": "RN1-F21-M3"
+}
