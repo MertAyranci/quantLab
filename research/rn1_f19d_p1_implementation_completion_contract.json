@@ -1,0 +1,284 @@
+{
+  "activation_gate": {
+    "early_readout": false,
+    "f19b_collector_sha256": "5d9970659dc0d8d0d7f5ae9b1122c1d70a4060e4871b889eb135467ad0c10760",
+    "f19b_contract_sha256": "2e43aff44ec9bae5813fa2b1fd154c7b7b04872b02170542bd2e99bc55b2625f",
+    "f19b_hash_source": "research/rn1_f19b_acquisition_validation.json",
+    "f20_read": false,
+    "finalized_acquisition_markets_exactly": 100,
+    "no_extra_acquisition_conditions": true,
+    "no_missing_registry_conditions": true,
+    "registry_rows_exactly": 100,
+    "registry_sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b",
+    "settlement_required": false,
+    "winner_required": false
+  },
+  "aggregation": {
+    "event_equal_secondary": "arithmetic mean of all event differences",
+    "leave_one_market_out": true,
+    "market_median_secondary": "median event_difference within each market, then descriptive distribution across markets",
+    "market_sign_count": true,
+    "primary_market_equal": "arithmetic mean of per-market primary differences",
+    "primary_per_market": "arithmetic mean event_difference over usable matched flagged events within each market"
+  },
+  "analysis_boundary_before_activation": {
+    "calculate_f18_signal": false,
+    "calculate_f19_markout": false,
+    "calculate_f19_pnl": false,
+    "calculate_f19_primary_metric": false,
+    "classify_f19_flagged_events": false,
+    "optimize_parameters": false,
+    "read_f19_acquisition_trade_content": false,
+    "read_f20_clob_content": false,
+    "read_winner": false,
+    "use_settlement": false
+  },
+  "binary_axis": {
+    "interpretation": "Direction is change in common binary p1 exposure, not inferred absolute RN1 inventory.",
+    "p0_definition": "outcomeIndex == 1",
+    "p1_definition": "outcomeIndex == 0",
+    "p1_exposure_direction": {
+      "BUY_p0": -1,
+      "BUY_p1": 1,
+      "SELL_p0": 1,
+      "SELL_p1": -1
+    }
+  },
+  "bootstrap": {
+    "ci": "percentile 2.5% and 97.5%",
+    "draws": 10000,
+    "input": "per-market primary mean differences",
+    "sampling": "sample markets with replacement, same number as observed",
+    "seed": 19018,
+    "statistic": "mean of sampled market means",
+    "strong_confirmation_rule": "95% CI upper bound < 0",
+    "unit": "market"
+  },
+  "control_matching": {
+    "absolute_time_distance_seconds_inclusive": [
+      120,
+      900
+    ],
+    "control_pool": "unflagged RN1 maker fills only",
+    "control_reuse": false,
+    "eligible_control_sort_order": [
+      "absolute_time_distance ascending",
+      "absolute_normalized_price_distance ascending",
+      "size_distance_from_ratio_1 ascending",
+      "control maker_fill_time ascending",
+      "stable_event_key ascending"
+    ],
+    "flagged_processing_order": [
+      "market game_start_time_utc",
+      "condition_id",
+      "maker_fill_time",
+      "stable_event_key"
+    ],
+    "future_markout_availability_used_for_matching": false,
+    "maximum_controls": 3,
+    "normalized_price_distance_max": 0.05,
+    "same_game_phase": true,
+    "same_inventory_direction": true,
+    "same_market": true,
+    "selection": "take first up to 3 currently unused eligible controls",
+    "signal_undefined_is_unflagged": true,
+    "size_distance_from_ratio_1": "max(control_size/flagged_size, flagged_size/control_size)",
+    "size_ratio_bounds_inclusive": [
+      0.5,
+      2.0
+    ]
+  },
+  "decision_and_signal": {
+    "base_notional": "size * price",
+    "decision_time": "maker_fill_time - 5 seconds",
+    "flag_rule": "imbalance <= -0.75",
+    "flow_window_end": "decision_time - 1 second",
+    "flow_window_start": "decision_time - 30 seconds",
+    "imbalance": "sum(relative_flow_sign * base_notional) / sum(base_notional)",
+    "non_self_definition": "proxyWallet != frozen RN1 wallet",
+    "relative_flow_sign": "taker_p1_direction * maker_inventory_direction",
+    "taker_direction_axis": "same p1 exposure mapping as binary_axis",
+    "window_boundaries": "inclusive",
+    "zero_denominator": "UNFLAGGED_SIGNAL_UNDEFINED"
+  },
+  "decision_statuses": {
+    "both_primary_and_declustered_negative": "CONFIRMED",
+    "confirmed_and_bootstrap_upper_below_zero": "STRONGLY_CONFIRMED",
+    "insufficient_sample": "INCONCLUSIVE_INSUFFICIENT_SAMPLE",
+    "sample_pass_but_success_rule_fails": "NOT_CONFIRMED"
+  },
+  "declustering": {
+    "algorithm": "Greedy earliest-event retention. Retain first event in each market; retain a later event only when its maker_fill_time is at least 60 seconds after the most recently retained event.",
+    "group": "condition_id",
+    "input": "usable matched flagged events",
+    "inventory_direction_separate_clusters": false,
+    "metric": "market-equal mean event_difference on retained events",
+    "order": [
+      "maker_fill_time ascending",
+      "stable_event_key ascending"
+    ]
+  },
+  "game_phase": {
+    "bins": [
+      {
+        "name": "pregame",
+        "rule": "seconds_from_start < 0"
+      },
+      {
+        "name": "live_0_5m",
+        "rule": "0 <= seconds_from_start < 300"
+      },
+      {
+        "name": "live_5_30m",
+        "rule": "300 <= seconds_from_start < 1800"
+      },
+      {
+        "name": "live_30_60m",
+        "rule": "1800 <= seconds_from_start < 3600"
+      },
+      {
+        "name": "live_60_120m",
+        "rule": "3600 <= seconds_from_start < 7200"
+      },
+      {
+        "name": "live_120m_plus",
+        "rule": "seconds_from_start >= 7200"
+      }
+    ],
+    "clock": "maker_fill_time - frozen registered game_start_time_utc",
+    "exact_start_time_phase": "live_0_5m",
+    "provenance_note": "Exact RN1-F17 source-code phase implementation is unrecoverable. These bins are specified prospectively here before any F19 performance readout and are not claimed to reproduce the exact uncommitted F17 implementation."
+  },
+  "normalized_inventory_price": {
+    "definition": "Probability price of the outcome corresponding to the maker's inventory direction.",
+    "rules": {
+      "direction_+1_on_p0_token": "1-price",
+      "direction_+1_on_p1_token": "price",
+      "direction_-1_on_p0_token": "price",
+      "direction_-1_on_p1_token": "1-price"
+    }
+  },
+  "parent": {
+    "design_path": "research/rn1_f18_flow_protection_design.json",
+    "design_sha256": "680b44e10da19111f2cef1b03fc8fc78c82692ab111c2e8463afb3e22ca90c67",
+    "freeze_commit": "12dd34060ccd697258e55735295c2f38ae8e7775",
+    "study": "RN1-F18"
+  },
+  "primary_markout": {
+    "aggressor_side": "opposite of RN1 maker side",
+    "entry_price": "normalized_inventory_price at RN1 maker fill",
+    "entry_time": "RN1 maker fill time",
+    "future_price": "future trade price transformed onto maker inventory direction",
+    "future_print": {
+      "earliest_timestamp_at_or_after_target": true,
+      "latest_allowed_time": "target_time + 10 seconds",
+      "same_aggressor_side": true,
+      "same_asset": true,
+      "stream": "market_taker",
+      "timestamp_tie_break": "stable_event_key ascending"
+    },
+    "markout_cents_per_share": "100 * markout_per_share",
+    "markout_per_share": "future_price - entry_price",
+    "sign": "positive means movement in maker inventory direction",
+    "target_time": "maker_fill_time + 15 seconds"
+  },
+  "prohibited_after_freeze": [
+    "changing adverse threshold",
+    "changing flow window",
+    "changing decision lead",
+    "changing primary horizon",
+    "changing future-print delay",
+    "changing game-phase bins",
+    "changing binary-axis mapping",
+    "changing control tolerances",
+    "changing control ordering",
+    "changing markout availability fallback",
+    "changing declustering algorithm",
+    "changing bootstrap implementation or seed",
+    "reading F20 to alter F19 confirmation",
+    "using winner or settlement",
+    "calculating PnL",
+    "early stopping",
+    "adding markets because the result is weak",
+    "retuning after prospective readout"
+  ],
+  "provenance": {
+    "claim_exact_f17_implementation_reproduction": false,
+    "completion_rules_are_prospective": true,
+    "completion_rules_selected_using_f19_performance": false,
+    "f17_exact_source_recovered": false,
+    "f17_procedural_source_recovered": false,
+    "f17_result_recovered": true,
+    "f18_hypothesis_and_statistical_parameters_recovered": true,
+    "interpretation": "These rules prospectively complete procedural details missing from the committed F18 freeze. They do not modify F18's frozen hypothesis or claim to reconstruct unrecoverable F17 source code.",
+    "prospective_performance_read_before_freeze": false
+  },
+  "purpose": "Specify deterministic procedural details not preserved from the uncommitted RN1-F17 implementation before any RN1-F19 prospective signal, markout, or performance readout.",
+  "rn1_role_classification": {
+    "ambiguous_or_inconsistent_multiset": "FAIL_CLOSED",
+    "maker_candidate_unit": "one residual RN1 maker fill",
+    "market_taker_stream": "F19b market_taker",
+    "method": "Multiset-match RN1 rows against market_taker rows using the frozen F19b canonical core trade fields. Matched RN1 rows are RN1 taker fills; residual RN1 rows are RN1 maker fills.",
+    "multiplicity_preserved": true,
+    "rn1_all_stream": "F19b rn1_all"
+  },
+  "sample_count_definitions": {
+    "do_not_substitute_usable_event_count_for_f18_matched_event_gate": true,
+    "f18_minimum_markets_with_usable_matched_pairs": 20,
+    "f18_minimum_matched_flagged_events": 50,
+    "matched_flagged_event": "flagged RN1 maker event for which at least one control is selected under the frozen matching rules; future markout availability does not affect this matched-event count",
+    "usable_matched_flagged_event": "matched flagged event for which the flagged event has a valid primary markout and at least one already-selected control has a valid primary markout"
+  },
+  "stable_event_key": {
+    "duplicate_ordinal": "zero-based ordinal after lexicographic sorting of otherwise identical canonical rows",
+    "fields": [
+      "timestamp",
+      "transactionHash",
+      "asset",
+      "side",
+      "price",
+      "size",
+      "outcomeIndex",
+      "duplicate_ordinal"
+    ]
+  },
+  "status": "PROSPECTIVE_IMPLEMENTATION_COMPLETION_FREEZE",
+  "study": "RN1-F19d-P1",
+  "success_rule": {
+    "declustered_market_equal_difference": "< 0",
+    "primary_market_equal_difference": "< 0",
+    "sample_gate": "at least 50 matched flagged events and at least 20 markets with usable matched pairs",
+    "strong_confirmation_additional_requirement": "market-bootstrap 95% CI upper bound < 0"
+  },
+  "unchanged_f18_parameters": {
+    "adverse_threshold": -0.75,
+    "control_reuse": false,
+    "decision_lead_seconds": 5,
+    "decluster_seconds": 60,
+    "flow_source": "non-self Polymarket taker trades",
+    "flow_weight": "base notional",
+    "flow_window_relative_to_decision": "[-30s,-1s]",
+    "flow_window_seconds": 30,
+    "future_print_max_delay_seconds": 10,
+    "maximum_controls_per_flagged_event": 3,
+    "minimum_markets_with_usable_matched_pairs": 20,
+    "minimum_matched_flagged_events": 50,
+    "price_distance_max": 0.05,
+    "primary_horizon_seconds": 15,
+    "size_ratio_max": 2.0,
+    "size_ratio_min": 0.5,
+    "target_full_games": 100,
+    "time_distance_max_seconds": 900,
+    "time_distance_min_seconds": 120
+  },
+  "usable_matched_event": {
+    "control_markout": "same frozen primary markout algorithm",
+    "control_mean": "arithmetic mean of valid selected-control markouts",
+    "event_difference": "flagged_markout - control_mean",
+    "fallback_to_unselected_controls_based_on_markout": false,
+    "flagged_primary_markout_required": true,
+    "minimum_controls_with_valid_primary_markout": 1,
+    "minimum_selected_controls": 1,
+    "selected_control_with_missing_markout": "exclude_from_control_mean"
+  }
+}
