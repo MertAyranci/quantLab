@@ -1,0 +1,156 @@
+{
+  "activation": {
+    "P3_does_not_activate_confirmatory_analysis": true,
+    "early_readout_prohibited": true,
+    "readout_requires_ready_status": true,
+    "readout_requires_separate_frozen_P4": true
+  },
+  "adapter_boundary": {
+    "condition_mismatch": "FAIL_CLOSED",
+    "duplicate_rows": "preserve multiplicity and assign deterministic duplicate_ordinal",
+    "invalid_outcome_index": "FAIL_CLOSED",
+    "invalid_price": "FAIL_CLOSED",
+    "invalid_side": "FAIL_CLOSED",
+    "invalid_timestamp": "FAIL_CLOSED",
+    "missing_required_field": "FAIL_CLOSED",
+    "nonpositive_size": "FAIL_CLOSED",
+    "output_type": "P2 Trade objects",
+    "production_trade_files_may_be_opened_during_p3_engineering": false,
+    "required_fields_exactly": [
+      "proxyWallet",
+      "side",
+      "asset",
+      "conditionId",
+      "size",
+      "price",
+      "timestamp",
+      "transactionHash",
+      "outcome",
+      "outcomeIndex"
+    ],
+    "rn1_wallet_mismatch_for_rn1_stream": "FAIL_CLOSED",
+    "synthetic_rows_only_during_p3_engineering": true
+  },
+  "analysis_boundary": {
+    "f20_read": false,
+    "parameter_optimization": false,
+    "pnl_calculated": false,
+    "prospective_flagged_events_classified": false,
+    "prospective_markout_calculated": false,
+    "prospective_primary_metric_calculated": false,
+    "prospective_signal_calculated": false,
+    "prospective_trade_content_read": false,
+    "settlement_used": false,
+    "winner_read": false
+  },
+  "engineering_components": {
+    "adapter": "research/rn1_f19d_p3_adapter.py",
+    "adapter_tests": "research/test_rn1_f19d_p3_adapter.py",
+    "readiness_gate": "research/rn1_f19d_p3_readiness.py",
+    "readiness_tests": "research/test_rn1_f19d_p3_readiness.py"
+  },
+  "frozen_inputs": {
+    "f19_registry_rows": 100,
+    "f19_registry_sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b",
+    "f19b_canonical_core_trade_fields": [
+      "proxyWallet",
+      "side",
+      "asset",
+      "conditionId",
+      "size",
+      "price",
+      "timestamp",
+      "transactionHash",
+      "outcome",
+      "outcomeIndex"
+    ],
+    "f19b_collector_sha256": "5d9970659dc0d8d0d7f5ae9b1122c1d70a4060e4871b889eb135467ad0c10760",
+    "f19b_contract_sha256": "2e43aff44ec9bae5813fa2b1fd154c7b7b04872b02170542bd2e99bc55b2625f",
+    "f19c_contract_sha256": "69a5274d7f1e42344c374fef0b24083a61083beaacd5d613b1afd738a3c4f569",
+    "f19c_operator_sha256": "87785beeb300656ba9fb9a21bd6647d89c8513651577f9450299fe3c015c54b6"
+  },
+  "manifest_only_readiness": {
+    "accepted_manifest_generations": {
+      "RN1-F19b": {
+        "required_provenance": "contract_sha256 equals frozen F19b contract SHA",
+        "study": "RN1-F19b"
+      },
+      "RN1-F19c": {
+        "acquisition_method": "frozen_RN1-F19b",
+        "required_provenance": [
+          "f19b_contract_sha256 equals frozen F19b contract SHA",
+          "f19c_contract_sha256 equals frozen F19c operations contract SHA"
+        ],
+        "study": "RN1-F19c"
+      }
+    },
+    "acquisition_manifest_json_may_be_read": true,
+    "f20_may_be_read": false,
+    "failure_rule": "Any registry/hash/schema/manifest/directory/reference integrity violation.",
+    "not_ready_rule": "Integrity is clean but fewer than 100 frozen registry conditions have valid finalized acquisition manifests.",
+    "raw_trade_pass_json_may_be_read": false,
+    "ready_rule": "Exactly 100 valid finalized acquisition markets, covering exactly the frozen 100 registry conditions, with no invalid manifests, orphan condition directories, temporary directories, or missing referenced raw files.",
+    "registry_file_may_be_read": true,
+    "required_registry_rows": 100,
+    "required_unique_conditions": 100,
+    "valid_finalized_market_requires": [
+      "manifest generation is either direct RN1-F19b or frozen RN1-F19c wrapper",
+      "generation-specific frozen acquisition provenance passes",
+      "condition exists in frozen registry",
+      "manifest status == PASS",
+      "manifest condition_id matches directory and registry",
+      "market_taker stream status == PASS",
+      "rn1_all stream status == PASS",
+      "each stream reports exactly two stable passes",
+      "stream pass row counts agree",
+      "stream pass canonical hashes agree",
+      "manifest analysis boundary reports no signal",
+      "manifest analysis boundary reports no markout",
+      "manifest analysis boundary reports no settlement",
+      "manifest analysis boundary reports no winner",
+      "manifest analysis boundary reports no PnL",
+      "referenced pass files exist"
+    ]
+  },
+  "parent": {
+    "p1_contract_sha256": "d4bebf4b8e231e2db1b190b47559d220b2ce34e3c25d7b23acd5179100f32004",
+    "p2_commit": "6263cb28d8f47ce4940a30a6720cf58beca3cf4b",
+    "p2_contract_sha256": "3b3ba485834bf8b2a6d91ebfc7828b312de5e34b876f1c0eda5da3ce14b38541",
+    "p2_core_sha256": "8f56015806bdeb5814901486e9348ff93119652e09ca8d438d826886eb53ca97",
+    "p2_validation_sha256": "6492d7851680b5237c56a05781811f8b3149d7a23ba23d4f6227aee859b7ec42"
+  },
+  "prohibited": [
+    "opening prospective pass_1.json trade content during P3 engineering",
+    "opening prospective pass_2.json trade content during P3 engineering",
+    "reading F20",
+    "calculating the F18 signal",
+    "classifying prospective flagged events",
+    "calculating prospective markout",
+    "calculating prospective PnL",
+    "using winner",
+    "using settlement",
+    "changing P1 semantics",
+    "changing P2 confirmation mechanics",
+    "early confirmatory readout"
+  ],
+  "provenance_resolution": {
+    "direct_f19b_manifests_remain_valid": true,
+    "discovered_by": "manifest-only readiness engineering; no prospective trade contents or performance were inspected",
+    "f19c_wrapper_manifests_are_valid_if_and_only_if": [
+      "study == RN1-F19c",
+      "acquisition_method == frozen_RN1-F19b",
+      "f19b_contract_sha256 matches frozen F19b contract",
+      "f19c_contract_sha256 matches frozen F19c operations contract"
+    ],
+    "reason": "F19c was the prospectively frozen blind operations layer and intentionally writes RN1-F19c manifests while reusing frozen RN1-F19b acquisition logic.",
+    "signal_or_performance_used": false
+  },
+  "purpose": "Freeze the real-data parsing boundary and a manifest-only activation gate for the eventual RN1-F19 confirmatory readout without reading prospective trade contents or calculating signal, markout, or PnL.",
+  "readiness_statuses": {
+    "integrity_failure": "FAIL_READINESS_INTEGRITY",
+    "not_ready": "NOT_READY_FOR_CONFIRMATORY_READOUT",
+    "ready": "READY_FOR_ONE_TIME_CONFIRMATORY_READOUT"
+  },
+  "status": "MANIFEST_ONLY_READINESS_ENGINEERING_FREEZE",
+  "study": "RN1-F19d-P3"
+}

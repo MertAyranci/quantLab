@@ -1,0 +1,99 @@
+{
+  "analysis_boundary": {
+    "f20_read": false,
+    "optimization_performed": false,
+    "pnl_calculated": false,
+    "prospective_markout_calculated": false,
+    "prospective_primary_metric_calculated": false,
+    "prospective_signal_calculated": false,
+    "prospective_trade_content_read": false,
+    "settlement_used": false,
+    "winner_read": false
+  },
+  "captured_at_utc": "2026-08-16T21:46:32.042933+00:00",
+  "code": {
+    "adapter_sha256": "57c19a0fce3d05055182073f8e8bafe6a8bd04bb7f4c5ea06b17c0f1dddf042b",
+    "adapter_test_sha256": "c8a6cf6af9f6b69262508f70c4ae93594944e421f3dbd393a1ff1ef7772605b4",
+    "contract_sha256": "1554b35ef3cee95b4ee8866132f38e5bae731eb913fb5dffb5b5d3ba6bc0ebac",
+    "readiness_sha256": "8943239f39e9ebc5d1c2a0c9e51fd7d7298535cc8f93a2ccfeab5c042fa66d7f",
+    "readiness_test_sha256": "907e10726215ec6c9a2c63e228a7a4048132c87d2f534c540b685387e86ab312"
+  },
+  "engineering_resolution": {
+    "correction_made_before_p3_commit": true,
+    "initial_direct_f19b_valid_markets": 4,
+    "initial_f19c_wrapper_rejected_markets": 15,
+    "initial_manifest_only_gate_status": "FAIL_READINESS_INTEGRITY",
+    "markout_used": false,
+    "performance_used": false,
+    "prospective_trade_content_used": false,
+    "resolution": "Accept both frozen manifest generations with strict generation-specific provenance validation.",
+    "root_cause": "Initial P3 readiness implementation recognized only direct RN1-F19b manifest provenance. Frozen RN1-F19c operations intentionally write RN1-F19c wrapper manifests while reusing frozen RN1-F19b acquisition logic.",
+    "signal_used": false
+  },
+  "live_manifest_only_readiness": {
+    "extra_acquisition_directories": 0,
+    "invalid_manifests": 0,
+    "markets_with_missing_referenced_raw_files": 0,
+    "orphan_condition_directories": 0,
+    "registry_rows": 100,
+    "remaining_markets": 81,
+    "status": "NOT_READY_FOR_CONFIRMATORY_READOUT",
+    "temporary_directories": 0,
+    "unique_conditions": 100,
+    "valid_finalized_markets": 19
+  },
+  "parent": {
+    "p1_contract_sha256": "d4bebf4b8e231e2db1b190b47559d220b2ce34e3c25d7b23acd5179100f32004",
+    "p2_commit": "6263cb28d8f47ce4940a30a6720cf58beca3cf4b",
+    "p2_contract_sha256": "3b3ba485834bf8b2a6d91ebfc7828b312de5e34b876f1c0eda5da3ce14b38541",
+    "p2_core_sha256": "8f56015806bdeb5814901486e9348ff93119652e09ca8d438d826886eb53ca97",
+    "p2_validation_sha256": "6492d7851680b5237c56a05781811f8b3149d7a23ba23d4f6227aee859b7ec42"
+  },
+  "provenance": {
+    "accepted_manifest_generations": [
+      "RN1-F19b",
+      "RN1-F19c"
+    ],
+    "f19_registry_sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b",
+    "f19b_collector_sha256": "5d9970659dc0d8d0d7f5ae9b1122c1d70a4060e4871b889eb135467ad0c10760",
+    "f19b_contract_sha256": "2e43aff44ec9bae5813fa2b1fd154c7b7b04872b02170542bd2e99bc55b2625f",
+    "f19c_contract_sha256": "69a5274d7f1e42344c374fef0b24083a61083beaacd5d613b1afd738a3c4f569",
+    "f19c_operator_sha256": "87785beeb300656ba9fb9a21bd6647d89c8513651577f9450299fe3c015c54b6"
+  },
+  "status": "PASS_MANIFEST_ONLY_READINESS_ENGINEERING",
+  "study": "RN1-F19d-P3",
+  "synthetic_validation": {
+    "all_checks": {
+      "extra_dirs_zero": true,
+      "f19b_collector_sha": true,
+      "f19b_contract_sha": true,
+      "f19c_contract_sha": true,
+      "f19c_operator_sha": true,
+      "f20_unread": true,
+      "invalid_manifests_zero": true,
+      "markout_uncomputed": true,
+      "missing_raw_references_zero": true,
+      "orphan_dirs_zero": true,
+      "p1_contract_sha": true,
+      "p2_contract_sha": true,
+      "p2_core_sha": true,
+      "p2_validation_sha": true,
+      "p3_adapter_sha": true,
+      "p3_adapter_test_sha": true,
+      "p3_contract_sha": true,
+      "p3_readiness_sha": true,
+      "p3_readiness_test_sha": true,
+      "parent_head_is_p2": true,
+      "pnl_uncomputed": true,
+      "pytest_returncode": true,
+      "raw_trade_content_unread": true,
+      "readiness_integrity_pass": true,
+      "registry_sha": true,
+      "signal_uncomputed": true,
+      "synthetic_tests_exactly_41": true,
+      "temporary_dirs_zero": true
+    },
+    "pytest_stdout": ".........................................                                [100%]\n41 passed in 0.15s",
+    "tests_passed": 41
+  }
+}
