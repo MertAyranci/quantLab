@@ -1,0 +1,194 @@
+{
+  "analysis_boundary": {
+    "F18_signal_calculated": false,
+    "F19_read": false,
+    "F20_read": false,
+    "flow_imbalance_calculated": false,
+    "inventory_valued": false,
+    "maker_rebate_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "post_fill_price_evaluated": false,
+    "prospective_data_read": false,
+    "prospective_performance_read": false,
+    "protected_vs_unprotected_compared": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "burned_universe": {
+    "anchors": 1080,
+    "expected_probe_orders": 2160,
+    "games": 9,
+    "markets": 9,
+    "probes_per_anchor": 2,
+    "prospective": false,
+    "selection_change_from_m6": false,
+    "source": "same frozen H2-v2 M2h cohort used by F21-M6",
+    "tape_sha256": "c234267e3342601c9706c39d7d4c20c93eaeea1df5b0ca0a5513cf67221be75f",
+    "tokens": 18
+  },
+  "continuity_semantics": {
+    "connection_mixing_allowed": false,
+    "continuity_break_action": "emit COLLECTOR_GAP before the offending source event and invalidate that probe",
+    "events_after_gap_may_fill_probe": false,
+    "generation_crossing_allowed": false,
+    "snapshot_reset_grants_queue_credit": false
+  },
+  "economic_outputs_prohibited": [
+    "markout",
+    "post-fill price move",
+    "adverse-selection return",
+    "spread capture",
+    "maker rebate",
+    "fee economics",
+    "inventory valuation",
+    "settlement value",
+    "winner conditioning",
+    "strategy return",
+    "PnL"
+  ],
+  "engineering_sufficiency_gate": {
+    "frozen_before_60s_outcome_read": true,
+    "if_fail": "Freeze M7 as FAIL. Do not change the 60-second window, thresholds, universe, quote placement, or fill rules inside M7.",
+    "interpretation": "These are execution-path coverage requirements, not alpha or profitability requirements.",
+    "minimum_markets_with_positive_simulated_fill": 5,
+    "minimum_probes_with_positive_simulated_fill": 20,
+    "minimum_unique_queue_consuming_real_trade_events": 50
+  },
+  "exposure_window": {
+    "duration_seconds": 60,
+    "end": "decision_time + exactly 60 seconds",
+    "events_after_end": "excluded",
+    "reason": "Frozen before any M7 60-second outcome inspection. No alternate horizon may be substituted inside M7.",
+    "source_events_after_start": "capture_time > decision_time",
+    "source_events_at_end": "capture_time <= decision_time + 60 seconds",
+    "start": "decision_time",
+    "start_inclusive_for_placement": true
+  },
+  "fill_path_outputs_allowed": [
+    "probe count",
+    "valid replay count",
+    "invalidated probe count",
+    "explicit trade translation count",
+    "exact-level BOOK_SIZE translation count",
+    "unique queue-consuming explicit trade event count",
+    "probes with filled_shares > 0",
+    "partial-fill probe count",
+    "full-fill probe count",
+    "markets containing at least one simulated fill probe",
+    "terminal structural state counts",
+    "queue-ahead structural summaries",
+    "deterministic replay hashes",
+    "invariant failures"
+  ],
+  "goal": "Exercise the frozen F21 passive-maker queue and fill state machine on previously-burned real Polymarket CLOB data using a pre-frozen longer exposure window. This is an execution-path engineering validation only, not a strategy or profitability test.",
+  "latency_semantics": {
+    "cancel_latency_ms": 0,
+    "logical_replay_ticks": true,
+    "logical_ticks_are_latency_measurements": false,
+    "placement_latency_ms": 0,
+    "protection_controller_used": false,
+    "purpose_of_logical_ticks": "preserve observed real microsecond/source ordering without collapsing separate real events into the same integer millisecond timestamp",
+    "real_latency_claim": false
+  },
+  "parent": {
+    "artifact_sha256": {
+      "contract": "c653dafcab0cc1a35695ac3bb3863d16b089efdd20514eb0ec949ec1e03aecbc",
+      "replay_code": "d2b0a2d10927f34985413c0a68fe60d6fdfd8bf48e29939361c38145f81d30d4",
+      "trade_side_gate": "3eccb25f9493c2ffeed2c8d28d41d509e8a3c8e8f43f87f404f56b4ba5b0230c",
+      "trade_side_gate_code": "31031ea0c25d4861495347754469f4045c9078d995185010068d0e872a3f6191",
+      "validation": "f20ac6525252db0e334e8e9703ba83b27140c1f97e2a1e27bfc92194f2c65fb2"
+    },
+    "commit": "59e491e533717f6e52b2948bb2231041caeb523e",
+    "study": "RN1-F21-M6",
+    "validation_status": "PASS_BURNED_REAL_DATA_REPLAY_VALIDATION"
+  },
+  "pass_requirements": {
+    "anchors": 1080,
+    "connection_mixing": 0,
+    "decision_base_mismatches": 0,
+    "deterministic_rebuild": true,
+    "duplicate_delta_sequence_keys": 0,
+    "duplicate_trade_sequence_keys": 0,
+    "generation_mixing": 0,
+    "inferred_fills": 0,
+    "lookahead_events": 0,
+    "minimum_markets_with_positive_simulated_fill": 5,
+    "minimum_probes_with_positive_simulated_fill": 20,
+    "minimum_unique_queue_consuming_real_trade_events": 50,
+    "probe_orders": 2160,
+    "replay_errors": 0,
+    "venue_invalid": 0
+  },
+  "probe_semantics": {
+    "both_sides_always_probed": true,
+    "buy_probe": "passive BUY at decision-time reconstructed best bid",
+    "exact_tick_required": true,
+    "minimum_order_size_required": true,
+    "post_only_required": true,
+    "probe_size": "captured per-market minimum_order_size",
+    "queue_initialization": "displayed exact-price public size at decision-time placement snapshot",
+    "sell_probe": "passive SELL at decision-time reconstructed best ask",
+    "signal_selects_side": false
+  },
+  "prohibited_adaptation": [
+    "No alternative exposure horizon",
+    "No minimum-fill threshold change",
+    "No minimum-market threshold change",
+    "No minimum-queue-consuming-event threshold change",
+    "No anchor exclusion based on M7 outcomes",
+    "No side-specific filtering based on M7 outcomes",
+    "No price-band filtering based on M7 outcomes",
+    "No game-phase filtering based on M7 outcomes",
+    "No queue-size filtering based on M7 outcomes",
+    "No retrospective parameter tuning"
+  ],
+  "queue_consuming_trade_definition": {
+    "book_change_without_trade_counts": false,
+    "buy_probe_requires_reported_side": "SELL",
+    "deduplicate_across_overlapping_anchor_windows": true,
+    "must_arrive_before_probe_terminal_or_window_end": true,
+    "must_be_explicit_last_trade_event": true,
+    "must_be_inside_valid_continuity_segment": true,
+    "must_match_exact_probe_price": true,
+    "must_match_probe_token": true,
+    "sell_probe_requires_reported_side": "BUY",
+    "unique_event_key": [
+      "connection_id",
+      "ingest_sequence"
+    ]
+  },
+  "reason_for_new_milestone": {
+    "interpretation": "M6 validated structural real-data replay but its 500ms windows did not materially exercise the passive fill path.",
+    "m6_probe_orders": 2160,
+    "m6_real_passive_fill_behavior_established": false,
+    "m6_real_window_ms": 500,
+    "m6_terminal_resting": 2160,
+    "m6_translated_trades": 2
+  },
+  "source_event_semantics": {
+    "book_size_decrease": "does not grant queue credit",
+    "book_size_increase": "never moves our order ahead of already displayed liquidity",
+    "book_snapshot_creates_fill": false,
+    "important_limitation": "F21-M7 inherits M1 exact-price fill semantics. A trade through the quote is not inferred to have filled the probe.",
+    "price_change": "BOOK_SIZE update only when token, side, and exact resting quote price match the probe",
+    "price_change_creates_fill": false,
+    "price_move_creates_fill": false,
+    "rest_book": "authoritative structural/continuity evidence only",
+    "trade_only_fill_evidence": true,
+    "trade_price_rule": "exact resting quote price only",
+    "trade_through_fill_inference": false,
+    "ws_book": "authoritative structural/continuity evidence only"
+  },
+  "status": "FROZEN_BURNED_LONG_WINDOW_FILL_PATH_VALIDATION",
+  "study": "RN1-F21-M7",
+  "trade_side_mapping": {
+    "BUY": "aggressive BUY consumes resting asks",
+    "SELL": "aggressive SELL consumes resting bids",
+    "comparable_cases": 4389,
+    "direct_support_fraction": "0.9847345636819321029847345637",
+    "gate_status": "PASS",
+    "reestimate_in_m7": false,
+    "source": "F21-M6 independently validated burned-data side gate"
+  }
+}

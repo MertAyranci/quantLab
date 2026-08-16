@@ -1,0 +1,109 @@
+{
+  "analysis_boundary": {
+    "F18_signal_calculated": false,
+    "F19_read": false,
+    "F20_read": false,
+    "flow_imbalance_calculated": false,
+    "inventory_valued": false,
+    "maker_rebate_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "post_fill_price_evaluated": false,
+    "prospective_data_read": false,
+    "prospective_performance_read": false,
+    "protected_vs_unprotected_compared": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "burned_universe": {
+    "anchors": 1080,
+    "exposure_seconds": 60,
+    "games": 9,
+    "markets": 9,
+    "probe_orders": 2160,
+    "tokens": 18
+  },
+  "continuity": {
+    "connection_changes_observed": 0,
+    "connection_mixing": 0,
+    "generation_crossings_observed": 504,
+    "generation_mixing": 0
+  },
+  "contract_sha256": "01e9dba3fa3059221820f04105b8beb5d28efa1cf1701231934e60893b575ae1",
+  "determinism": {
+    "deterministic_rebuild": true,
+    "first_replay_sha256": "13bf35bca1050a85324b871942a4756e85281eada3ca9fd149c48c6a068ab1e5",
+    "second_replay_sha256": "13bf35bca1050a85324b871942a4756e85281eada3ca9fd149c48c6a068ab1e5"
+  },
+  "engineering_thresholds": {
+    "minimum_markets_with_positive_simulated_fill": 5,
+    "minimum_probes_with_positive_simulated_fill": 20,
+    "minimum_unique_queue_consuming_real_trade_events": 50
+  },
+  "fill_path_coverage": {
+    "full_fill_probes": 0,
+    "invalidated_probes": 504,
+    "markets_with_positive_simulated_fill": 0,
+    "partial_fill_probes": 0,
+    "positive_simulated_fill_probes": 0,
+    "probes_replayed": 2160,
+    "unique_queue_consuming_real_trade_events": 64
+  },
+  "integrity_checks": {
+    "explicit_fill_model_mismatches": 0,
+    "inferred_fills": 0,
+    "missing_trade_size": 0,
+    "negative_filled_shares": 0,
+    "overfilled_probes": 0,
+    "placement_snapshot_missing": 0,
+    "replay_errors": 0,
+    "unknown_trade_side": 0
+  },
+  "parent_m6": {
+    "commit": "59e491e533717f6e52b2948bb2231041caeb523e",
+    "trade_side_gate_sha256": "3eccb25f9493c2ffeed2c8d28d41d509e8a3c8e8f43f87f404f56b4ba5b0230c",
+    "trade_side_gate_status": "PASS",
+    "validation_sha256": "f20ac6525252db0e334e8e9703ba83b27140c1f97e2a1e27bfc92194f2c65fb2"
+  },
+  "requirements": {
+    "anchors": true,
+    "connection_mixing": true,
+    "decision_base_mismatches": true,
+    "deterministic_rebuild": true,
+    "duplicate_delta_sequence_keys": true,
+    "duplicate_trade_sequence_keys": true,
+    "generation_mixing": true,
+    "inferred_fills": true,
+    "lookahead_events": true,
+    "minimum_markets_with_positive_simulated_fill": false,
+    "minimum_probes_with_positive_simulated_fill": false,
+    "minimum_unique_queue_consuming_real_trade_events": true,
+    "probe_orders": true,
+    "replay_errors": true,
+    "venue_invalid": true
+  },
+  "source_integrity": {
+    "decision_base_mismatches": 0,
+    "duplicate_delta_sequence_keys": 0,
+    "duplicate_trade_sequence_keys": 0,
+    "lookahead_or_predecision_events": 0
+  },
+  "status": "FAIL_BURNED_LONG_WINDOW_FILL_PATH_VALIDATION",
+  "study": "RN1-F21-M7",
+  "terminal_state_counts": {
+    "invalidated": 504,
+    "resting": 1656
+  },
+  "translation_counts": {
+    "generation_crossing_observed": 504,
+    "irrelevant_book_delta": 42448,
+    "queue_consuming_trade_occurrence": 121,
+    "snapshot_structural_only": 504,
+    "source_delta": 46212,
+    "source_rows_after_gap": 7406,
+    "source_snapshot": 1008,
+    "source_trade": 250,
+    "translated_book_size": 3764,
+    "translated_trade": 250
+  }
+}
