@@ -1,0 +1,46 @@
+{
+  "analysis_boundary": {
+    "f18_signal_calculated": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "prospective_data_read": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "files": {
+    "contract_sha256": "f40d1553301932c39b4be779d09366adecfe2b1f73b4b31a8d693ab3b9bc49e5",
+    "replay_engine_sha256": "1d762d0c69a554d4a3b776f01ad71123d6399d84c54ea719c3fccee0fd232214",
+    "replay_tests_sha256": "4b258e997916112eb03dccc6e1cb73849f80259163c2d7eacfa9d3804d8d2fbf"
+  },
+  "parent": {
+    "commit": "ba61a2ddb2e5e882ccc140244c7d72602ebadb0e",
+    "m1_engine_sha256": "8acbdbd2364924419b5469fcd4ae5ba4fb1c8082d47713d8f42bd4331870e731",
+    "study": "RN1-F21-M1"
+  },
+  "replay_semantics": {
+    "book_size_decrease_queue_credit": false,
+    "collector_gap_priority_over_trade": true,
+    "explicit_end_timestamp": true,
+    "missing_due_placement_snapshot": "invalidate",
+    "placement_snapshot": "exact timestamp required",
+    "trade_at_cancel_effective_time": "eligible before cancellation"
+  },
+  "status": "PASS_REPLAY_ENGINE_FROZEN",
+  "study": "RN1-F21-M2",
+  "validation": {
+    "chronological_input_validation": true,
+    "database_access": false,
+    "deterministic_replay": true,
+    "exact_placement_snapshot_required": true,
+    "m1_regression_tests_passed": 19,
+    "m1_regression_tests_total": 19,
+    "m2_synthetic_tests_passed": 22,
+    "m2_synthetic_tests_total": 22,
+    "network_access": false,
+    "out_of_order_silent_repair": false,
+    "placement_interpolation": false,
+    "prospective_data_access": false,
+    "same_timestamp_frozen_priority": true
+  }
+}

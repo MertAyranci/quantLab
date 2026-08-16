@@ -1,0 +1,103 @@
+{
+  "study": "RN1-F21-M2",
+  "status": "FROZEN_EVENT_DRIVEN_REPLAY",
+  "parent": "RN1-F21-M1",
+  "parent_commit": "ba61a2ddb2e5e882ccc140244c7d72602ebadb0e",
+  "purpose": "Apply the frozen F21-M1 passive-maker semantics to a deterministic chronological synthetic event stream.",
+  "scope": {
+    "included": [
+      "chronological replay",
+      "same-timestamp deterministic ordering",
+      "exact placement snapshot",
+      "aggressive trade events",
+      "anonymous book-size events",
+      "cancel requests",
+      "cancel-effective processing",
+      "collector-gap invalidation",
+      "explicit replay end time",
+      "canonical replay summary"
+    ],
+    "excluded": [
+      "F18 signal",
+      "F19 prospective data",
+      "F20 CLOB data",
+      "real market replay",
+      "fees",
+      "maker rebates",
+      "inventory",
+      "hedging",
+      "markout",
+      "PnL",
+      "settlement",
+      "winner information",
+      "parameter calibration",
+      "parameter optimization"
+    ]
+  },
+  "input_ordering": {
+    "input_timestamps_must_be_nondecreasing": true,
+    "silent_global_resort_of_out_of_order_input": false,
+    "same_timestamp_events_are_reordered_by_frozen_priority": true
+  },
+  "event_types": [
+    "PLACEMENT_BOOK",
+    "CANCEL_REQUEST",
+    "COLLECTOR_GAP",
+    "TRADE",
+    "BOOK_SIZE",
+    "CLOCK"
+  ],
+  "same_timestamp_priority": [
+    "PLACEMENT_BOOK",
+    "CANCEL_REQUEST",
+    "COLLECTOR_GAP",
+    "TRADE",
+    "BOOK_SIZE",
+    "CLOCK",
+    "CANCEL_EFFECTIVE"
+  ],
+  "placement": {
+    "exact_snapshot_timestamp_required": true,
+    "required_timestamp": "order placement_effective_ts_ms",
+    "duplicate_placement_snapshot": "reject replay",
+    "missing_snapshot_after_placement_time": "invalidate order",
+    "snapshot_requires": [
+      "displayed_size_at_price",
+      "best_bid",
+      "best_ask"
+    ],
+    "book_interpolation": false
+  },
+  "cancel": {
+    "cancel_effective_strictly_before_next_later_event": true,
+    "events_exactly_at_cancel_effective_time_execute_before_cancel_effective": true,
+    "preplacement_cancel_supported": true,
+    "preplacement_cancel_still_pending_at_placement": "quote may become active but remains cancel-pending"
+  },
+  "gap": {
+    "collector_gap_same_timestamp_as_trade": "gap invalidation wins",
+    "post_gap_fill_inference": false
+  },
+  "replay_end": {
+    "explicit_end_timestamp_required": true,
+    "end_timestamp_must_not_precede_last_input_event": true,
+    "pending_cancel_is_effected_if_due_by_end_timestamp": true,
+    "missing_due_placement_snapshot_is_invalidated_by_end_timestamp": true
+  },
+  "conservatism": {
+    "infer_missing_events": false,
+    "infer_queue_from_book_changes": false,
+    "infer_fill_from_price_movement": false,
+    "infer_trade_side": false,
+    "infer_trade_size": false
+  },
+  "analysis_boundary": {
+    "prospective_data_read": false,
+    "performance_read": false,
+    "F18_signal_calculated": false,
+    "markout_calculated": false,
+    "winner_used": false,
+    "settlement_used": false,
+    "pnl_calculated": false
+  }
+}
