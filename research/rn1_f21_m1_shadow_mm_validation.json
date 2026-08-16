@@ -1,0 +1,39 @@
+{
+  "analysis_boundary": {
+    "f18_signal_calculated": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "prospective_data_read": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "files": {
+    "contract_sha256": "dc4f1d2bf39231faf320dcbafcb7f9def725faa02717e746b52e2f70a141515f",
+    "engine_sha256": "8acbdbd2364924419b5469fcd4ae5ba4fb1c8082d47713d8f42bd4331870e731",
+    "tests_sha256": "18fa6914a0407dcf4d1c9e0b65cb88d5641d32f3844dafc0b91cc8be80fac362"
+  },
+  "semantics": {
+    "cancellation_queue_credit": false,
+    "collector_gap": "invalidate",
+    "fill_before_cancel": true,
+    "hidden_fill_inference": false,
+    "partial_fills": true,
+    "price_move_fill_inference": false,
+    "trade_at_cancel_effective_time": "eligible",
+    "trade_side_required": true,
+    "trade_size_required": true,
+    "visible_queue_ahead_only": true
+  },
+  "status": "PASS_SEMANTICS_FROZEN",
+  "study": "RN1-F21-M1",
+  "validation": {
+    "database_access": false,
+    "network_access": false,
+    "performance_access": false,
+    "prospective_data_access": false,
+    "pure_state_machine": true,
+    "synthetic_tests_passed": 19,
+    "synthetic_tests_total": 19
+  }
+}

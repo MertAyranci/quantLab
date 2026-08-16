@@ -1,0 +1,103 @@
+{
+  "study": "RN1-F21-M1",
+  "status": "FROZEN_SHADOW_MAKER_SEMANTICS",
+  "purpose": "Define deterministic, conservative passive-order queue and cancellation semantics before any prospective OOS execution replay.",
+  "relationship_to_existing_execution": {
+    "existing_fill_sim": "Aggressive IOC only.",
+    "f21_engine": "Passive resting-order state machine only.",
+    "modify_existing_fill_sim": false,
+    "modify_order_manager": false
+  },
+  "scope": {
+    "included": [
+      "passive quote placement",
+      "visible queue-ahead initialization",
+      "aggressive trade consumption",
+      "partial passive fills",
+      "cancel request",
+      "cancel latency",
+      "fill-before-cancel",
+      "same-timestamp event priority",
+      "collector-gap invalidation",
+      "deterministic audit trail"
+    ],
+    "excluded": [
+      "strategy signal generation",
+      "F18 prospective data",
+      "F19 performance",
+      "F20 market data replay",
+      "fees",
+      "maker rebates",
+      "inventory PnL",
+      "hedging",
+      "settlement",
+      "winner information",
+      "latency calibration",
+      "parameter optimization"
+    ]
+  },
+  "queue_semantics": {
+    "fifo_assumption": true,
+    "initial_queue_ahead": "Displayed public size already resting at the exact quote price when our passive order becomes effective.",
+    "join_position": "Behind all displayed size already at the exact price.",
+    "book_size_increase_after_join": "Does not increase queue ahead; new displayed liquidity is assumed to join behind our order.",
+    "book_size_decrease_without_identified_aggressive_trade": "Gives zero queue credit.",
+    "queue_ahead_can_decline_from": [
+      "identified eligible aggressive trade quantity"
+    ],
+    "hidden_liquidity_credit": false,
+    "cancellation_ahead_credit": false,
+    "fill_from_book_change_alone": false
+  },
+  "trade_semantics": {
+    "resting_bid_consumed_by": "SELL aggressor at the resting bid price.",
+    "resting_ask_consumed_by": "BUY aggressor at the resting ask price.",
+    "trade_quantity_first_consumes_queue_ahead": true,
+    "remaining_trade_quantity_can_fill_our_order": true,
+    "partial_fills_allowed": true,
+    "trade_at_unrelated_price": "No queue or fill effect.",
+    "trade_side_required": true,
+    "trade_size_required": true
+  },
+  "cancel_semantics": {
+    "cancel_request_does_not_immediately_remove_order": true,
+    "cancel_effective_time": "cancel_request_time + configured cancel_latency_ms",
+    "trades_before_cancel_effective_time_can_fill": true,
+    "trade_exactly_at_cancel_effective_time_can_fill": true,
+    "cancel_becomes_effective_before_any_event_strictly_after_cancel_effective_time": true,
+    "repeated_cancel_request": "Idempotent; first request wins."
+  },
+  "placement_semantics": {
+    "placement_effective_time": "submit_time + configured placement_latency_ms",
+    "order_cannot_fill_before_placement_effective_time": true,
+    "marketable_quote_at_effective_time": "Rejected from passive simulator; aggressive execution belongs to the existing IOC simulator.",
+    "full_depth_exact_level_required_for_queue_initialization": true
+  },
+  "failure_semantics": {
+    "collector_gap": "Invalidate the shadow order from the gap onward; do not invent fills through missing data.",
+    "missing_trade_side": "Reject event.",
+    "missing_trade_size": "Reject event.",
+    "negative_trade_size": "Reject event.",
+    "negative_queue_size": "Reject state."
+  },
+  "same_timestamp_priority": [
+    "placement_effective",
+    "trade",
+    "cancel_effective"
+  ],
+  "conservatism": {
+    "optimistic_queue_credit_from_cancellations": false,
+    "infer_hidden_fills": false,
+    "infer_fills_from_price_movement": false,
+    "infer_fills_from_last_trade_price_without_size_and_side": false
+  },
+  "analysis_boundary": {
+    "prospective_data_read": false,
+    "performance_read": false,
+    "F18_signal_calculated": false,
+    "markout_calculated": false,
+    "winner_used": false,
+    "settlement_used": false,
+    "pnl_calculated": false
+  }
+}
