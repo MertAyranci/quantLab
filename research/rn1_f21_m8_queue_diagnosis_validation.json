@@ -1,0 +1,287 @@
+{
+  "analysis_boundary": {
+    "F18_signal_calculated": false,
+    "F19_read": false,
+    "F20_read": false,
+    "alternate_horizon_tested": false,
+    "cancel_ahead_inferred": false,
+    "flow_imbalance_calculated": false,
+    "hidden_liquidity_inferred": false,
+    "inventory_valued": false,
+    "maker_rebate_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "post_fill_price_evaluated": false,
+    "prospective_data_read": false,
+    "prospective_performance_read": false,
+    "protected_vs_unprotected_compared": false,
+    "queue_semantics_changed": false,
+    "settlement_used": false,
+    "trade_through_fill_inferred": false,
+    "winner_used": false
+  },
+  "by_market": {
+    "1769614": {
+      "invalidated_probes": 56,
+      "probes": 240,
+      "probes_exceeding_queue": 0,
+      "probes_reaching_queue": 0,
+      "probes_with_qualifying_trade": 2,
+      "qualifying_trade_occurrences": 2,
+      "unique_qualifying_trade_events": 1
+    },
+    "1769616": {
+      "invalidated_probes": 56,
+      "probes": 240,
+      "probes_exceeding_queue": 0,
+      "probes_reaching_queue": 0,
+      "probes_with_qualifying_trade": 0,
+      "qualifying_trade_occurrences": 0,
+      "unique_qualifying_trade_events": 0
+    },
+    "1769618": {
+      "invalidated_probes": 56,
+      "probes": 240,
+      "probes_exceeding_queue": 0,
+      "probes_reaching_queue": 0,
+      "probes_with_qualifying_trade": 0,
+      "qualifying_trade_occurrences": 0,
+      "unique_qualifying_trade_events": 0
+    },
+    "1769620": {
+      "invalidated_probes": 56,
+      "probes": 240,
+      "probes_exceeding_queue": 0,
+      "probes_reaching_queue": 2,
+      "probes_with_qualifying_trade": 4,
+      "qualifying_trade_occurrences": 4,
+      "unique_qualifying_trade_events": 2
+    },
+    "1769625": {
+      "invalidated_probes": 56,
+      "probes": 240,
+      "probes_exceeding_queue": 0,
+      "probes_reaching_queue": 0,
+      "probes_with_qualifying_trade": 0,
+      "qualifying_trade_occurrences": 0,
+      "unique_qualifying_trade_events": 0
+    },
+    "1769651": {
+      "invalidated_probes": 56,
+      "probes": 240,
+      "probes_exceeding_queue": 0,
+      "probes_reaching_queue": 0,
+      "probes_with_qualifying_trade": 0,
+      "qualifying_trade_occurrences": 0,
+      "unique_qualifying_trade_events": 0
+    },
+    "1769658": {
+      "invalidated_probes": 56,
+      "probes": 240,
+      "probes_exceeding_queue": 0,
+      "probes_reaching_queue": 0,
+      "probes_with_qualifying_trade": 0,
+      "qualifying_trade_occurrences": 0,
+      "unique_qualifying_trade_events": 0
+    },
+    "1817541": {
+      "invalidated_probes": 56,
+      "probes": 240,
+      "probes_exceeding_queue": 0,
+      "probes_reaching_queue": 0,
+      "probes_with_qualifying_trade": 32,
+      "qualifying_trade_occurrences": 66,
+      "unique_qualifying_trade_events": 34
+    },
+    "1817542": {
+      "invalidated_probes": 56,
+      "probes": 240,
+      "probes_exceeding_queue": 0,
+      "probes_reaching_queue": 0,
+      "probes_with_qualifying_trade": 45,
+      "qualifying_trade_occurrences": 49,
+      "unique_qualifying_trade_events": 27
+    }
+  },
+  "by_side": {
+    "BUY": {
+      "invalidated_probes": 252,
+      "probes": 1080,
+      "probes_with_qualifying_trade": 4,
+      "qualifying_occurrences": 4
+    },
+    "SELL": {
+      "invalidated_probes": 252,
+      "probes": 1080,
+      "probes_reaching_queue": 2,
+      "probes_with_qualifying_trade": 79,
+      "qualifying_occurrences": 117
+    }
+  },
+  "continuity": {
+    "connection_changes_observed": 0,
+    "connection_mixing": 0,
+    "generation_crossings_observed": 504,
+    "generation_mixing": 0
+  },
+  "contract_sha256": "6398bdbe3bc0501b260202df84812b2cbcc054a26ce20fe34ae39f3a8dd5b169",
+  "determinism": {
+    "deterministic_rebuild": true,
+    "first_diagnostic_sha256": "a48b97d45c735fd7b2b840c1811a887813ced7b297fd820fd44452a82ad2dd75",
+    "second_diagnostic_sha256": "a48b97d45c735fd7b2b840c1811a887813ced7b297fd820fd44452a82ad2dd75"
+  },
+  "diagnosis": {
+    "depletion_ge_25pct": 2,
+    "depletion_ge_50pct": 2,
+    "depletion_ge_75pct": 2,
+    "depletion_ge_90pct": 2,
+    "depletion_ge_95pct": 2,
+    "depletion_ge_99pct": 2,
+    "interpretation": "M7 zero fills are mechanically consistent with the frozen F21 queue model: explicit qualifying trade volume never exceeded initial queue ahead sufficiently to reach the probe order.",
+    "invalidated_after_qualifying_trade": 11,
+    "invalidated_before_any_qualifying_trade": 493,
+    "invalidated_probes": 504,
+    "m7_actual_positive_simulated_fill_probes": 0,
+    "mechanically_expected_positive_fill_probes": 0,
+    "mechanically_explained": true,
+    "probe_orders": 2160,
+    "probes_exactly_exhausting_initial_queue": 2,
+    "probes_exceeding_initial_queue": 0,
+    "probes_reaching_initial_queue": 2,
+    "probes_with_any_qualifying_trade": 83,
+    "qualifying_trade_occurrences": 121,
+    "queue_model_discrepancy": false,
+    "unique_qualifying_trade_events": 64
+  },
+  "integrity": {
+    "checks": {
+      "decision_base_mismatch": true,
+      "deterministic_rebuild": true,
+      "duplicate_delta_sequence_keys": true,
+      "duplicate_trade_sequence_keys": true,
+      "lookahead_or_predecision_event": true,
+      "m7_invalidation_reproduction": true,
+      "m7_positive_fill_mechanical_reproduction": true,
+      "m7_unique_queue_event_reproduction": true,
+      "missing_decision_base": true,
+      "missing_trade_size": true,
+      "nonpositive_trade_size": true,
+      "probe_orders": true,
+      "unknown_trade_side": true
+    },
+    "duplicate_delta_sequence_keys": 0,
+    "duplicate_trade_sequence_keys": 0
+  },
+  "parent_m7": {
+    "commit": "e52ee344165716b9efa176e9bbf68d58250ddbf1",
+    "invalidated_probes": 504,
+    "positive_fill_probes": 0,
+    "runner_sha256": "6bb7f3afed358300cff2081a148212bfc9d65954a35f4f5a76fa35bd10046684",
+    "unique_queue_consuming_real_trade_events": 64,
+    "validation_sha256": "bae57113937b96277000f1ddc68642b1b4e9bf2b8b925ab9405ead4567c8c3d7"
+  },
+  "source_counts": {
+    "exact_level_updates": 3764,
+    "translated_trades": 250
+  },
+  "status": "PASS_BURNED_QUEUE_DEPLETION_DIAGNOSIS",
+  "study": "RN1-F21-M8",
+  "summaries": {
+    "cumulative_qualifying_trade_volume": {
+      "max": "7547.997776",
+      "min": "0",
+      "n": 2160,
+      "p10": "0",
+      "p25": "0",
+      "p50": "0",
+      "p75": "0",
+      "p90": "0",
+      "p95": "0",
+      "p99": "100"
+    },
+    "initial_queue_ahead": {
+      "max": "729305.64",
+      "min": "15.44",
+      "n": 2160,
+      "p10": "65",
+      "p25": "4069.2",
+      "p50": "15054.39",
+      "p75": "34756.33",
+      "p90": "295303.27",
+      "p95": "704683.35",
+      "p99": "726567.57"
+    },
+    "initial_queue_to_order_size_ratio": {
+      "max": "145861.128",
+      "min": "3.088",
+      "n": 2160,
+      "p10": "13",
+      "p25": "813.84",
+      "p50": "3010.878",
+      "p75": "6951.266",
+      "p90": "59060.654",
+      "p95": "140936.67",
+      "p99": "145313.514"
+    },
+    "queue_depletion_ratio_all_probes": {
+      "max": "1",
+      "min": "0E+2",
+      "n": 2160,
+      "p10": "0E+2",
+      "p25": "0E+2",
+      "p50": "0E+2",
+      "p75": "0E+2",
+      "p90": "0E+2",
+      "p95": "0E+2",
+      "p99": "0.002911310400745894805353309032"
+    },
+    "queue_depletion_ratio_probes_with_trade": {
+      "max": "1",
+      "min": "0.000002456830634233014483789617361",
+      "n": 83,
+      "p10": "0.00003383015509739075794669497484",
+      "p25": "0.0001527599971452465313461257468",
+      "p50": "0.0004024136852527337236613270488",
+      "p75": "0.002943358967340949981077635734",
+      "p90": "0.01015703877392893188972429568",
+      "p95": "0.06813369426525418713381073563",
+      "p99": "1"
+    },
+    "residual_queue_ahead": {
+      "max": "729305.64",
+      "min": "0.00",
+      "n": 2160,
+      "p10": "65",
+      "p25": "4069.2",
+      "p50": "15054.39",
+      "p75": "34756.33",
+      "p90": "295303.27",
+      "p95": "704683.35",
+      "p99": "726567.57"
+    },
+    "time_to_first_qualifying_trade_seconds": {
+      "max": "56.768769",
+      "min": "0.019365",
+      "n": 83,
+      "p10": "3.680086",
+      "p25": "10.494903",
+      "p50": "26.206029",
+      "p75": "40.656791",
+      "p90": "50.316449",
+      "p95": "54.928753",
+      "p99": "56.712195"
+    },
+    "time_to_invalidation_seconds": {
+      "max": "59.919231",
+      "min": "0.534567",
+      "n": 504,
+      "p10": "1.835931",
+      "p25": "6.889978",
+      "p50": "29.685277",
+      "p75": "37.124078",
+      "p90": "42.090563",
+      "p95": "59.916312",
+      "p99": "59.918713"
+    }
+  }
+}
