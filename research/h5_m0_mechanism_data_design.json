@@ -1,0 +1,272 @@
+{
+  "candidate_response_horizons_seconds": [
+    1,
+    3,
+    5,
+    10,
+    30,
+    60
+  ],
+  "common_binary_axis": {
+    "ambiguous_team_mapping": "FAIL_CLOSED",
+    "draw_or_third_outcome": "INELIGIBLE",
+    "external_mapping": "External team outcome must map unambiguously to the exact economic team represented by the Polymarket p1 outcome.",
+    "p0_definition": "Polymarket outcomeIndex == 1",
+    "p1_definition": "Polymarket outcomeIndex == 0"
+  },
+  "development_and_confirmation_plan": {
+    "M0": "mechanism and data-design freeze",
+    "M1": "new-data synchronized acquisition and temporal-resolution feasibility",
+    "M2": "development-stage mechanism study on new post-M0 data",
+    "M3_if_promising": "freeze exact candidate statistic, event handling, primary horizon, sample gate, and OOS confirmation rule",
+    "M4_if_frozen": "new prospective confirmatory OOS collection and one-time readout",
+    "execution_stage_if_confirmed": "Only after mechanism confirmation: executable bid/ask, latency, spread, fees, slippage, queue assumptions, and conservative fill economics."
+  },
+  "explicit_non_decisions": [
+    "No H5 trading threshold is selected.",
+    "No innovation magnitude threshold is selected.",
+    "No primary response horizon is selected.",
+    "No optimal polling cadence is selected.",
+    "No profitable strategy is claimed.",
+    "No maker/taker execution choice is made.",
+    "No H5 PnL is calculated.",
+    "No winner or settlement data is required.",
+    "No F19 trade data is read.",
+    "No F20 data is read.",
+    "No RN1 wallet behavior is used.",
+    "No H2-v2 failed absolute-gap hypothesis is reopened."
+  ],
+  "external_market_state": {
+    "consensus_probability": "median of all currently valid fresh family probabilities",
+    "direct_exchange_source": {
+      "preferred_if_operationally_available": true,
+      "reason": "Direct timestamped updates provide cleaner innovation timing and permit shorter-horizon latency claims."
+    },
+    "family_probability": "(1/back_decimal + 1/lay_decimal) / 2",
+    "minimum_valid_families": 2,
+    "odds_api_aggregate_source": {
+      "allowed_for_m1_feasibility": true,
+      "low_latency_claim_automatically_supported": false,
+      "previous_h2_v2_max_source_age_seconds": 25,
+      "reason": "Historical aggregate-feed refresh cadence is too coarse to assume sub-5-second venue-latency resolution."
+    },
+    "preferred_exchange_families": [
+      "betfair_ex_uk",
+      "matchbook",
+      "smarkets"
+    ],
+    "required_per_family_fields": [
+      "exchange_family",
+      "p1_best_back_decimal",
+      "p1_best_lay_decimal",
+      "family_p1_probability",
+      "source_timestamp",
+      "local_receive_timestamp"
+    ],
+    "required_state_fields": [
+      "condition_id",
+      "p1_team_identity",
+      "valid_family_count",
+      "consensus_p1_probability",
+      "local_receive_timestamp",
+      "individual_family_source_timestamps"
+    ],
+    "stale_carry_forward": false
+  },
+  "frozen_at_utc": "2026-08-16T23:21:31.128940+00:00",
+  "horizon_policy": {
+    "all_feasible_prespecified_horizons_reported_in_m2": true,
+    "m1_may_not_remove_or_choose_horizons_using": [
+      "Polymarket response magnitude",
+      "directional success rate",
+      "correlation",
+      "regression coefficient",
+      "PnL",
+      "economic edge"
+    ],
+    "m1_may_remove_horizons_only_for": [
+      "source update cadence",
+      "timestamp resolution",
+      "collector latency",
+      "Polymarket quote coverage",
+      "clock-quality limitations"
+    ],
+    "primary_horizon_frozen_at_m0": false,
+    "primary_horizon_must_be_frozen_before_m2_response_analysis": true,
+    "reason": "The feasible primary latency horizon depends on source timestamp/update resolution, which must be established without inspecting H5 response."
+  },
+  "independence_boundary": {
+    "f18_signal_allowed": false,
+    "f19_condition_ids_excluded": 100,
+    "f19_registered_condition_ids_allowed_for_h5_evidence": false,
+    "f19_registry_may_be_read_only_to_exclude_condition_ids": true,
+    "f19_trade_data_allowed": false,
+    "f20_data_allowed": false,
+    "h2_v2_burned_odds_game_ids_excluded": 9,
+    "h2_v2_m3a_development_markets_allowed_for_h5_evidence": false,
+    "h5_evidence_must_come_from_data_collected_after_m0_freeze": true,
+    "historical_h2_v2_data_may_be_used_for": [
+      "software interface understanding",
+      "schema understanding",
+      "synthetic/unit-test construction",
+      "identifier-only derivation of the frozen H2-v2 development exclusion set"
+    ],
+    "historical_h2_v2_data_may_not_be_used_for": [
+      "H5 effect estimation",
+      "H5 horizon selection",
+      "H5 threshold selection",
+      "H5 progression evidence"
+    ],
+    "mechanical_exclusion_registry": "research/h5_m0_exclusions.json",
+    "rn1_wallet_selection_allowed": false
+  },
+  "initial_mechanism_analysis_family": {
+    "continuous_scale_diagnostic": "relationship between external innovation magnitude and subsequent PM p1 midpoint change",
+    "directional_response_definition": "sign(external_innovation) * (future_PM_p1_midpoint - event_time_PM_p1_midpoint)",
+    "event_inclusion": "all admissible non-zero innovation events",
+    "exact_statistical_test_frozen_at_m0": false,
+    "market_clustering_must_be_respected": true,
+    "positive_directional_response_means": "Polymarket moved in the same direction as the external innovation",
+    "reason": "M2 is a development-stage mechanism study. Exact candidate statistic and confirmation rule will be frozen only after a separate development stage, before new confirmatory OOS data.",
+    "threshold_free": true
+  },
+  "innovation_definition": {
+    "accepted_state_requires": [
+      "at least two valid fresh exchange families",
+      "unambiguous p1 team mapping",
+      "pregame timestamp",
+      "valid source timestamps",
+      "valid local receive timestamp"
+    ],
+    "innovation": "current_consensus_p1_probability - previous_accepted_consensus_p1_probability",
+    "minimum_magnitude_threshold": null,
+    "new_source_information_requires": "At least one contributing exchange family has a source timestamp strictly later than that family's source timestamp in the immediately preceding accepted state.",
+    "primary_event_time": "local_receive_timestamp of the first collector observation revealing the new accepted external state",
+    "reason_no_threshold": "Initial mechanism testing should not condition on a posthoc magnitude cutoff. All non-zero admissible innovations are retained for development analysis.",
+    "repeated_poll_without_new_source_information": "NOT_AN_INNOVATION_EVENT",
+    "source_timestamp_role": "diagnostic and venue-timing evidence; must not replace local receipt time for actionability claims",
+    "threshold_selected_at_m0": false,
+    "unit": "one accepted external consensus state change",
+    "zero_consensus_change": "NOT_AN_INNOVATION_EVENT"
+  },
+  "m0_verdict": "NEW HYPOTHESIS FAMILY PREREGISTERED; NO SIGNAL OR ECONOMIC CLAIM",
+  "m1_engineering_stage": {
+    "correlation_allowed": false,
+    "engineering_success_requirements": [
+      "All markets are outside the frozen F19 registry and outside H2-v2 development evidence.",
+      "Exactly two economic outcomes map unambiguously between external venues and Polymarket.",
+      "At least two fresh external exchange families are available on >=80% of eligible collection observations.",
+      "External source timestamps and local receive timestamps are preserved.",
+      "Polymarket valid two-sided p1 top-of-book is available on >=95% of otherwise eligible synchronized observations.",
+      "Observed source update cadence and timestamp resolution are measured without calculating PM response.",
+      "No in-play state enters the development dataset."
+    ],
+    "m1_data_may_enter_m2_development_if": "No PM response statistic, H5 signal, directional hit rate, regression, or PnL was inspected before the M1 source/horizon engineering freeze.",
+    "minimum_accepted_external_states": 100,
+    "minimum_distinct_new_markets": 5,
+    "name": "H5-M1 temporal-resolution and synchronized-data feasibility",
+    "pm_response_allowed": false,
+    "pnl_allowed": false,
+    "regression_allowed": false,
+    "signals_allowed": false,
+    "source_selection_rule": "Source architecture for M2 may be chosen only from M1 engineering quality, coverage, temporal resolution, cost, and reliability\u2014not H5 effect size.",
+    "threshold_selection_allowed": false
+  },
+  "milestone": "H5-M0",
+  "name": "External Sharp-Market Innovation to Polymarket Repricing",
+  "parent": {
+    "git_commit": "ff8af80fe2b7cf5a2c3d635b44c660b331f53c2c",
+    "h2_v2_m1_data_contract": {
+      "path": "research/h2_v2_m1_data_contract.json",
+      "sha256": "c539abbf046e173d3f50f57b071d483bcb549b034cf9e7716151fe1752d1143b"
+    },
+    "h2_v2_m3a_conclusion": {
+      "path": "research/h2_v2_m3a_conclusion.json",
+      "sha256": "d0f01941ea83df8b4d7c38d1a0930f51485304c425cf0c1a0dd509dd6bf073ce"
+    },
+    "h5_m0_exclusions": {
+      "path": "research/h5_m0_exclusions.json",
+      "sha256": "fb4a268f3148e746e31232c658cdc8793c2e082a73c5a8260af6779d89b1949a"
+    },
+    "rn1_f19_registry": {
+      "path": "data/prospective/rn1_f19/registry.jsonl",
+      "sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b",
+      "use": "exclusion list only"
+    }
+  },
+  "polymarket_state": {
+    "executable_quotes_retained_for_later_economics": true,
+    "execution_economics_allowed_at_m0": false,
+    "historical_trade_print_substitution": false,
+    "midpoint_definition": "(p1_best_bid + p1_best_ask) / 2",
+    "primary_mechanism_price_candidate": "p1 top-of-book midpoint",
+    "required": [
+      "p1 best bid",
+      "p1 best ask",
+      "p1 best bid size",
+      "p1 best ask size",
+      "p0 best bid",
+      "p0 best ask",
+      "local receive timestamp",
+      "venue timestamp where available",
+      "tick size",
+      "market status",
+      "accepting_orders"
+    ],
+    "source": "live Polymarket CLOB"
+  },
+  "prohibited_before_m2": [
+    "calculate H5 directional response",
+    "calculate H5 correlation",
+    "calculate H5 regression",
+    "calculate H5 PnL",
+    "select innovation threshold from observed response",
+    "select horizon from observed response",
+    "inspect F19 trade contents",
+    "inspect F20 for H5",
+    "reuse H2-v2 development effects as H5 evidence",
+    "use settlement or winner to select H5 parameters"
+  ],
+  "scientific_position": {
+    "h2_v2_absolute_fair_value_design_reopened": false,
+    "h2_v2_result_preserved": "STRUCTURAL_EXECUTABLE_SIGNAL_GATE_FAILED",
+    "h5_question": "When a fresh external sharp-market consensus changes, does Polymarket subsequently reprice in the same direction?",
+    "mechanism": "external information innovation precedes Polymarket price adjustment",
+    "new_hypothesis_family": true,
+    "not_claimed_at_m0": [
+      "profitable strategy",
+      "tradeable latency",
+      "causal information advantage",
+      "maker edge",
+      "taker edge",
+      "positive expected PnL",
+      "specific profitable innovation threshold"
+    ],
+    "null": "External consensus innovations do not predict subsequent same-direction Polymarket repricing beyond contemporaneous movement/noise.",
+    "posthoc_rescue_of_h2_v2": false
+  },
+  "scope": {
+    "binary_only": true,
+    "in_play_allowed": false,
+    "market_type": "pregame moneyline",
+    "required_outcomes": 2,
+    "rn1_wallet_used": false,
+    "settlement_required": false,
+    "sport": "MLB",
+    "winner_required": false
+  },
+  "status": "MECHANISM_DATA_DESIGN_FREEZE",
+  "study": "H5",
+  "timing_and_causality": {
+    "claim_tiers": {
+      "actionable_receipt_lead": "External state is known locally before subsequent Polymarket move.",
+      "venue_lead": "External venue itself moved before Polymarket. This stronger claim is permitted only if M1 demonstrates sufficient source timestamp quality."
+    },
+    "collector_clock_must_not_be_reconstructed_from_source_timestamp": true,
+    "external_event_must_be_observed_before_response_window": true,
+    "local_timestamps_preserved": true,
+    "primary_clock": "local receive time",
+    "source_timestamps_preserved": true,
+    "timezone": "UTC"
+  }
+}
