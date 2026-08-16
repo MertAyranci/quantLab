@@ -1,0 +1,38 @@
+{
+  "analysis_boundary": {
+    "database_read": false,
+    "f19_acquisition_read": false,
+    "f20_read": false,
+    "network_access": false,
+    "pnl_calculated": false,
+    "prospective_markout_calculated": false,
+    "prospective_signal_calculated": false,
+    "settlement_used": false,
+    "winner_read": false
+  },
+  "captured_at_utc": "2026-08-16T21:24:07.305734+00:00",
+  "code": {
+    "contract_sha256": "3b3ba485834bf8b2a6d91ebfc7828b312de5e34b876f1c0eda5da3ce14b38541",
+    "core_sha256": "8f56015806bdeb5814901486e9348ff93119652e09ca8d438d826886eb53ca97",
+    "test_sha256": "5671db9a2284ed369ea8d84dbfd7ab9ea8a5cdef64feac521d404ddbe915a512"
+  },
+  "parent": {
+    "p1_commit": "edebca381b3fddfdfcd2a8cd3d2bc68f8a3a44e3",
+    "p1_contract_sha256": "d4bebf4b8e231e2db1b190b47559d220b2ce34e3c25d7b23acd5179100f32004"
+  },
+  "status": "PASS_SYNTHETIC_CONFIRMATION_CORE",
+  "study": "RN1-F19d-P2",
+  "validation": {
+    "checks": {
+      "core_sha": true,
+      "p1_sha": true,
+      "pytest_returncode": true,
+      "static_io_boundary": true,
+      "synthetic_tests_exactly_38": true,
+      "test_sha": true
+    },
+    "forbidden_io_hits": [],
+    "pytest_stdout": "......................................                                   [100%]\n38 passed in 0.07s",
+    "synthetic_tests_passed": 38
+  }
+}

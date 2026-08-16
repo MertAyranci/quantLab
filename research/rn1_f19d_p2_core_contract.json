@@ -1,0 +1,82 @@
+{
+  "acceptance": {
+    "all_tests_must_pass": true,
+    "core_sha_must_match": true,
+    "forbidden_io_static_scan_must_pass": true,
+    "parent_p1_sha_must_match": true,
+    "synthetic_tests_exactly": 38,
+    "test_sha_must_match": true
+  },
+  "analysis_boundary": {
+    "database_read": false,
+    "f19_acquisition_read": false,
+    "f20_read": false,
+    "network_access": false,
+    "pnl_calculated": false,
+    "prospective_markout_calculated": false,
+    "prospective_signal_calculated": false,
+    "settlement_used": false,
+    "winner_read": false
+  },
+  "artifacts": {
+    "core": "research/rn1_f19d_p2_core.py",
+    "core_sha256": "8f56015806bdeb5814901486e9348ff93119652e09ca8d438d826886eb53ca97",
+    "tests": "research/test_rn1_f19d_p2_core.py",
+    "tests_sha256": "5671db9a2284ed369ea8d84dbfd7ab9ea8a5cdef64feac521d404ddbe915a512"
+  },
+  "bootstrap_mechanical_resolution": {
+    "draws": 10000,
+    "index_rule": "floor((draws - 1) * percentile)",
+    "note": "Mechanical realization of the P1 percentile bootstrap; specified before any prospective readout.",
+    "percentiles": [
+      0.025,
+      0.975
+    ],
+    "seed": 19018
+  },
+  "core_requirements": {
+    "binary_axis": true,
+    "confirmation_status_machine": true,
+    "control_reuse_forbidden": true,
+    "event_equal_secondary": true,
+    "frozen_control_matching": true,
+    "frozen_flow_signal": true,
+    "future_markout_availability_not_used_in_matching": true,
+    "game_phase": true,
+    "leave_one_market_out": true,
+    "market_bootstrap": true,
+    "market_equal_aggregation": true,
+    "market_median_secondary": true,
+    "market_sign_count": true,
+    "primary_markout": true,
+    "pure_data_objects_only": true,
+    "rn1_maker_taker_multiset_classification": true,
+    "role_inconsistency_fails_closed": true,
+    "sixty_second_declustering": true,
+    "usable_pair_logic": true
+  },
+  "parent": {
+    "commit": "edebca381b3fddfdfcd2a8cd3d2bc68f8a3a44e3",
+    "contract_sha256": "d4bebf4b8e231e2db1b190b47559d220b2ce34e3c25d7b23acd5179100f32004",
+    "study": "RN1-F19d-P1"
+  },
+  "prohibited": [
+    "opening data/prospective",
+    "database access",
+    "network access",
+    "reading F19 performance",
+    "reading F20",
+    "parameter tuning",
+    "changing P1 semantics",
+    "winner or settlement use",
+    "PnL calculation"
+  ],
+  "purpose": "Implement and validate the frozen F18/P1 confirmation mechanics using pure functions and synthetic fixtures only.",
+  "sample_gate": {
+    "matched_count_is_not_replaced_by_usable_event_count": true,
+    "minimum_markets_with_usable_matched_pairs": 20,
+    "minimum_matched_flagged_events": 50
+  },
+  "status": "SYNTHETIC_CORE_ENGINEERING_FREEZE",
+  "study": "RN1-F19d-P2"
+}
