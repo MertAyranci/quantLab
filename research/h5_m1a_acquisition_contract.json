@@ -1,0 +1,386 @@
+{
+  "candidate_horizons_seconds": [
+    1,
+    3,
+    5,
+    10,
+    30,
+    60
+  ],
+  "capture_window": {
+    "hard_stop_per_market": "canonical commence_time",
+    "may_end_early_only_for": [
+      "API quota safety",
+      "collector failure",
+      "network failure",
+      "disk safety",
+      "all selected games reached start time"
+    ],
+    "minimum_initial_engineering_run_seconds": 600,
+    "post_start_records_for_h5": "INELIGIBLE",
+    "pregame_only": true,
+    "starts_after_market_registration": true
+  },
+  "consensus_record_required_fields": [
+    "capture_id",
+    "poll_sequence",
+    "odds_game_id",
+    "condition_id",
+    "p1_team",
+    "response_received_at_utc",
+    "valid_fresh_family_count",
+    "families_used",
+    "consensus_p1_probability"
+  ],
+  "data_namespace": {
+    "append_only_per_capture": true,
+    "existing_capture_overwrite_allowed": false,
+    "must_be_separate_from_f19": true,
+    "must_be_separate_from_f20": true,
+    "must_be_separate_from_h2_v2_tables": true,
+    "root": "data/research/h5_m1"
+  },
+  "diagnostic_external_polling": {
+    "interval_seconds": 10,
+    "is_future_signal_cadence": false,
+    "is_h5_execution_cadence": false,
+    "maximum_initial_run_seconds": 600,
+    "maximum_polls_initial_run": 60,
+    "may_be_changed_after_m1_only_using": [
+      "API quota constraints",
+      "source update cadence",
+      "request latency",
+      "timestamp quality",
+      "engineering reliability"
+    ],
+    "may_not_be_changed_using": [
+      "H5 innovation magnitude",
+      "PM response",
+      "directional hit rate",
+      "correlation",
+      "regression",
+      "PnL"
+    ],
+    "purpose": "Oversample the historically observed aggregate-feed update cadence to measure source timing and coverage."
+  },
+  "engineering_observation_definitions": {
+    "accepted_external_state": "An eligible_external_observation with at least two fresh complete exchange families and a valid consensus_p1_probability. Accepted-state status does not depend on any change from a prior state.",
+    "eligible_external_observation": "One selected registered market in one successful external API poll, observed strictly before its canonical commence_time, where the returned game identity maps to the already-frozen registered market. This definition is evaluated before the fresh-family count requirement.",
+    "external_consensus_difference_calculated": false,
+    "fresh_family_coverage_denominator": "all eligible_external_observations",
+    "fresh_family_coverage_numerator": "eligible_external_observations satisfying accepted_external_state",
+    "future_pm_events_may_backfill_checkpoint": false,
+    "pm_coverage_denominator": "all pm_coverage_eligible_checkpoints",
+    "pm_coverage_eligible_checkpoint": "Every eligible_external_observation after PM capture for that registered market has been initialized and before canonical commence_time. A websocket outage or unresolved continuity gap does not remove the checkpoint from the denominator.",
+    "pm_coverage_numerator": "pm_coverage_eligible_checkpoints satisfying valid_pm_checkpoint",
+    "pm_price_difference_calculated": false,
+    "valid_pm_checkpoint": "At the external response_received_at_utc, the current locally-known p1 CLOB state has both a valid best bid and best ask, descends from an initial book/resync snapshot, and has no unresolved connection or book-generation gap. Only information locally received at or before the checkpoint may be used."
+  },
+  "exclusions": {
+    "exclusion_check_before_collection": true,
+    "reject_f19_condition_ids": true,
+    "reject_h2_v2_burned_odds_game_ids": true,
+    "source": "research/h5_m0_exclusions.json"
+  },
+  "explicit_non_decisions": [
+    "No H5 innovation threshold is selected.",
+    "No H5 innovation event is calculated.",
+    "No primary response horizon is selected.",
+    "No PM response is calculated.",
+    "No correlation or regression is calculated.",
+    "No maker/taker choice is made.",
+    "No trading rule is selected.",
+    "No PnL is calculated.",
+    "No F19 trade content is read.",
+    "No F20 data is read."
+  ],
+  "external_record_required_fields": [
+    "capture_id",
+    "poll_sequence",
+    "odds_game_id",
+    "condition_id",
+    "canonical_commence_time",
+    "p1_team",
+    "p0_team",
+    "request_started_at_utc",
+    "response_received_at_utc",
+    "request_latency_ms",
+    "exchange_family",
+    "family_source_timestamp_utc",
+    "source_age_seconds",
+    "p1_back_decimal",
+    "p1_lay_decimal",
+    "p1_family_probability",
+    "family_pair_complete",
+    "family_fresh"
+  ],
+  "external_source": {
+    "api_key_must_not_be_written": true,
+    "consensus": "median of all valid fresh family probabilities",
+    "exchange_families": [
+      "betfair_ex_uk",
+      "matchbook",
+      "smarkets"
+    ],
+    "family_probability": "(1/back_decimal + 1/lay_decimal) / 2",
+    "initial_provider": "The Odds API",
+    "local_receive_time_required": true,
+    "market": "h2h",
+    "maximum_source_age_seconds": 25,
+    "minimum_fresh_complete_families": 2,
+    "raw_response_preserved": true,
+    "request_time_required": true,
+    "source_timestamp_required": true,
+    "sport": "baseball_mlb",
+    "stale_carry_forward": false
+  },
+  "frozen_at_utc": "2026-08-16T23:26:30.528878+00:00",
+  "horizon_freeze_boundary": {
+    "classification_must_not_use": [
+      "PM response size",
+      "PM response sign",
+      "H5 effect estimate",
+      "PnL"
+    ],
+    "classification_must_use_only": [
+      "timestamp resolution",
+      "connection continuity",
+      "PM state reconstructability",
+      "source timing quality",
+      "collector latency"
+    ],
+    "m1a_selects_primary_horizon": false,
+    "m1b_may_classify_horizons_as_technically_feasible": true,
+    "primary_horizon_selected_in_m1": false,
+    "primary_horizon_selection_occurs": "after M1 engineering feasibility and before M2 response analysis"
+  },
+  "implementation_provenance": {
+    "h2_v2_event_mapper": {
+      "inheritance_semantics": "engineering reference only; H5 data must remain in the separate H5 namespace",
+      "path": "collectors/odds/h2_v2_event_mapper.py",
+      "role": "reference implementation for collision-safe MLB-to-Polymarket mapping",
+      "sha256": "c59e10af09640c77c9f97d4a91c172ffa84f0dd68512f9a984d42335643d3bb7"
+    },
+    "h2_v2_sharp_collector": {
+      "inheritance_semantics": "engineering reference only; H5 data must remain in the separate H5 namespace",
+      "path": "collectors/odds/h2_v2_sharp_collector.py",
+      "role": "reference implementation for external exchange parsing, timestamps, freshness, and consensus construction",
+      "sha256": "81d2a6abadc9d5fe2f218be35f301d33f00a963dd46626c7fb55445883d5130d"
+    },
+    "polymarket_ws_collector": {
+      "inheritance_semantics": "engineering reference only; H5 data must remain in the separate H5 namespace",
+      "path": "collectors/polymarket/ws_collector.py",
+      "role": "reference implementation for exact-frame capture, connection continuity, sequencing, book generation, and REST resynchronization",
+      "sha256": "50f4ee810ae38974f3156431b6596980c514c8d17ca11f4c8cc341ff058951c0"
+    }
+  },
+  "m1_success_requirements": {
+    "clock_fields_missing": 0,
+    "f19_overlap": 0,
+    "fresh_external_family_coverage": "accepted_external_states / eligible_external_observations >= 0.80",
+    "h2_v2_burned_overlap": 0,
+    "in_play_records_admitted": 0,
+    "minimum_accepted_external_states": 100,
+    "minimum_distinct_markets": 5,
+    "pm_book_coverage": "valid_pm_checkpoints / pm_coverage_eligible_checkpoints >= 0.95",
+    "team_mapping_failures": 0
+  },
+  "m1b_allowed_engineering_metrics": [
+    "number of markets",
+    "number of polls",
+    "number of accepted external states",
+    "fresh-family coverage",
+    "family source-update interval distribution",
+    "source-age distribution",
+    "HTTP request-latency distribution",
+    "PM websocket uptime",
+    "PM connection-gap distribution",
+    "PM message-rate distribution",
+    "PM two-sided-book coverage",
+    "timestamp resolution",
+    "mapping success/failure counts",
+    "exclusion counts",
+    "disk/data integrity hashes"
+  ],
+  "m1b_prohibited_metrics": [
+    "external consensus change",
+    "innovation magnitude",
+    "innovation sign",
+    "PM price change after an external observation",
+    "same-direction response",
+    "hit rate",
+    "correlation",
+    "regression",
+    "markout",
+    "edge",
+    "PnL"
+  ],
+  "mapping": {
+    "ambiguous_mapping": "FAIL_CLOSED",
+    "ambiguous_outcome_mapping": "FAIL_CLOSED",
+    "eligible_candidate_must_be_unique": true,
+    "external_p1_team_must_equal": "economic team represented by PM outcomeIndex 0",
+    "maximum_start_time_delta_seconds": 600,
+    "p0_definition": "Polymarket outcomeIndex 1",
+    "p1_definition": "Polymarket outcomeIndex 0",
+    "slug_date_used": false,
+    "sports_market_type": "moneyline",
+    "team_rule": "exact normalized MLB team set"
+  },
+  "market_selection": {
+    "if_fewer_than_10": "Collect all eligible markets; M1 may proceed if at least 5 remain.",
+    "minimum_distinct_markets_for_m1_success": 5,
+    "ordering": [
+      "canonical commence_time ascending",
+      "odds_game_id ascending"
+    ],
+    "replacement_rule": "Replacement/skip is allowed only during the pre-acquisition registration procedure and before the immutable registry freeze. After registry freeze there are no additions, deletions, or replacements.",
+    "take_rule": "Take the first 10 otherwise eligible new markets after frozen exclusions.",
+    "target_distinct_markets": 10
+  },
+  "market_universe": {
+    "binary_only": true,
+    "exactly_two_polymarket_tokens": true,
+    "market_type": "pregame moneyline",
+    "minimum_lead_seconds_at_registration": 1800,
+    "polymarket_accepting_orders": true,
+    "polymarket_active": true,
+    "polymarket_closed": false,
+    "selection_may_use_future_response": false,
+    "selection_may_use_liquidity": false,
+    "selection_may_use_price": false,
+    "selection_may_use_settlement": false,
+    "selection_may_use_spread": false,
+    "selection_may_use_volume": false,
+    "selection_may_use_winner": false,
+    "sport": "baseball_mlb"
+  },
+  "milestone": "H5-M1A",
+  "name": "Synchronized external/Polymarket temporal-feasibility acquisition",
+  "parent": {
+    "git_commit": "58014f54c7c4989da2eee0c4f2eccef603ef3449",
+    "h5_m0_exclusions": {
+      "path": "research/h5_m0_exclusions.json",
+      "sha256": "fb4a268f3148e746e31232c658cdc8793c2e082a73c5a8260af6779d89b1949a"
+    },
+    "h5_m0_mechanism_data_design": {
+      "path": "research/h5_m0_mechanism_data_design.json",
+      "sha256": "073730512baa587e5be730f534daf1e389c8934d301769a77f387e1fff0a553c"
+    }
+  },
+  "planned_artifacts": [
+    "collectors/odds/h5_m1_collector.py",
+    "research/h5_m1b_validate.py",
+    "research/h5_m1_validation.json"
+  ],
+  "polymarket_capture": {
+    "book_generation_preserved": true,
+    "connection_id_preserved": true,
+    "exact_raw_frames_preserved": true,
+    "future_response_must_not_be_derived": true,
+    "historical_trade_print_substitution": false,
+    "ingest_sequence_preserved": true,
+    "initial_rest_book_snapshot_required": true,
+    "last_trade_price_required_for_m1": false,
+    "local_capture_timestamp_preserved": true,
+    "normalized_events_preserved": true,
+    "required_event_types": [
+      "book",
+      "price_change",
+      "best_bid_ask",
+      "tick_size_change"
+    ],
+    "rest_reconciliation_allowed": true,
+    "source": "live CLOB WebSocket",
+    "venue_timestamp_preserved_when_available": true
+  },
+  "purpose": "Collect new post-M0 synchronized external exchange states and Polymarket CLOB states solely to establish mapping, timestamp, coverage, update-cadence, and temporal-resolution feasibility.",
+  "registration": {
+    "addition_after_registry_freeze": false,
+    "deletion_after_registry_freeze": false,
+    "discovery_may_not_use": [
+      "external odds levels",
+      "external consensus probability",
+      "Polymarket prices",
+      "Polymarket spread",
+      "Polymarket volume",
+      "Polymarket liquidity",
+      "future price response",
+      "winner",
+      "settlement"
+    ],
+    "discovery_may_use": [
+      "MLB team identities",
+      "commence time",
+      "Polymarket question/outcomes",
+      "sportsMarketType",
+      "active",
+      "closed",
+      "acceptingOrders",
+      "CLOB token IDs",
+      "condition_id",
+      "Gamma gameStartTime",
+      "frozen H5 exclusion identifiers"
+    ],
+    "first_h5_observation_permitted_only_after_registry_freeze": true,
+    "freeze_receipt_must_include": [
+      "registry SHA256",
+      "row count",
+      "distinct odds_game_id count",
+      "distinct condition_id count",
+      "M0 contract SHA256",
+      "M0 exclusion registry SHA256",
+      "registration timestamp",
+      "registration code SHA256"
+    ],
+    "market_later_loses_coverage": "Retain the registered market and count the failure/missing coverage honestly; do not replace the market.",
+    "minimum_markets_to_begin_acquisition": 5,
+    "registry_freeze_receipt": "research/h5_m1_registry_freeze.json",
+    "registry_must_be_written_atomically": true,
+    "registry_order": [
+      "canonical commence_time ascending",
+      "odds_game_id ascending"
+    ],
+    "registry_path": "data/research/h5_m1/registry.jsonl",
+    "replacement_after_registry_freeze": false,
+    "replacement_before_registry_freeze": "An excluded, ambiguous, or otherwise ineligible candidate is skipped and the next candidate in frozen ordering is considered.",
+    "required_before_first_h5_observation": true,
+    "target_markets": 10
+  },
+  "scientific_boundary": {
+    "correlation_calculated": false,
+    "directional_hit_rate_calculated": false,
+    "external_state_differences_calculated": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "future_pm_price_change_calculated": false,
+    "future_pm_state_used_to_repair_checkpoint": false,
+    "h5_innovation_calculated": false,
+    "market_replacement_after_observing_coverage": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "source_architecture_boundary": {
+    "aggregate_feed_is_initial_m1_source": true,
+    "direct_exchange_feed_may_replace_for_m2": true,
+    "replacement_may_not_use": [
+      "H5 effect size",
+      "PM response",
+      "profitability"
+    ],
+    "replacement_may_use_only": [
+      "temporal resolution",
+      "timestamp quality",
+      "coverage",
+      "reliability",
+      "cost",
+      "operational feasibility"
+    ]
+  },
+  "status": "ACQUISITION_CONTRACT_FREEZE",
+  "study": "H5",
+  "verdict_if_contract_freezes": "H5-M1A ACQUISITION DESIGN FROZEN; NO H5 EFFECT OBSERVED"
+}
