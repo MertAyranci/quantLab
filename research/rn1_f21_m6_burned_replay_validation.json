@@ -1,0 +1,107 @@
+{
+  "analysis_boundary": {
+    "F18_signal_calculated": false,
+    "F19_read": false,
+    "F20_read": false,
+    "flow_imbalance_calculated": false,
+    "inventory_valued": false,
+    "maker_rebate_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "prospective_data_read": false,
+    "prospective_performance_read": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "burned_universe": {
+    "anchors": 1080,
+    "games": 9,
+    "markets": 9,
+    "probe_orders": 2160,
+    "tokens": 18
+  },
+  "continuity": {
+    "connection_changes_observed": 0,
+    "connection_mixing": 0,
+    "generation_crossings_observed": 0,
+    "generation_mixing": 0,
+    "important": "Observed continuity breaks invalidate the affected probe before the offending source event; they are not mixed into replay."
+  },
+  "contract_sha256": "c653dafcab0cc1a35695ac3bb3863d16b089efdd20514eb0ec949ec1e03aecbc",
+  "replay_semantics": {
+    "book_snapshot_fill_inference": false,
+    "both_sides_probed": true,
+    "cancel_latency_ms": 0,
+    "continuity_break": "COLLECTOR_GAP before offending event",
+    "logical_replay_ticks": true,
+    "logical_ticks_are_latency": false,
+    "placement_latency_ms": 0,
+    "probe_size": "captured minimum_order_size",
+    "real_window_ms": 500,
+    "signal_used": false,
+    "trade_inference": false
+  },
+  "source_integrity": {
+    "decision_base_mismatches": 0,
+    "duplicate_delta_sequence_keys": 0,
+    "duplicate_trade_sequence_keys": 0,
+    "execution_base_mismatches": 0,
+    "lookahead_or_predecision_events": 0
+  },
+  "status": "PASS_BURNED_REAL_DATA_REPLAY_VALIDATION",
+  "study": "RN1-F21-M6",
+  "terminal_state_counts": {
+    "resting": 2160
+  },
+  "trade_side_gate": {
+    "artifact_sha256": "3eccb25f9493c2ffeed2c8d28d41d509e8a3c8e8f43f87f404f56b4ba5b0230c",
+    "comparable": 4389,
+    "direct": 4322,
+    "direct_support_fraction": "0.9847345636819321029847345637",
+    "frozen_mapping": {
+      "BUY": "aggressive BUY consumes resting asks",
+      "SELL": "aggressive SELL consumes resting bids"
+    },
+    "inverse": 67,
+    "status": "PASS"
+  },
+  "translation_counts": {
+    "irrelevant_book_delta": 366,
+    "snapshot_structural_only": 4,
+    "source_delta": 392,
+    "source_snapshot": 4,
+    "source_trade": 2,
+    "translated_book_size": 26,
+    "translated_trade": 2
+  },
+  "validation": {
+    "deterministic_rebuild": true,
+    "first_replay_sha256": "07e34c31c1550eeb9ceb13ca80445c46d0ac7f9f7eddee03e206b0e48999fa6e",
+    "placement_snapshot_missing": 0,
+    "probes_replayed": 2160,
+    "replay_errors": 0,
+    "requirements": {
+      "anchors": true,
+      "connection_mixing": true,
+      "decision_base_mismatch": true,
+      "deterministic_rebuild": true,
+      "duplicate_delta_sequence_keys": true,
+      "duplicate_trade_sequence_keys": true,
+      "execution_base_mismatch": true,
+      "generation_mixing": true,
+      "lookahead_events": true,
+      "missing_decision_base": true,
+      "missing_execution_base": true,
+      "missing_trade_size": true,
+      "placement_snapshot_seen": true,
+      "probe_orders": true,
+      "probes_replayed": true,
+      "replay_errors": true,
+      "side_gate_pass": true,
+      "unknown_trade_side": true,
+      "venue_invalid": true
+    },
+    "second_replay_sha256": "07e34c31c1550eeb9ceb13ca80445c46d0ac7f9f7eddee03e206b0e48999fa6e",
+    "venue_invalid": 0
+  }
+}

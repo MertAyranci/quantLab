@@ -1,0 +1,182 @@
+{
+  "analysis_boundary": {
+    "F18_signal_calculated": false,
+    "F19_read": false,
+    "F20_read": false,
+    "flow_imbalance_calculated": false,
+    "inventory_valued": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "prospective_data_read": false,
+    "prospective_performance_read": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "burned_universe": {
+    "anchors": 1080,
+    "artifact_sha256": {
+      "builder": "94876180e1eed3fbd30bde1d8bc10df8e67e444967c9864d737e8cf0fa4709d9",
+      "conclusion": "c992fb70d32247e3e19102a5c708a4084385c16f7407b00ae8690adf851092da",
+      "contract": "ea0ce05b254a7da951303c1538609926716dfb7200cf23b50ae67570d2aefe43",
+      "tape": "c234267e3342601c9706c39d7d4c20c93eaeea1df5b0ca0a5513cf67221be75f",
+      "validation": "c6883a4994cee12e0da9a5c7621c27a5046b76e43363e9679e2b2fc6bfa0d1ed"
+    },
+    "collector_run_id": 11691,
+    "decision_base_sources": {
+      "rest_book": 728,
+      "ws_book": 352
+    },
+    "execution_base_sources": {
+      "rest_book": 728,
+      "ws_book": 352
+    },
+    "games": 9,
+    "markets": 9,
+    "prospective": false,
+    "source": "H2-v2 M2h authoritative snapshot-reset cohort",
+    "structural_probe_orders": 2160,
+    "tokens": 18
+  },
+  "continuity_semantics": {
+    "connection_mixing_allowed": false,
+    "generation_crossing_allowed": false,
+    "snapshot_reset_grants_queue_credit": false,
+    "unexplained_continuity_break": "COLLECTOR_GAP / invalidate probe"
+  },
+  "event_source_semantics": {
+    "book": "Authoritative structural reference. A later snapshot does not itself create a fill.",
+    "fill_inference_from_price_movement": false,
+    "last_trade_price": "Explicit trade price, size, and reported side from last_trade_events.",
+    "placement": "Burned M2h reconstructed decision BBO and size.",
+    "price_change": "Exact-price absolute displayed-size update; translated to BOOK_SIZE only. It never grants queue credit.",
+    "trade_inference_from_book_change": false,
+    "trade_inference_from_price_change": false
+  },
+  "frozen_db_preflight": {
+    "book_deltas": 5972912,
+    "book_snapshots": 26476,
+    "duplicate_delta_sequence_keys": 0,
+    "duplicate_trade_sequence_keys": 0,
+    "last_trade_events": 10814,
+    "trade_replay_usable": 10814,
+    "trade_side_counts": {
+      "BUY": 9723,
+      "SELL": 1091
+    },
+    "trade_side_present": 10814,
+    "trade_size_present": 10814
+  },
+  "ordering_semantics": {
+    "adapter_method": "After the frozen 500ms real-time window is selected, eligible source events are ordered causally and mapped to monotonically increasing logical replay ticks.",
+    "cancel_latency": 0,
+    "database_capture_resolution": "microseconds",
+    "f21_m2_field_name": "ts_ms",
+    "important_limitation": "M6 does not collapse real microsecond ordering into millisecond buckets.",
+    "latency_performance_claim": false,
+    "logical_ticks_are_latency_measurements": false,
+    "nonzero_f21_latency_used": false,
+    "placement_latency": 0,
+    "protection_controller_used": false,
+    "raw_primary_clock": "collector capture_time",
+    "within_stream_sequence": [
+      "connection_id",
+      "ingest_sequence",
+      "change_index"
+    ]
+  },
+  "outputs_allowed": [
+    "source row counts",
+    "probe counts",
+    "event translation counts",
+    "continuity invalidation counts",
+    "trade-side semantic validation counts",
+    "terminal order state counts",
+    "deterministic replay hashes",
+    "invariant failures"
+  ],
+  "outputs_prohibited": [
+    "strategy return",
+    "fill edge",
+    "fill-rate comparison by signal",
+    "markout",
+    "adverse-selection estimate",
+    "protected-versus-unprotected economic result",
+    "maker rebate earnings",
+    "inventory valuation",
+    "PnL",
+    "winner or settlement analysis"
+  ],
+  "parent": {
+    "commit": "dba65c6e350a79a18e78d0029e65bd1ff97041f1",
+    "study": "RN1-F21-M5",
+    "validation_sha256": "fe3d7cad7dce9d8aee579fb5365a38dcc5f8ed569fb11830d7b8f27bc026fb95",
+    "validation_status": "PASS_POLYMARKET_VENUE_SEMANTICS_FROZEN"
+  },
+  "pass_requirements": {
+    "anchors": 1080,
+    "burned_artifact_hashes_match": true,
+    "connection_mixing": 0,
+    "deterministic_rebuild": true,
+    "duplicate_source_sequence_keys": 0,
+    "generation_mixing": 0,
+    "lookahead_events": 0,
+    "probe_orders": 2160,
+    "prospective_reads": 0,
+    "side_semantics_gate": "PASS",
+    "venue_config_complete": 1080
+  },
+  "probe_construction": {
+    "both_sides_always_probed": true,
+    "buy_probe": "Passive BUY at reconstructed decision best bid.",
+    "buy_probe_must_be_below_best_ask": true,
+    "initial_queue_ahead": "Displayed size already resting at the exact probe quote in the reconstructed decision book.",
+    "post_only_required": true,
+    "probe_size": "Captured per-market minimum_order_size from the burned M2h row.",
+    "probes_per_anchor": 2,
+    "sell_probe": "Passive SELL at reconstructed decision best ask.",
+    "sell_probe_must_be_above_best_bid": true,
+    "strategy_signal_used": false
+  },
+  "purpose": "Validate that the frozen F21 passive-maker execution semantics can consume real previously-burned Polymarket CLOB evidence deterministically, without reading the F19/F20 prospective cohort and without performing strategy or economic evaluation.",
+  "replay_window": {
+    "end": "M2h execution_time",
+    "events_after_execution_time": "exclude",
+    "frozen_real_duration_ms": 500,
+    "lookahead_allowed": false,
+    "start": "M2h decision_time"
+  },
+  "status": "FROZEN_BURNED_REAL_DATA_REPLAY_VALIDATION",
+  "study": "RN1-F21-M6",
+  "trade_side_gate": {
+    "candidate_direct_mapping": {
+      "BUY": "aggressive BUY consumes resting asks",
+      "SELL": "aggressive SELL consumes resting bids"
+    },
+    "comparable_case_requirements": [
+      "same token",
+      "same websocket continuity segment",
+      "pre-trade authoritative book state available",
+      "post-trade authoritative book state available",
+      "trade price exists on the candidate consumed side pre-trade",
+      "no ambiguous continuity reset",
+      "no inferred missing trade"
+    ],
+    "direct_support_must_exceed_inverse": true,
+    "if_gate_fails": "M6 FAIL. Do not translate last_trade side into F21 AggressorSide.",
+    "if_gate_passes": "Freeze direct mapping for this burned replay validation only.",
+    "independent_validation_source": "Burned authoritative pre/post CLOB book transitions only; no settlement and no prospective data.",
+    "minimum_comparable_cases": 200,
+    "minimum_direct_support_fraction": 0.9,
+    "reason": "Official public market-channel documentation defines last_trade_price as a maker/taker match and supplies side/size, but M6 does not silently assume the reported side is the aggressor side.",
+    "status_before_validation": "UNVERIFIED"
+  },
+  "venue_semantics": {
+    "captured_minimum_order_size_required": true,
+    "captured_tick_required": true,
+    "f21_m5_adapter_required": true,
+    "maker_platform_fee_used": false,
+    "maker_rebate_used": false,
+    "post_only_validation_required": true,
+    "reason": "M6 validates execution structure, not economics."
+  }
+}
