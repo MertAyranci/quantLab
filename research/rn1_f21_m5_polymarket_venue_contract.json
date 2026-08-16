@@ -1,0 +1,94 @@
+{
+  "analysis_boundary": {
+    "F18_signal_calculated": false,
+    "flow_imbalance_calculated": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "prospective_data_read": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "fee_semantics": {
+    "builder_code_attached": false,
+    "builder_fee": 0,
+    "fee_exponent_source": "per-market payload",
+    "fee_rate_source": "per-market payload",
+    "maker_platform_fee": 0,
+    "platform_fee_taker_only_required": true,
+    "published_fee_formula": "C * feeRate * p * (1-p)",
+    "unsupported_exponent": "fail closed unless formula for that exponent is explicitly frozen"
+  },
+  "market_parameter_semantics": {
+    "clob_fd_required": true,
+    "clob_gamma_exponent_must_match": true,
+    "clob_gamma_fee_rate_must_match": true,
+    "clob_gamma_taker_only_must_match": true,
+    "clob_mos_required": true,
+    "clob_mts_required": true,
+    "gamma_fee_schedule_required": true,
+    "rebate_rate_source": "Gamma feeSchedule.rebateRate"
+  },
+  "order_semantics": {
+    "amount_encoding_decimals": 6,
+    "marketable_post_only": "reject",
+    "minimum_order_size_checked_after_rounding": true,
+    "order_type": "post-only GTC/GTD maker",
+    "post_only_required": true,
+    "price_must_exactly_conform_to_tick": true,
+    "silent_price_rounding": false,
+    "size_rounding": "down to two decimals",
+    "tick_size_changes_must_be_respected": true
+  },
+  "parent": {
+    "accounting_engine_sha256": "d4a38d8e4d7daefcd33f1e5340de9ce2ad8fe8242e38fbf4c8004737ded6d2e8",
+    "commit": "e101d299bac5e3bf71fa9196fbb46df384411e05",
+    "study": "RN1-F21-M4",
+    "validation_status": "PASS_MAKER_ACCOUNTING_FROZEN"
+  },
+  "purpose": "Replace generic synthetic maker-cost assumptions with conservative Polymarket-specific order constraints and maker-rebate accounting semantics.",
+  "rebate_semantics": {
+    "actual_rebate_requires_market_total_fee_equivalent": true,
+    "actual_rebate_requires_rebate_pool": true,
+    "fixed_rebate_bps_per_fill": false,
+    "formula": "own_fee_equivalent / market_total_fee_equivalent * rebate_pool",
+    "maker_fill_produces_fee_equivalent": true,
+    "sports_reference_is_runtime_authority": false,
+    "sports_reference_rebate_share": 0.15
+  },
+  "source_freeze_sha256": "de28469be42d96157db22333c0f98f58ac04a2393a956df3c2938e0cd5bb55ef",
+  "status": "FROZEN_POLYMARKET_VENUE_SEMANTICS",
+  "study": "RN1-F21-M5",
+  "tick_precision_table": {
+    "0.0001": {
+      "amount_decimals": 6,
+      "price_decimals": 4,
+      "size_decimals": 2
+    },
+    "0.001": {
+      "amount_decimals": 5,
+      "price_decimals": 3,
+      "size_decimals": 2
+    },
+    "0.0025": {
+      "amount_decimals": 6,
+      "price_decimals": 4,
+      "size_decimals": 2
+    },
+    "0.005": {
+      "amount_decimals": 5,
+      "price_decimals": 3,
+      "size_decimals": 2
+    },
+    "0.01": {
+      "amount_decimals": 4,
+      "price_decimals": 2,
+      "size_decimals": 2
+    },
+    "0.1": {
+      "amount_decimals": 3,
+      "price_decimals": 1,
+      "size_decimals": 2
+    }
+  }
+}

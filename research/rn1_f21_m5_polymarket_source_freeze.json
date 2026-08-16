@@ -1,0 +1,84 @@
+{
+  "study": "RN1-F21-M5",
+  "observed_date": "2026-08-16",
+  "source_policy": "Official Polymarket documentation only.",
+  "sources": [
+    {
+      "name": "CLOB market info",
+      "url": "https://docs.polymarket.com/api-reference/markets/get-clob-market-info",
+      "facts": [
+        "mos is minimum order size",
+        "mts is minimum tick size",
+        "fd contains fee-curve parameters",
+        "itode indicates taker order delay",
+        "oas is minimum order age"
+      ]
+    },
+    {
+      "name": "Place Orders",
+      "url": "https://docs.polymarket.com/trading/place-orders",
+      "facts": [
+        "limit-order size must meet minimum order size",
+        "price must conform to current tick size",
+        "size is rounded down to two decimals",
+        "amount precision depends on tick size",
+        "tick_size_change events invalidate cached tick size",
+        "post-only marketable orders are rejected rather than taking liquidity"
+      ]
+    },
+    {
+      "name": "Fees",
+      "url": "https://docs.polymarket.com/trading/fees",
+      "facts": [
+        "platform fees are taker-only",
+        "makers pay zero platform fees",
+        "published fee formula is C * feeRate * p * (1-p)",
+        "sports reference feeRate on observation date is 0.05",
+        "taker fees are rounded to five decimal places"
+      ]
+    },
+    {
+      "name": "Maker Rebates",
+      "url": "https://docs.polymarket.com/programs/maker-rebates",
+      "facts": [
+        "rebates are paid daily",
+        "rebates are calculated per market",
+        "maker fee-equivalent uses the fee curve",
+        "daily maker rebate equals own fee-equivalent share times rebate pool",
+        "sports reference maker rebate pool share on observation date is 0.15",
+        "rebate percentage may change over time"
+      ]
+    },
+    {
+      "name": "Gamma market schema",
+      "url": "https://docs.polymarket.com/api-reference/markets/get-market-by-id",
+      "facts": [
+        "market feeSchedule exposes exponent",
+        "market feeSchedule exposes rate",
+        "market feeSchedule exposes takerOnly",
+        "market feeSchedule exposes rebateRate"
+      ]
+    },
+    {
+      "name": "Builder Fees",
+      "url": "https://docs.polymarket.com/programs/builders/fees",
+      "facts": [
+        "builder fees are independent of platform fees",
+        "builder fees apply when a builder code is attached",
+        "no builder code means no builder fee"
+      ]
+    }
+  ],
+  "frozen_reference": {
+    "sports_fee_rate": 0.05,
+    "sports_maker_platform_fee_rate": 0,
+    "sports_maker_rebate_pool_share": 0.15
+  },
+  "important_boundary": {
+    "category_reference_overrides_per_market_payload": false,
+    "per_market_payload_required_for_real_replay": true,
+    "rebate_rate_treated_as_per_fill_cash_credit": false,
+    "builder_code_attached": false,
+    "prospective_market_payload_read": false
+  }
+}

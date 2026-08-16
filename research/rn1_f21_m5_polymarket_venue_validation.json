@@ -1,0 +1,60 @@
+{
+  "analysis_boundary": {
+    "f18_signal_calculated": false,
+    "flow_imbalance_calculated": false,
+    "markout_calculated": false,
+    "performance_read": false,
+    "pnl_calculated": false,
+    "prospective_data_read": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "files": {
+    "contract_sha256": "6d119bab3a0f83f3dfec4bff0cd4232789142716a7e31372661c64ab8a01448c",
+    "source_freeze_sha256": "de28469be42d96157db22333c0f98f58ac04a2393a956df3c2938e0cd5bb55ef",
+    "tests_sha256": "ab7c40bbac0e0d4b4daa62a60c985ed34846fa55f0f6e37877b471df2cc5c341",
+    "venue_engine_sha256": "a46b836d39527bdc4a676324db96349784ba61e6a461864620f44dfefdc1dd41"
+  },
+  "parent": {
+    "commit": "e101d299bac5e3bf71fa9196fbb46df384411e05",
+    "study": "RN1-F21-M4",
+    "validation_status": "PASS_MAKER_ACCOUNTING_FROZEN"
+  },
+  "status": "PASS_POLYMARKET_VENUE_SEMANTICS_FROZEN",
+  "study": "RN1-F21-M5",
+  "validation": {
+    "builder_fee_path_enabled": false,
+    "clob_gamma_fee_crosscheck": true,
+    "database_access": false,
+    "exact_tick_validation": true,
+    "fixed_rebate_bps_per_fill": false,
+    "m1_regression_passed": 19,
+    "m1_regression_total": 19,
+    "m2_regression_passed": 22,
+    "m2_regression_total": 22,
+    "m3_regression_passed": 19,
+    "m3_regression_total": 19,
+    "m4_regression_passed": 18,
+    "m4_regression_total": 18,
+    "m5_tests_passed": 25,
+    "m5_tests_total": 25,
+    "maker_platform_fee_zero": true,
+    "market_level_rebate_denominator_required": true,
+    "marketable_post_only_rejected": true,
+    "minimum_size_after_rounding": true,
+    "network_access": false,
+    "post_only_required": true,
+    "prospective_data_access": false,
+    "silent_price_rounding": false
+  },
+  "venue_semantics": {
+    "fee_curve": "C * feeRate * p * (1-p) for exponent == 1 only",
+    "maker_order_type": "post-only",
+    "maker_platform_fee": "zero under frozen taker-only schedule",
+    "maker_rebate": "market-level ex-post allocation; not fixed per-fill bps",
+    "price_tick": "exact conformity required",
+    "runtime_market_parameters": "must come from captured per-market CLOB/Gamma payloads",
+    "size_rounding": "down to two decimals",
+    "unsupported_exponent": "fail closed"
+  }
+}
