@@ -1,0 +1,132 @@
+{
+  "analysis_boundary": {
+    "book_depth_read": false,
+    "book_price_read": false,
+    "edge_calculated": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h5_response_read": false,
+    "h6_response_calculated": false,
+    "h6_transition_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "trade_content_read": false,
+    "winner_used": false
+  },
+  "discovery": {
+    "clob_book_or_price_endpoint_used": false,
+    "events_endpoint": "https://gamma-api.polymarket.com/events",
+    "events_filter": {
+      "active": true,
+      "closed": false,
+      "pagination_limit": 100,
+      "tag_id": "resolved MLB primaryTagId"
+    },
+    "f19_registry_used_for_selection": false,
+    "f20_used": false,
+    "h5_used": false,
+    "odds_api_used": false,
+    "source": "Polymarket Gamma metadata only",
+    "sport_identifier": "mlb",
+    "sport_tag_rule": "Use primaryTagId from the unique /sports object whose sport == 'mlb'.",
+    "sports_endpoint": "https://gamma-api.polymarket.com/sports"
+  },
+  "eligibility": {
+    "accepting_orders": true,
+    "active": true,
+    "binary_outcomes_exactly": 2,
+    "clob_tokens_exactly": 2,
+    "closed": false,
+    "condition_id_required": true,
+    "duplicate_condition_id_allowed": false,
+    "duplicate_token_id_allowed": false,
+    "game_start_time_required": true,
+    "gamma_market_id_required": true,
+    "m0_minimum_registration_lead_seconds": 1800,
+    "minimum_markets": 5,
+    "operational_lead_reason": "M1 capture must cover the entire fixed -1800s to game-start window. The extra 1800s is launch/audit margin fixed before acquisition and is not a response, liquidity, or performance parameter.",
+    "question_team_set_must_equal_outcome_team_set": true,
+    "registrar_operational_lead_seconds": 3600,
+    "sports_market_type": "moneyline",
+    "target_markets": 5
+  },
+  "frozen_inputs": {
+    "h6_m0_independence_policy": {
+      "path": "research/h6_m0_independence_policy.json",
+      "sha256": "13b58c64e5c63275c533be12272eec2a96a7a71a5da2b79eb3bc52f995637c32"
+    },
+    "h6_m0_mechanism_data_design": {
+      "path": "research/h6_m0_mechanism_data_design.json",
+      "sha256": "bcbcf5e5ffc72517df5c6162771da62fc11113c2b514b297c9848172444e9213"
+    }
+  },
+  "m1_burn_policy": {
+    "all_registered_markets_permanently_burned_for_h6_m2_and_m4": true,
+    "f19_identity_overlap_allowed": true,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h5_response_read": false
+  },
+  "milestone": "H6-M1-REGISTRATION",
+  "parent_git_commit": "c2f274683eb4168442088621df0ea9b315d3379d",
+  "registry": {
+    "allowlisted_fields": [
+      "study",
+      "milestone",
+      "registration_index",
+      "registered_at_utc",
+      "gamma_event_id",
+      "gamma_event_slug",
+      "gamma_market_id",
+      "condition_id",
+      "gamma_market_slug",
+      "gamma_question",
+      "game_start_time_utc",
+      "p1_outcome",
+      "p0_outcome",
+      "p1_token_id",
+      "p0_token_id",
+      "mapping_rule"
+    ],
+    "atomic_create_no_overwrite": true,
+    "freeze_receipt": "research/h6_m1_registry_freeze.json",
+    "path": "data/research/h6/m1/registry.jsonl",
+    "serialization": "UTF-8 JSONL; sort_keys=True; compact separators; terminal newline"
+  },
+  "selection": {
+    "additions_after_registry_freeze": false,
+    "deletions_after_registry_freeze": false,
+    "ordering": [
+      "game_start_time_utc ascending",
+      "condition_id ascending"
+    ],
+    "replacement_after_registry_freeze": false,
+    "selection_may_not_use": [
+      "price",
+      "spread",
+      "displayed depth",
+      "liquidity",
+      "volume",
+      "trade count",
+      "future response",
+      "winner",
+      "settlement",
+      "PnL"
+    ],
+    "selection_may_use": [
+      "sport tag",
+      "market type",
+      "binary outcome count",
+      "scheduled start time",
+      "active/closed/accepting metadata",
+      "condition_id",
+      "market id",
+      "token ids",
+      "team/outcome identity"
+    ],
+    "take": "first exactly 5 eligible markets"
+  },
+  "status": "REGISTRATION_CONTRACT_FREEZE",
+  "study": "H6"
+}
