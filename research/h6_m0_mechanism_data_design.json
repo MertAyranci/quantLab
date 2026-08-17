@@ -1,0 +1,298 @@
+{
+  "analysis_boundary": {
+    "edge_calculated": false,
+    "external_odds_used": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h5_response_read": false,
+    "h6_primary_horizon_selected": false,
+    "h6_response_calculated": false,
+    "h6_signal_threshold_selected": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "candidate_response_definition_for_m2_development": {
+    "all_prespecified_horizons_may_be_reported_in_m2": true,
+    "candidate_horizons_seconds": [
+      1,
+      3,
+      5,
+      10,
+      30,
+      60
+    ],
+    "gap_rule": "If continuity becomes invalid between event time and target horizon, response is missing for that horizon. No future state may backfill across the gap.",
+    "positive_means": "subsequent midpoint repriced in the direction of the liquidity-pressure change",
+    "primary_confirmation_horizon_frozen_at_m0": false,
+    "primary_confirmation_horizon_must_be_frozen_before_m4": true,
+    "response": "sign(imbalance_change) * (p1_midpoint_as_of_target_horizon - p1_midpoint_at_event)",
+    "response_calculation_allowed_in_m0": false,
+    "response_calculation_allowed_in_m1": false,
+    "target_state_rule": "Use the causally reconstructed p1 state valid as-of the exact target time. The last valid state may persist through target time; do not wait for or select the first future update."
+  },
+  "canonical_axis": {
+    "primary_mechanism_uses": "direct p1 CLOB only",
+    "primary_token": "Polymarket outcomeIndex == 0 (p1)",
+    "secondary_token": "Polymarket outcomeIndex == 1 (p0), captured for integrity/secondary diagnostics only",
+    "synthetic_cross_token_executable_book_used": false
+  },
+  "continuity_and_reconstruction": {
+    "book_generation_required": true,
+    "change_index_required": true,
+    "connection_id_required": true,
+    "future_backfill_allowed": false,
+    "immediate_resync_after_connect_or_reconnect": true,
+    "ingest_sequence_required": true,
+    "initial_full_rest_snapshot_required": true,
+    "normalized_events_preserved": true,
+    "periodic_rest_reconciliation_max_seconds": 60,
+    "raw_frame_sequence_required": true,
+    "raw_websocket_text_preserved_exactly": true,
+    "reconciliation_mismatch_action": "increment book generation, record new full snapshot, and invalidate continuity across the boundary",
+    "rest_snapshot_is_signal_event": false,
+    "silence_or_connection_gap_action": "invalidate continuity until a new full resync snapshot is recorded"
+  },
+  "development_and_confirmation_plan": {
+    "M0": "mechanism and data-design freeze",
+    "M1": "dedicated new capture; engineering/reconstruction feasibility only",
+    "M2": "new-data development-stage mechanism study",
+    "M3_if_promising": "freeze exact statistic, primary horizon, clustering/declaration rules, sample gate, and prospective OOS confirmation rule",
+    "M4_if_frozen": "new prospective confirmatory OOS collection and one-time readout",
+    "execution_stage_if_confirmed": "only after confirmation: executable bid/ask, spread, latency, fees, slippage, queue assumptions, conservative fills, and paper trading"
+  },
+  "explicit_non_decisions": [
+    "No minimum imbalance-change magnitude threshold is selected.",
+    "No optimal response horizon is selected.",
+    "No trading threshold is selected.",
+    "No multi-level depth statistic is selected as the primary H6 signal.",
+    "No trade-versus-cancellation classifier is selected.",
+    "No maker/taker execution choice is made.",
+    "No PnL is calculated.",
+    "No winner or settlement data is required.",
+    "No F19 trade content is read.",
+    "No F20 data is read.",
+    "No H5 response or external-odds data is read."
+  ],
+  "frame_atomicity": {
+    "event_time": "single local receive timestamp assigned once to the raw frame",
+    "future_backfill_of_event_time": false,
+    "rule": "All p1 changes contained in one raw websocket frame are applied before evaluating the H6 transition for that token. A frame can create at most one primary H6 transition per p1 token."
+  },
+  "freeze_time_authority": "git commit timestamp; no separate wall-clock freeze timestamp",
+  "m0_verdict": "NEW HYPOTHESIS FAMILY PREREGISTERED; NO SIGNAL, RESPONSE, OR ECONOMIC CLAIM",
+  "m1_engineering_stage": {
+    "after_fail": "Diagnose engineering defects without calculating H6 response. A corrected collector or protocol requires a new preregistered engineering cohort; failed-cohort data remain burned for H6 mechanism evidence.",
+    "after_inconclusive": "The frozen H6-M1 cohort remains permanently burned. Any new engineering attempt requires a separately preregistered M1 variant/cohort before acquisition; it may not extend or append to the original cohort based on observed message/transition counts.",
+    "allowed_metrics": [
+      "frame counts",
+      "message type counts",
+      "connection counts",
+      "reconnect counts",
+      "REST resync counts",
+      "reconciliation mismatch counts",
+      "wall-clock valid-state coverage",
+      "state reconstructability",
+      "book generation counts",
+      "top-of-book presence",
+      "price-stationary transition counts",
+      "event density",
+      "timestamp resolution",
+      "disk usage",
+      "file hashes"
+    ],
+    "engineering_cohort": {
+      "after_registry_freeze_additions_deletions_replacements": false,
+      "capture_window_is_data_dependent": false,
+      "capture_window_rule": "For every registered M1 engineering market, capture the fixed wall-clock interval from exactly 1800 seconds before registered game start until registered game start.",
+      "capture_window_seconds_per_market": 1800,
+      "early_stop_or_extension_based_on_message_or_transition_counts": false,
+      "engineering_markets_are_permanently_burned_for_h6_m2_and_m4": true,
+      "minimum_markets": 5,
+      "minimum_registration_lead_seconds": 1800,
+      "pregame_only": true,
+      "registration_before_capture_required": true,
+      "selection_may_not_use": [
+        "price",
+        "spread",
+        "displayed depth",
+        "volume",
+        "trade count",
+        "future response",
+        "winner",
+        "settlement",
+        "PnL"
+      ],
+      "selection_may_use": [
+        "sport",
+        "market type",
+        "binary outcome count",
+        "scheduled start time",
+        "active/open/accepting metadata",
+        "condition_id",
+        "token ids"
+      ],
+      "target_markets": 5
+    },
+    "forbidden_metrics": [
+      "future midpoint change after H6 transition",
+      "directional response",
+      "directional hit rate",
+      "correlation between imbalance change and future price",
+      "regression of future price on imbalance change",
+      "markout",
+      "edge",
+      "PnL",
+      "winner-conditioned statistics",
+      "settlement-conditioned statistics"
+    ],
+    "important_independence_exception": {
+      "f19_market_identity_overlap_allowed_for_m1_engineering_only": true,
+      "f19_trade_or_f20_data_allowed": false,
+      "reason": "M1 computes no H6 response or effect. Identity overlap permits immediate feed engineering while the M1 cohort is permanently excluded from all H6 evidence."
+    },
+    "m1_result_labels": [
+      "PASS_ENGINEERING_FEASIBILITY",
+      "FAIL_ENGINEERING_FEASIBILITY",
+      "INCONCLUSIVE_ENGINEERING"
+    ],
+    "name": "H6-M1 dedicated CLOB reconstruction and transition-feasibility",
+    "result_semantics": {
+      "FAIL_ENGINEERING_FEASIBILITY": "Any integrity, causality, reconstruction, generation/connection mixing, future-backfill, in-play contamination, raw-frame preservation, deterministic-replay, initial-snapshot, or valid-state coverage gate fails.",
+      "INCONCLUSIVE_ENGINEERING": "All integrity, causality, reconstruction, and >=95% valid-state coverage gates pass, but the frozen event-density and/or market-breadth gates are not met. Do not extend the same cohort or capture window to chase counts.",
+      "PASS_ENGINEERING_FEASIBILITY": "All integrity, causality, reconstruction, coverage, and event-density/breadth gates pass on the fixed registered capture windows."
+    },
+    "scope_change_after_m1_failure": "A sport/market-type expansion requires a newly preregistered H6 variant and may not silently rescue H6.",
+    "success_gates": {
+      "deterministic_replay": "PASS",
+      "distinct_markets": ">= 5",
+      "future_backfill": 0,
+      "generation_or_connection_mixing": 0,
+      "in_play_primary_transitions": 0,
+      "initial_full_p1_snapshots": "100% of registered markets",
+      "raw_text_frame_capture": "all received text frames preserved with SHA256",
+      "reconciliation_interval_seconds": "<= 60",
+      "reconstruction_integrity_errors": 0,
+      "transition_market_breadth": ">= 25 valid transitions in each of at least 4 markets",
+      "valid_price_stationary_nonzero_imbalance_transitions": ">= 500 total across >= 5 markets",
+      "valid_two_sided_l1_wall_clock_coverage": ">= 95% of scheduled pregame capture time"
+    }
+  },
+  "m2_development_stage": {
+    "allowed_only_after": [
+      "H6-M1 engineering PASS",
+      "H5 registry has been frozen",
+      "H6-M2 development registry is frozen before data observation"
+    ],
+    "confirmation_claim_allowed": false,
+    "data": "new post-M1 dedicated H6 data only",
+    "execution_economics_allowed": false,
+    "m1_engineering_data_used_as_effect_evidence": false,
+    "pnl_allowed": false,
+    "primary_family": "price-stationary non-zero L1 imbalance transitions",
+    "required_reporting": [
+      "all prespecified response horizons",
+      "event count and market breadth",
+      "market-clustered uncertainty",
+      "continuous relationship between imbalance_change and future midpoint change",
+      "directional-response distribution",
+      "robustness to market concentration"
+    ],
+    "threshold_free_primary_analysis": true
+  },
+  "milestone": "H6-M0",
+  "name": "Endogenous Top-of-Book Liquidity Pressure to Polymarket Repricing",
+  "parent_git_commit": "f419e5bdd4edc912a783567efd45ae2f2e0e1d90",
+  "primary_book_state": {
+    "imbalance_range": "[-1, 1]",
+    "l1_imbalance": "(best_bid_size - best_ask_size) / (best_bid_size + best_ask_size)",
+    "midpoint": "(best_bid_price + best_ask_price) / 2",
+    "multi_level_depth": {
+      "allowed_role_before_m3": "engineering reconstructability and secondary M2 development diagnostics only",
+      "captured": true,
+      "primary_h6_m0_signal_family": false
+    },
+    "required_fields": [
+      "p1 best bid price",
+      "p1 best bid displayed size",
+      "p1 best ask price",
+      "p1 best ask displayed size",
+      "local raw-frame receive timestamp",
+      "venue timestamp when supplied",
+      "connection_id",
+      "raw frame sequence",
+      "ingest sequence",
+      "change_index",
+      "book_generation",
+      "tick size"
+    ],
+    "valid_state_requires": [
+      "same valid book generation",
+      "two-sided p1 top of book",
+      "best bid < best ask",
+      "best bid size > 0",
+      "best ask size > 0",
+      "no unresolved continuity gap",
+      "market still pregame"
+    ]
+  },
+  "primary_transition_family": {
+    "admissible_primary_transition": "non-zero imbalance_change",
+    "direction": "sign(imbalance_change)",
+    "imbalance_change": "post_frame_l1_imbalance - pre_frame_l1_imbalance",
+    "liquidity_change_requirement": "At least one of best bid displayed size or best ask displayed size changes.",
+    "minimum_absolute_imbalance_change": null,
+    "periodic_reconciliation_can_create_transition": false,
+    "price_stationary_requirement": {
+      "best_ask_price_unchanged": true,
+      "best_bid_price_unchanged": true,
+      "tick_size_unchanged": true
+    },
+    "reason_no_trade_cancel_classification": "The mechanism is displayed-liquidity pressure, not an unsupported inference about whether a size change was caused by cancellation, addition, or execution.",
+    "reconnect_can_create_transition": false,
+    "rest_resync_can_create_transition": false,
+    "same_generation_required": true,
+    "threshold_free_at_m0": true,
+    "trade_or_cancel_classification_required": false,
+    "unit": "one valid p1 pre-frame state to one valid p1 post-frame state"
+  },
+  "scientific_position": {
+    "mechanism": "Displayed liquidity can reallocate before quoted prices move. A directional change in executable top-of-book depth may reveal endogenous price pressure before the midpoint reprices.",
+    "new_hypothesis_family": true,
+    "not_a_rescue_of": [
+      "H2-v2 absolute external fair-value gap",
+      "H5 external sharp-market innovation",
+      "F18 RN1 aggressive-flow adverse-selection overlay",
+      "F21 passive queue model"
+    ],
+    "null": "Conditional on unchanged contemporaneous best bid/ask prices, changes in top-of-book size imbalance have no systematic relationship with subsequent midpoint changes.",
+    "profitability_claim_allowed_at_m0": false,
+    "question": "When Polymarket best bid and best ask prices are unchanged, does a change in displayed top-of-book size imbalance predict the direction of a subsequent short-horizon midpoint repricing?",
+    "stronger_causal_claim_allowed_at_m0": false
+  },
+  "scope": {
+    "binary_only": true,
+    "external_odds_used": false,
+    "in_play_allowed": false,
+    "market_type": "pregame moneyline",
+    "required_outcomes": 2,
+    "settlement_required": false,
+    "sport": "MLB",
+    "venue": "Polymarket CLOB",
+    "wallet_behavior_used": false,
+    "winner_required": false
+  },
+  "status": "MECHANISM_DATA_DESIGN_FREEZE",
+  "study": "H6",
+  "timing_and_causality": {
+    "collector_must_timestamp_raw_frame_once": true,
+    "events_at_or_after_game_start": "INELIGIBLE",
+    "normalized_records_must_inherit_frame_receive_time": true,
+    "pregame_hard_stop": "registered game start time",
+    "primary_clock": "local raw-frame receive time",
+    "source_timestamp_must_not_replace_local_receive_time": true,
+    "timezone": "UTC",
+    "venue_timestamp_role": "diagnostic only unless independently validated"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "analysis_boundary": {
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h2_v2_performance_read_for_h6": false,
+    "h5_response_read": false,
+    "h6_pnl_calculated": false,
+    "h6_response_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "data_separation": {
+    "f19_root_allowed": false,
+    "f20_root_allowed": false,
+    "h5_root_allowed": false,
+    "h6_root": "data/research/h6",
+    "reuse_allowed_for_software_only": [
+      "collector architecture",
+      "websocket interface knowledge",
+      "REST snapshot/reconciliation interface knowledge",
+      "synthetic/unit-test patterns"
+    ],
+    "reuse_not_allowed_for_h6_evidence": [
+      "F19 trade rows",
+      "F20 raw or normalized CLOB capture",
+      "H5 external market states",
+      "H5 PM response",
+      "H2-v2 performance",
+      "F18 discovery performance",
+      "F21 performance"
+    ]
+  },
+  "frozen_prior_artifacts": {
+    "f19_registry": {
+      "allowed_use": "identifier/metadata exclusion only",
+      "path": "data/prospective/rn1_f19/registry.jsonl",
+      "row_count": 100,
+      "sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b"
+    },
+    "h2_v2_burned_identifier_source": {
+      "allowed_use": "identifier exclusion only",
+      "expected_burned_external_events": 9,
+      "path": "research/h5_m0_exclusions.json",
+      "sha256": "fb4a268f3148e746e31232c658cdc8793c2e082a73c5a8260af6779d89b1949a"
+    },
+    "h5_m0": {
+      "path": "research/h5_m0_mechanism_data_design.json",
+      "sha256": "073730512baa587e5be730f534daf1e389c8934d301769a77f387e1fff0a553c"
+    },
+    "h5_m1a": {
+      "path": "research/h5_m1a_acquisition_contract.json",
+      "sha256": "6da26ac94413b5a79566764dcc43d4584bff94c3b88531225dec09a4db99b1be"
+    }
+  },
+  "h6_m1_engineering_policy": {
+    "m1_market_ids_must_be_added_to_h6_burned_set_before_m2": true,
+    "m1_market_ids_must_be_frozen_before_capture": true,
+    "may_overlap_f19_condition_ids": true,
+    "may_overlap_future_h5_condition_ids_if_not_yet_registered": true,
+    "may_read_f19_trade_content": false,
+    "may_read_f20": false,
+    "may_read_h5_external_odds_or_response": false,
+    "reason": "M1 is strictly engineering-only and computes no response/effect. Every M1 market is permanently burned for H6 mechanism evidence."
+  },
+  "h6_m2_development_policy": {
+    "dedicated_h6_capture_required": true,
+    "f20_may_substitute_for_h6_capture": false,
+    "historical_h6_pre_m2_capture_may_substitute": false,
+    "must_exclude": [
+      "all 100 frozen F19 condition_ids",
+      "all H2-v2 burned development market identities",
+      "all H6-M1 engineering condition_ids",
+      "all H5 condition_ids once H5 registry is frozen"
+    ],
+    "reason": "H5 registrar is already frozen and does not know H6. Waiting for H5 registry freeze lets H6 exclude H5 without modifying H5 or risking cross-family market overlap.",
+    "registration_may_begin_before_h5_registry_exists": false,
+    "selection_may_not_use": [
+      "price",
+      "spread",
+      "depth",
+      "volume",
+      "future response",
+      "winner",
+      "settlement",
+      "PnL"
+    ]
+  },
+  "h6_m4_confirmation_policy": {
+    "must_exclude_all_prior_h6_development_and_engineering_markets": true,
+    "must_preserve_f19_and_h5_exclusions": true,
+    "must_use_new_markets_not_used_in_h6_m2": true,
+    "no_early_stop_by_performance": true,
+    "one_time_readout": true
+  },
+  "milestone": "H6-M0",
+  "name": "H6 Independence and Evidence-Separation Policy",
+  "parent_git_commit": "f419e5bdd4edc912a783567efd45ae2f2e0e1d90",
+  "status": "INDEPENDENCE_POLICY_FREEZE",
+  "study": "H6"
+}
