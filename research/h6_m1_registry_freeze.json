@@ -1,0 +1,59 @@
+{
+  "analysis_boundary": {
+    "book_depth_read": false,
+    "book_price_read": false,
+    "edge_calculated": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h5_response_read": false,
+    "h6_response_calculated": false,
+    "h6_transition_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "trade_content_read": false,
+    "winner_used": false
+  },
+  "burn_policy": {
+    "all_registered_markets_burned_for_h6_m2_and_m4": true,
+    "f19_identity_overlap_allowed_for_m1_engineering": true
+  },
+  "git_commit": "09716166785d4e9a3fb5d83f05e88ce78399d880",
+  "h6_m0_independence_sha256": "13b58c64e5c63275c533be12272eec2a96a7a71a5da2b79eb3bc52f995637c32",
+  "h6_m0_sha256": "bcbcf5e5ffc72517df5c6162771da62fc11113c2b514b297c9848172444e9213",
+  "milestone": "H6-M1",
+  "registered_at_utc": "2026-08-18T00:32:26.901116+00:00",
+  "registration_code": {
+    "path": "research/h6_m1_register.py",
+    "sha256": "bc4c7d799e45f9ab0e4326058cb6ca7b214a85abf5ee0ffaff69631d45bcf7b5"
+  },
+  "registration_contract": {
+    "path": "research/h6_m1_registration_contract.json",
+    "sha256": "34e43b9b69e9988ea92728a7d7c08ae2063505171b54d3d8b19fa64557eb9dd8"
+  },
+  "registry": {
+    "distinct_condition_id_count": 5,
+    "distinct_token_id_count": 10,
+    "path": "data/research/h6/m1/registry.jsonl",
+    "row_count": 5,
+    "sha256": "8484176202fff2f81974b698711145d100fda156c6598d5e734b3c6789850217"
+  },
+  "selection": {
+    "book_or_price_endpoint_used": false,
+    "f19_registry_used_for_selection": false,
+    "m0_minimum_registration_lead_seconds": 1800,
+    "minimum_markets": 5,
+    "mlb_primary_tag_id": "100381",
+    "odds_api_used": false,
+    "ordering": [
+      "game_start_time_utc ascending",
+      "condition_id ascending"
+    ],
+    "registrar_operational_lead_seconds": 3600,
+    "source": "Polymarket Gamma metadata only",
+    "sport": "mlb",
+    "target_markets": 5
+  },
+  "status": "REGISTRY_FROZEN",
+  "study": "H6"
+}
