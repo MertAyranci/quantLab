@@ -1,0 +1,60 @@
+{
+  "change": {
+    "active_closed_filters_unchanged": true,
+    "description": "Remove only Gamma API server-side order and ascending request parameters.",
+    "eligibility_rules_unchanged": true,
+    "gamma_server_side_ordering_after": false,
+    "offset_pagination_unchanged": true,
+    "operational_registration_lead_seconds_unchanged": 3600,
+    "pagination_limit_unchanged": 100,
+    "sport_tag_filter_unchanged": true,
+    "target_markets_unchanged": 5
+  },
+  "freeze_time_authority": "git commit timestamp",
+  "milestone": "H6-M1",
+  "parent_git_commit": "be3b5fc3c1f42add2ea1f8f36f3d6590afa8c76d",
+  "provenance": {
+    "capture_contract_after_sha256": "97380ad5f75b999cc9f0253dabcb90542b43e1829e42fc3189ca38f0a9342a3b",
+    "capture_contract_before_sha256": "f3ab55326bced6d8a5f8556e3a9671eaa090297f412a475eacc07d70c647c2ca",
+    "collector_after_sha256": "a7ec54ca9a19856e138af8962c3ae68f267e7fed8c14191cb91ba5c81b35ab3d",
+    "collector_before_sha256": "e2f45d3260d6541f529b993a9db813ca71f7051ed098f55956d019d284d6373e",
+    "registrar_after_sha256": "bc4c7d799e45f9ab0e4326058cb6ca7b214a85abf5ee0ffaff69631d45bcf7b5",
+    "registrar_before_sha256": "efebd0bdbd93062a5c669cf1cc86f55d6575af25e6c1da1755b2fc47a04059f5",
+    "registrar_test_after_sha256": "12253d6a95ccfaeb23c4af5645cb42b641c810f6fec3f4eeaf9453353f85c5e7",
+    "registrar_test_before_sha256": "004c589430b42f7ca73a5943be40c65670f4477e97f53a5e49f1b1c4f67f7922"
+  },
+  "scientific_selection": {
+    "changed": false,
+    "ordering": [
+      "game_start_time_utc ascending",
+      "condition_id ascending"
+    ],
+    "ordering_location": "local select_candidates() after discovery",
+    "take": "first exactly 5 eligible markets"
+  },
+  "state_at_failure": {
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "gamma_events_payload_admitted": false,
+    "gamma_sports_metadata_read": true,
+    "h5_response_read": false,
+    "h6_response_calculated": false,
+    "h6_transition_calculated": false,
+    "market_selection_performed": false,
+    "pnl_calculated": false,
+    "registry_created": false,
+    "registry_receipt_created": false
+  },
+  "study": "H6",
+  "trigger": {
+    "endpoint": "https://gamma-api.polymarket.com/events",
+    "error": "order fields are not valid",
+    "http_status": 422,
+    "rejected_parameter": {
+      "ascending": "true",
+      "order": "start_date"
+    }
+  },
+  "type": "PRE_REGISTRY_API_COMPATIBILITY_AMENDMENT",
+  "verdict": "TRANSPORT_COMPATIBILITY_ONLY; NO SCIENTIFIC SELECTION CHANGE"
+}

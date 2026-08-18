@@ -120,6 +120,46 @@ def test_resolve_mlb_tag_rejects_missing():
         m.resolve_mlb_tag(c)
 
 
+
+def test_fetch_active_mlb_events_uses_no_gamma_server_sort():
+    c = FakeClient([
+        (
+            m.EVENTS_URL,
+            [
+                {
+                    "id": "event-1",
+                    "markets": [],
+                }
+            ],
+        ),
+    ])
+
+    rows = m.fetch_active_mlb_events(
+        c,
+        tag_id="100381",
+    )
+
+    assert len(rows) == 1
+    assert len(c.calls) == 1
+
+    url, params = c.calls[0]
+
+    assert url == m.EVENTS_URL
+
+    assert params["tag_id"] == "100381"
+    assert params["active"] == "true"
+    assert params["closed"] == "false"
+    assert params["limit"] == m.PAGE_LIMIT
+    assert params["offset"] == 0
+
+    # API transport ordering is deliberately absent.
+    # Scientific ordering happens locally in
+    # select_candidates().
+    assert "order" not in params
+    assert "ascending" not in params
+
+
+
 def test_canonical_candidate_accepts_valid_market():
     now = datetime(2026, 8, 18, 0, 0, tzinfo=timezone.utc)
     row = m.canonical_candidate(

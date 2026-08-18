@@ -250,8 +250,6 @@ def fetch_active_mlb_events(client: httpx.Client, *, tag_id: str) -> list[dict[s
                 "closed": "false",
                 "limit": PAGE_LIMIT,
                 "offset": offset,
-                "order": "start_date",
-                "ascending": "true",
             },
         )
         if not isinstance(payload, list):

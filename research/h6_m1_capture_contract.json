@@ -71,7 +71,7 @@
     },
     "h6_m1_registrar": {
       "path": "research/h6_m1_register.py",
-      "sha256": "efebd0bdbd93062a5c669cf1cc86f55d6575af25e6c1da1755b2fc47a04059f5"
+      "sha256": "bc4c7d799e45f9ab0e4326058cb6ca7b214a85abf5ee0ffaff69631d45bcf7b5"
     },
     "h6_m1_registration_contract": {
       "path": "research/h6_m1_registration_contract.json",
@@ -100,6 +100,12 @@
     "venue_timestamp_ordering_role": "engineering reconstruction only; never H6 causal/event clock"
   },
   "parent_git_commit": "c451376560fa77d12a5a1413a9fee070862cd344",
+  "pre_registry_api_compatibility_amendment": {
+    "gamma_server_side_ordering_used": false,
+    "local_selection_ordering_unchanged": true,
+    "path": "research/h6_m1_api_compatibility_amendment.json",
+    "scientific_selection_rule_changed": false
+  },
   "registry_requirements": {
     "exact_market_count": 5,
     "exact_token_count": 10,
