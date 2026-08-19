@@ -1,0 +1,54 @@
+{
+  "analysis_boundary": {
+    "f18_signal_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "prices_inspected": false,
+    "settlement_used": false,
+    "winner_inspected": false
+  },
+  "conclusion": "The earlier gzip EOF failure was an engineering defect in the F20-M2 health checker, not evidence of damaged F20-M1 capture. The repaired monitor passed on the live collector with all 30 active tokens structurally recent.",
+  "incident": {
+    "capture_corruption_found": false,
+    "description": "Health checker could attempt to read a gzip file that was still open by the live F20-M1 collector. The previous logic excluded only the current wall-clock minute, while the MinuteGzipWriter may legitimately keep a previous-minute stream file open until that stream next writes.",
+    "f20_m1_collector_bug_found": false,
+    "health_monitor_bug_found": true
+  },
+  "live_validation": {
+    "active_markets": 15,
+    "active_tokens": 30,
+    "captured_at_utc": "2026-08-19T00:31:37.854818+00:00",
+    "classifications": {
+      "CAPTURE_GAP": 0,
+      "EXPECTED_CLOSED_SILENCE": 0,
+      "EXPECTED_PREOPEN_SILENCE": 0,
+      "HEALTHY_RECENT": 30,
+      "STATUS_LOOKUP_FAILURE": 0,
+      "UNEXPLAINED_VENUE_UNAVAILABLE": 0
+    },
+    "receipt_path": "data/prospective/rn1_f19/clob_f20_m1/health/runs/health_20260819T003137.854818Z.json",
+    "receipt_sha256": "d43df073e427062a1e822456912686b802c34fdcf554611c6a1785881eee8ac2",
+    "recent_structural_tokens": 30,
+    "service_active": true,
+    "status": "PASS"
+  },
+  "operational_state": {
+    "collector_restart_required": false,
+    "data_repair_required": false,
+    "f20_m1_capture": "CONTINUE",
+    "f20_m2_health_monitor": "REPAIRED_AND_VALIDATED"
+  },
+  "repair": {
+    "commit": "075362d414221527bcd759ad655f60aae83a85a4",
+    "f20_m1_collector_modified": false,
+    "f20_m1_service_restarted": false,
+    "health_checker_path": "collectors/polymarket/rn1_f20_m2_health.py",
+    "health_checker_sha256": "0c3fab70468990f1f95c5f738c3908d275418fb7acbce761d2fe16fbcc5c9e9f",
+    "mechanic": "Discover gzip paths actually held open by the live rn1-f20-m1-clob.service MainPID through /proc/<PID>/fd and exclude those paths from completed-file inspection. Retain current-minute exclusion as an additional safeguard.",
+    "regression_test_path": "research/test_rn1_f20_m2_health.py",
+    "regression_test_sha256": "764759fd4dbe9dfb4ccd16be217048601bd23a0e75f70eb000c47829d203c129",
+    "synthetic_tests_passed": 4
+  },
+  "status": "PASS_ENGINEERING_REPAIR",
+  "study": "RN1-F20-M2"
+}
