@@ -1,0 +1,105 @@
+{
+  "analysis_boundary": {
+    "correlation_calculated": false,
+    "directional_hit_rate_calculated": false,
+    "directional_response_calculated": false,
+    "edge_calculated": false,
+    "external_odds_used": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "future_midpoint_response_calculated": false,
+    "h5_response_read": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "authoritative_result": {
+    "path": "data/research/h6/m1/validation/h6m1_engineering_20260818_84841762_result.json",
+    "sha256": "db020910ef40daa11003777f367b3d0b25b89fcd6a079260300115baef5b176d"
+  },
+  "capture_id": "h6m1_engineering_20260818_84841762",
+  "cohort_policy": {
+    "m1_markets_permanently_burned_for_m2": true,
+    "m1_markets_permanently_burned_for_m4": true,
+    "same_capture_extension_allowed": false,
+    "same_capture_revalidation_with_changed_rules_allowed": false
+  },
+  "deterministic_replay": {
+    "digest": "053abf4c34284c39d44260e5753b2819ba5859a8b7416e52078837202e281eb7",
+    "status": "PASS"
+  },
+  "engineering_metrics": {
+    "aggregate_coverage_fraction": 0.999992510556,
+    "coverage_fraction_by_market": {
+      "0x34bee39a68d7459a5380229787d0361e0bf1e68e4b17bdea0720fce35be55d69": 1.0,
+      "0x8fa7310a657aedfbbc22d3a3be7d639f4d2330bd44fa4bf5995fe783eb51d261": 1.0,
+      "0x9ceaad602f0a1a97c697826274e7abce6fedd27f2c367d9520300e33dabe934e": 1.0,
+      "0xa017e92b6db818247e679283ae2070ebf8c3600aa6e7648fad4f23bb6a2715d4": 0.999962552778,
+      "0xad64a42584abc3ad0a7958e553b9a82e68a96b72daf0d0290ecac118263a3b0e": 1.0
+    },
+    "distinct_markets": 5,
+    "future_backfill": 0,
+    "generation_or_connection_mixing": 0,
+    "in_play_primary_transitions": 0,
+    "initial_full_p1_snapshot_count": 5,
+    "markets_with_at_least_25_transitions": 5,
+    "post_frame_crosscheck_failures": 0,
+    "reconstruction_integrity_errors": [],
+    "rest_flag_crosscheck_failures": 0,
+    "rest_generation_crosscheck_failures": 0,
+    "rest_reconciliation_mismatches": 165,
+    "state_errors": 0,
+    "transition_count_by_market": {
+      "0x34bee39a68d7459a5380229787d0361e0bf1e68e4b17bdea0720fce35be55d69": 433,
+      "0x8fa7310a657aedfbbc22d3a3be7d639f4d2330bd44fa4bf5995fe783eb51d261": 456,
+      "0x9ceaad602f0a1a97c697826274e7abce6fedd27f2c367d9520300e33dabe934e": 344,
+      "0xa017e92b6db818247e679283ae2070ebf8c3600aa6e7648fad4f23bb6a2715d4": 540,
+      "0xad64a42584abc3ad0a7958e553b9a82e68a96b72daf0d0290ecac118263a3b0e": 340
+    },
+    "transition_count_total": 2113,
+    "transition_distinct_markets": 5,
+    "venue_tob_mismatch_tokens": 2
+  },
+  "frozen_validation": {
+    "validation_contract_sha256": "1c3f34dfa252dffa2614572b94ea2ddb317deafe05df8eaa279f0d76db491d69",
+    "validator_git_head": "420ec8ad91c535980d1981212a66eae8161ac9b4",
+    "validator_sha256": "24d5731555dd3eab1adf5fb4fbc19f39c9b4692d0a06bf35ca87a62089549c1c",
+    "validator_test_sha256": "34eb5b7c0f5df0830661bccd5472f4b9150b42c83cf30572063c49946c888001"
+  },
+  "gate_results": {
+    "deterministic_replay": true,
+    "distinct_markets": true,
+    "future_backfill": true,
+    "generation_or_connection_mixing": true,
+    "in_play_primary_transitions": true,
+    "initial_full_p1_snapshots": true,
+    "market_breadth_25": true,
+    "raw_text_frame_capture": true,
+    "reconciliation_interval": true,
+    "reconstruction_integrity_errors": true,
+    "transition_count": true,
+    "transition_distinct_markets": true,
+    "valid_two_sided_l1_wall_clock_coverage": true
+  },
+  "lineage": {
+    "duplicate_raw_keys": 0,
+    "normalized_lineage_failures": 0,
+    "raw_sha_failures": 0
+  },
+  "milestone": "H6-M1",
+  "next_stage": {
+    "blocker": "H5 registry must exist and be frozen before H6-M2 registration.",
+    "h6_m1_complete": true,
+    "h6_m2_registration_allowed_now": false
+  },
+  "reconciliation": {
+    "count": 73,
+    "errors": [],
+    "max_interval_seconds": 30.258345
+  },
+  "scientific_scope": "Engineering/reconstruction feasibility only. No predictive-response or economic claim.",
+  "status": "PASS_ENGINEERING_FEASIBILITY",
+  "study": "H6"
+}
