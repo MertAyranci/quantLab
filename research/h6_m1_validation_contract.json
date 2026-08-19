@@ -1,0 +1,204 @@
+{
+  "allowed_outputs": [
+    "frame counts",
+    "message type counts",
+    "connection counts",
+    "REST resync counts",
+    "reconciliation counts",
+    "reconciliation mismatch counts",
+    "generation counts",
+    "deterministic replay status and digest",
+    "reconstruction integrity errors",
+    "future-backfill violations",
+    "generation/connection mixing violations",
+    "in-play primary transition count",
+    "valid p1 wall-clock coverage aggregate",
+    "valid p1 wall-clock coverage by market",
+    "valid price-stationary nonzero imbalance transition count",
+    "transition count by market",
+    "markets with at least 25 valid transitions",
+    "file hashes",
+    "final H6-M1 engineering verdict"
+  ],
+  "analysis_boundary": {
+    "correlation_calculated": false,
+    "directional_hit_rate_calculated": false,
+    "directional_response_calculated": false,
+    "edge_calculated": false,
+    "external_odds_used": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "future_midpoint_response_calculated": false,
+    "h5_response_read": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "authoritative_replay_sources": {
+    "boundary_states_role": "scheduled-boundary cross-check only",
+    "control_stream_role": "connection/resync/reconciliation and reconstruction cross-check only",
+    "normalized_stream_role": "lineage and deterministic cross-check only; not authoritative state source",
+    "raw_websocket_frames": true,
+    "registry": true,
+    "rest_snapshots": true
+  },
+  "deterministic_replay": {
+    "method": "Replay the frozen authoritative inputs twice from pristine state using identical code and compare canonical engineering summary, transition identities, coverage intervals, generation history, and final reconstructed token states.",
+    "required": true,
+    "required_result": "byte-identical canonical replay digest"
+  },
+  "forbidden_outputs": [
+    "future midpoint change after an H6 transition",
+    "directional response",
+    "directional hit rate",
+    "correlation between imbalance change and future price",
+    "regression of future price on imbalance change",
+    "markout",
+    "edge",
+    "PnL",
+    "winner-conditioned statistics",
+    "settlement-conditioned statistics",
+    "F19 trade content",
+    "F20 data",
+    "H5 response data",
+    "external odds"
+  ],
+  "frozen_capture": {
+    "capture_complete": {
+      "path": "data/research/h6/m1/capture/h6m1_engineering_20260818_84841762/capture_complete.json",
+      "sha256": "3cfe19055f8ed386b7d272bbe31930964f339da11bfcaa1d32bf836f6aca4fda"
+    },
+    "capture_id": "h6m1_engineering_20260818_84841762",
+    "capture_root": "data/research/h6/m1/capture/h6m1_engineering_20260818_84841762",
+    "capture_start": {
+      "path": "data/research/h6/m1/capture/h6m1_engineering_20260818_84841762/capture_start.json",
+      "sha256": "31c26d900b0a4f16f8a7c85bb504bae0f5c41a0a0c4b32a89c7e068d13542bba"
+    },
+    "registry_sha256": "8484176202fff2f81974b698711145d100fda156c6598d5e734b3c6789850217",
+    "streams": {
+      "boundary_states": {
+        "sha256": "816d9b0bcbc4f5bd52222ef58c17fc383aa463e99dced5acc1cb3f951ccb82ab"
+      },
+      "control": {
+        "sha256": "840205c432f8777311a2543a317c12c559bd76963ed0f78f51229bfd86a5d70e"
+      },
+      "normalized": {
+        "sha256": "5fad68d12e80485ca6b0aefbd3c955b0c5fba52f96156f7b5da2e52aa791f95b"
+      },
+      "raw_frames": {
+        "sha256": "8c280a46a58a15ce79bf989b968c5fd56971fea900a24da8e6e2a7475e8f6a74"
+      },
+      "rest_snapshots": {
+        "sha256": "1d7e164d463538c8deb77cec873e7ea6c018357e36d9b9543e8701d9f0450fa7"
+      }
+    }
+  },
+  "frozen_scientific_inputs": {
+    "h6_m0_independence_policy_sha256": "13b58c64e5c63275c533be12272eec2a96a7a71a5da2b79eb3bc52f995637c32",
+    "h6_m0_mechanism_data_design_sha256": "bcbcf5e5ffc72517df5c6162771da62fc11113c2b514b297c9848172444e9213",
+    "h6_m1_capture_contract_sha256": "97380ad5f75b999cc9f0253dabcb90542b43e1829e42fc3189ca38f0a9342a3b",
+    "h6_m1_collector_sha256": "a7ec54ca9a19856e138af8962c3ae68f267e7fed8c14191cb91ba5c81b35ab3d"
+  },
+  "imbalance_definition": {
+    "direction": "sign(imbalance_change)",
+    "formula": "(best_bid_size - best_ask_size) / (best_bid_size + best_ask_size)",
+    "transition": "post_frame_imbalance - pre_frame_imbalance"
+  },
+  "milestone": "H6-M1-VALIDATION",
+  "parent_git_commit": "5927bf5345ece357f2f80ac33cc106bf986be100",
+  "primary_transition_definition": {
+    "best_ask_price_unchanged": true,
+    "best_bid_price_unchanged": true,
+    "best_size_change_required": true,
+    "eligibility_window": "registered game_start_time_utc - 1800 seconds <= raw frame receive time < registered game_start_time_utc",
+    "imbalance_change_nonzero_required": true,
+    "minimum_absolute_imbalance_change": null,
+    "post_state_valid_required": true,
+    "pre_state_valid_required": true,
+    "reconciliation_can_create_transition": false,
+    "reconnect_can_create_transition": false,
+    "rest_snapshot_can_create_transition": false,
+    "same_connection_required": true,
+    "same_generation_required": true,
+    "tick_size_unchanged": true,
+    "unit": "at most one p1 transition per received raw websocket frame",
+    "venue_tob_mismatch_frame_can_create_transition": false,
+    "venue_tob_mismatch_rule": "If the collector identifies a venue/local top-of-book mismatch from a raw frame, that token/frame is ineligible as a primary transition. Continuity resumes only from the subsequent authoritative REST resync generation."
+  },
+  "purpose": "One-time engineering/reconstruction feasibility validation of the frozen H6-M1 capture. No H6 future response, predictive effect, economic edge, winner, settlement, or PnL may be calculated.",
+  "readout_policy": {
+    "live_result_create_only": true,
+    "live_result_path": "data/research/h6/m1/validation/h6m1_engineering_20260818_84841762_result.json",
+    "same_capture_may_not_be_revalidated_with_changed_rules": true,
+    "synthetic_tests_must_pass_before_live_readout": true,
+    "validator_must_be_committed_before_live_readout": true
+  },
+  "reconciliation_interval_gate": {
+    "maximum_seconds": 60,
+    "measurement": "wall-clock interval between periodic reconciliation completions during active capture, including initialization-to-first and last-reconciliation-to-final-game-start edge intervals"
+  },
+  "replay_ordering": {
+    "connection_change": "continuity boundary",
+    "future_state_backfill_allowed": false,
+    "generation_change": "continuity boundary",
+    "primary_clock": "local collector receive time",
+    "raw_frame_effective_time": "raw_frames.capture_time",
+    "rest_batch_rule": "Rows sharing connection_id, reason, request_started_at_utc and response_received_at_utc form one authoritative REST batch.",
+    "rest_snapshot_effective_time": "rest_snapshots.response_received_at_utc"
+  },
+  "state_reconstruction": {
+    "initial_state": "uninitialized and invalid until authoritative full snapshot",
+    "p0_role": "integrity diagnostics only",
+    "price_change_size_semantics": "absolute current aggregated size at price level",
+    "price_change_zero_size": "remove level",
+    "primary_token_role": "p1 only",
+    "rest_connect_snapshot": "authoritative full snapshot; increments generation",
+    "rest_reconciliation_match": "does not increment generation",
+    "rest_reconciliation_mismatch": "increments generation and establishes a new authoritative state",
+    "rest_resync": "increments generation and establishes a new authoritative state",
+    "stale_ws_rule": "state-mutating WS events with venue timestamp strictly older than last authoritative venue timestamp are preserved but not applied",
+    "ws_full_book": "authoritative within-stream full snapshot; does not increment generation while current state is valid, but restoration of invalid/uninitialized state creates a new generation"
+  },
+  "status": "VALIDATION_CONTRACT_FREEZE",
+  "study": "H6",
+  "success_gates": {
+    "deterministic_replay": "PASS",
+    "distinct_markets_minimum": 5,
+    "future_backfill": 0,
+    "generation_or_connection_mixing": 0,
+    "in_play_primary_transitions": 0,
+    "initial_full_p1_snapshots": "100% of 5 markets",
+    "markets_with_at_least_25_valid_transitions_minimum": 4,
+    "raw_text_frame_capture": "all received text frames preserved with valid SHA256",
+    "reconciliation_interval_seconds_max": 60,
+    "reconstruction_integrity_errors": 0,
+    "transition_distinct_markets_minimum": 5,
+    "valid_price_stationary_nonzero_imbalance_transitions_minimum": 500,
+    "valid_two_sided_l1_wall_clock_coverage_min_fraction": 0.95
+  },
+  "valid_state_definition": {
+    "best_ask_size_positive": true,
+    "best_bid_less_than_best_ask": true,
+    "best_bid_size_positive": true,
+    "continuity_valid": true,
+    "initialized": true,
+    "pregame": true,
+    "two_sided": true
+  },
+  "verdict_logic": {
+    "FAIL_ENGINEERING_FEASIBILITY": "Any integrity, causality, reconstruction, raw-frame, deterministic replay, initial-snapshot, mixing, future-backfill, in-play contamination, reconciliation-interval, or valid-state coverage gate fails.",
+    "INCONCLUSIVE_ENGINEERING": "All integrity, causality, reconstruction, and >=95% coverage gates pass, but one or more frozen transition-density/breadth gates are not met.",
+    "PASS_ENGINEERING_FEASIBILITY": "All frozen integrity, causality, reconstruction, coverage, transition-density, and market-breadth gates pass."
+  },
+  "wall_clock_coverage": {
+    "aggregate_gate": ">= 95%",
+    "denominator": "5 registered markets * 1800 scheduled p1 pregame seconds",
+    "interpretation": "A mismatch creates a continuity/generation boundary at the authoritative reconciliation response time. The validator does not retroactively declare the preceding interval invalid because no such backdating rule was preregistered.",
+    "numerator": "wall-clock seconds during the scheduled windows for which the causally reconstructed p1 state satisfies the frozen valid-state definition",
+    "per_market_coverage": "report for diagnostics only; no additional per-market 95% pass requirement",
+    "reconciliation_mismatch_backdating": false,
+    "window_seconds_per_market": 1800
+  }
+}
