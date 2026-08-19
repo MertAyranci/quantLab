@@ -89,10 +89,97 @@ def service_active() -> bool:
     return result.returncode == 0
 
 
+def service_main_pid() -> int | None:
+    result = subprocess.run(
+        [
+            "systemctl",
+            "show",
+            "rn1-f20-m1-clob.service",
+            "--property=MainPID",
+            "--value",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    if result.returncode != 0:
+        return None
+
+    try:
+        pid = int(result.stdout.strip())
+    except ValueError:
+        return None
+
+    return pid if pid > 0 else None
+
+
+def open_gzip_paths_for_pid(
+    pid: int,
+    *,
+    proc_root: Path = Path("/proc"),
+    root: Path | None = None,
+) -> set[Path]:
+    """
+    Return F20 gzip paths actually held open by the collector process.
+
+    A MinuteGzipWriter rotates only when that stream next writes.
+    Therefore a previous wall-clock minute can legitimately remain
+    open during stream-specific silence.
+    """
+    root = (root or ROOT).resolve(strict=False)
+    fd_root = proc_root / str(pid) / "fd"
+
+    try:
+        descriptors = list(fd_root.iterdir())
+    except OSError:
+        return set()
+
+    selected: set[Path] = set()
+
+    for fd in descriptors:
+        try:
+            target_text = str(fd.readlink())
+        except OSError:
+            continue
+
+        if target_text.endswith(" (deleted)"):
+            target_text = target_text.removesuffix(
+                " (deleted)"
+            )
+
+        target = Path(target_text)
+
+        if not target.is_absolute():
+            continue
+
+        target = target.resolve(strict=False)
+
+        if not target.name.endswith(".jsonl.gz"):
+            continue
+
+        if root not in target.parents:
+            continue
+
+        selected.add(target)
+
+    return selected
+
+
+def live_open_gzip_paths() -> set[Path]:
+    pid = service_main_pid()
+
+    if pid is None:
+        return set()
+
+    return open_gzip_paths_for_pid(pid)
+
+
 def completed_recent_files(
     *,
     now: datetime,
     horizon_seconds: int,
+    open_paths: set[Path] | None = None,
 ) -> list[Path]:
 
     # Never read the gzip file for the minute that
@@ -111,10 +198,18 @@ def completed_recent_files(
 
     selected = []
 
+    open_resolved = {
+        path.resolve(strict=False)
+        for path in (open_paths or set())
+    }
+
     for path in (
         ROOT
         / "normalized"
     ).glob("*/*.jsonl.gz"):
+
+        if path.resolve(strict=False) in open_resolved:
+            continue
 
         name = path.name.removesuffix(
             ".jsonl.gz"
@@ -240,9 +335,12 @@ def main() -> None:
 
     recent_tokens = set()
 
+    open_gzip_paths = live_open_gzip_paths()
+
     files = completed_recent_files(
         now=now,
         horizon_seconds=horizon,
+        open_paths=open_gzip_paths,
     )
 
     for path in files:
