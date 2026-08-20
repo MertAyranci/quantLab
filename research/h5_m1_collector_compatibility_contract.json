@@ -1,0 +1,187 @@
+{
+  "study": "H5",
+  "milestone": "H5-M1A",
+  "type": "PREACQUISITION_COLLECTOR_COMPATIBILITY_CONTRACT",
+  "status": "FROZEN_BEFORE_H5_M1_ACQUISITION",
+  "parent_git_commit": "134e57b66db5306a7ec92982d7d8a07bae6185db",
+
+  "engineering_problem": {
+    "description": "The frozen pre-amendment H5 collector expects external event identity fields to be embedded in the H5 registry, while the preregistered registration-visibility amendment permanently separates immutable Stage-1 Polymarket condition registration from immutable Stage-2 external event-ID resolution.",
+    "scientific_trigger": false,
+    "performance_information_used": false,
+    "h5_external_odds_observed": false
+  },
+
+  "frozen_inputs": {
+    "m1a_acquisition_contract": {
+      "path": "research/h5_m1a_acquisition_contract.json",
+      "sha256": "6da26ac94413b5a79566764dcc43d4584bff94c3b88531225dec09a4db99b1be"
+    },
+    "registration_visibility_amendment": {
+      "path": "research/h5_m1_registration_visibility_amendment.json",
+      "sha256": "5cd23a68e1fea185acff187bd9a9556fc0e86c53d9a5b649a01ca0f74ce27dda"
+    },
+    "stage1_registrar": {
+      "path": "research/h5_m1_stage1_register.py",
+      "sha256": "c8453b9394bd476677e9eaa986a56c0d2f57164c581efe510bfa95f2bb735b4f"
+    },
+    "stage1_registry": {
+      "path": "data/research/h5_m1/registry.jsonl",
+      "sha256": "c73e65dea1ba76eea40f1d724aa7d96381c06db4cb77e411df2213ce8f7cf95b",
+      "row_count": 10,
+      "mutable": false
+    },
+    "stage1_receipt": {
+      "path": "research/h5_m1_registry_freeze.json",
+      "sha256": "61c96d789b4c3cc39984889be9209cb990022ee20f9e3c985551dd6cf52874c2"
+    },
+    "stage2_resolver": {
+      "path": "research/h5_m1_stage2_resolve.py",
+      "sha256": "e2ff82690ce0428c9e7785a8b1fa92092da30b08c93c8f7cecde2ef3b54d7ac1"
+    },
+    "pre_compatibility_collector": {
+      "path": "collectors/odds/h5_m1_collector.py",
+      "sha256": "995db8aed0f1305b705339d61c5ab647bb5805ec753abfed6fab3c4b0061b518",
+      "commit": "8d3b62de3c54d6522ce438fcd6cbde560fd38bf5"
+    }
+  },
+
+  "stage2_runtime_binding": {
+    "map_path": "data/research/h5_m1/external_id_map.jsonl",
+    "receipt_path": "research/h5_m1_external_id_map_freeze.json",
+    "map_sha_known_at_contract_freeze": false,
+    "binding_rule": "At H5 acquisition time, require the immutable Stage-2 receipt, require status STAGE2_EXTERNAL_ID_MAP_FROZEN, require mutable=false, and require the actual map SHA-256 and row count to equal the values frozen inside that receipt.",
+    "minimum_resolved_nonburned_markets": 5,
+    "ambiguous_count_required": 0
+  },
+
+  "join_contract": {
+    "stage1_is_never_modified": true,
+    "stage2_is_never_merged_back_into_stage1_on_disk": true,
+    "join_is_in_memory_only": true,
+    "stage1_order_is_authoritative": true,
+    "registration_indexes_are_never_renumbered": true,
+
+    "exact_join_keys": [
+      "registration_index",
+      "condition_id",
+      "gamma_market_id"
+    ],
+
+    "additional_equality_checks": [
+      "gamma_slug",
+      "p1_team",
+      "p0_team",
+      "pm_game_start_time"
+    ],
+
+    "eligible_stage2_status": "RESOLVED_NONBURNED",
+
+    "prohibited_statuses": [
+      "RESOLVED_H2_BURNED_PROHIBITED"
+    ],
+
+    "pending_stage1_rule": "A Stage-1 market with no row in the frozen Stage-2 map is not acquired and is not replaced.",
+
+    "h2_burned_rule": "A Stage-2 row marked RESOLVED_H2_BURNED_PROHIBITED is excluded from acquisition and is not replaced.",
+
+    "minimum_output_rows": 5,
+    "maximum_output_rows": 10,
+
+    "merged_runtime_fields": {
+      "odds_game_id": "Stage-2 odds_game_id",
+      "canonical_commence_time": "Stage-2 canonical_commence_time",
+      "home_team": "Stage-2 provider_home_team",
+      "away_team": "Stage-2 provider_away_team",
+      "condition_id": "Stage-1 condition_id",
+      "gamma_market_id": "Stage-1 gamma_market_id",
+      "gamma_slug": "Stage-1 gamma_slug",
+      "p1_team": "Stage-1 p1_team",
+      "p0_team": "Stage-1 p0_team",
+      "p1_token_id": "Stage-1 p1_token_id",
+      "p0_token_id": "Stage-1 p0_token_id",
+      "pm_game_start_time": "Stage-1 pm_game_start_time",
+      "registration_index": "Stage-1 registration_index"
+    }
+  },
+
+  "identity_integrity": {
+    "condition_ids_unique": true,
+    "odds_game_ids_unique": true,
+    "token_ids_unique": true,
+    "p1_and_p0_tokens_distinct": true,
+    "registration_index_range": [1, 10],
+    "registration_indexes_strictly_increasing_in_runtime_rows": true,
+    "contiguous_runtime_indexes_required": false,
+    "stage1_condition_replacement_allowed": false
+  },
+
+  "team_normalization": {
+    "behavior_changed": false,
+    "obsolete_registrar_import_required_after_compatibility": false,
+    "rule": "Preserve the historical H5 normalization behavior locally: stringify, strip, lowercase, remove periods, replace hyphens with spaces, collapse whitespace, map Oakland Athletics and Athletics to athletics. No scientific team-mapping rule is changed."
+  },
+
+  "acquisition_semantics": {
+    "provider_changed": false,
+    "provider": "The Odds API",
+    "sport": "baseball_mlb",
+    "odds_market": "h2h",
+    "exchange_families": [
+      "betfair_ex_uk",
+      "matchbook",
+      "smarkets"
+    ],
+    "maximum_source_age_seconds": 25,
+    "minimum_fresh_complete_families": 2,
+    "consensus": "median",
+    "poll_interval_seconds": 10,
+    "maximum_polls": 60,
+    "maximum_initial_run_seconds": 600,
+    "polymarket_capture_semantics_changed": false,
+    "candidate_response_horizons_changed": false,
+    "mapping_rule_changed": false,
+    "maximum_start_delta_seconds": 600
+  },
+
+  "capture_provenance_requirements": {
+    "capture_start_must_record": [
+      "collector_sha256",
+      "compatibility_contract_sha256",
+      "stage1_registry_sha256",
+      "stage1_receipt_sha256",
+      "stage2_map_sha256",
+      "stage2_receipt_sha256",
+      "stage1_registered_market_count",
+      "acquisition_market_count"
+    ],
+    "capture_complete_must_preserve_scientific_boundary": true
+  },
+
+  "validator_compatibility_requirement": {
+    "existing_m1b_validator_must_not_be_run_unchanged": true,
+    "reason": "The frozen pre-amendment validator expects the old registry/collector provenance model.",
+    "validator_must_be_amended_and_frozen_before_authoritative_m1b_readout": true
+  },
+
+  "analysis_boundary": {
+    "odds_bearing_endpoint_used_during_contract_freeze": false,
+    "external_odds_read": false,
+    "external_consensus_calculated": false,
+    "external_state_differences_calculated": false,
+    "h5_innovation_calculated": false,
+    "polymarket_prices_read": false,
+    "pm_response_calculated": false,
+    "future_pm_state_read": false,
+    "correlation_calculated": false,
+    "regression_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "winner_used": false,
+    "settlement_used": false,
+    "f19_trade_content_read": false,
+    "f20_read": false
+  },
+
+  "verdict": "ENGINEERING COMPATIBILITY ONLY; H5 SCIENTIFIC SEMANTICS UNCHANGED"
+}
