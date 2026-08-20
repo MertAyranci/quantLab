@@ -1,0 +1,175 @@
+{
+  "capture": {
+    "boundary_recording_order": "For each received text frame, record any due primary-window open/game-start boundary using the current pre-frame reconstructed state before applying that frame.",
+    "boundary_states_preserved": true,
+    "custom_feature_enabled": true,
+    "data_dependent_extension_allowed": false,
+    "early_stop_based_on_transition_count_allowed": false,
+    "game_start_hard_stop": true,
+    "initial_full_rest_snapshot_required": true,
+    "late_launch_policy": "FAIL_CLOSED before network capture if collector begins after earliest_primary_window_start - 120s",
+    "minimum_free_disk_bytes": 4294967296,
+    "normalized_events_preserved": true,
+    "ping_seconds": 10,
+    "prearm_data_role": "Engineering state initialization only; pre-arm observations are not eligible H6-M2 development observations.",
+    "prearm_seconds_before_earliest_primary_window": 120,
+    "primary_window": {
+      "end": "strictly before registered game_start_time_utc",
+      "rule": "H6-M2 capture eligibility is registered game_start_time_utc - 1800s <= local raw-frame receive time < registered game_start_time_utc.",
+      "start_seconds_before_game_start": 1800
+    },
+    "raw_text_frames_preserved": true,
+    "rest_books_endpoint": "https://clob.polymarket.com/books",
+    "rest_reconciliation_preserve_all_books": true,
+    "rest_reconciliation_seconds": 30,
+    "rest_snapshots_preserved": true,
+    "root": "data/research/h6/m2/capture",
+    "silence_seconds": 30,
+    "subscription_type": "market",
+    "websocket": "wss://ws-subscriptions-clob.polymarket.com/ws/market"
+  },
+  "collector_analysis_boundary": {
+    "correlation_calculated": false,
+    "directional_hit_rate_calculated": false,
+    "directional_response_calculated": false,
+    "edge_calculated": false,
+    "external_odds_used": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "future_midpoint_change_calculated": false,
+    "h5_response_read": false,
+    "imbalance_change_calculated": false,
+    "l1_imbalance_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "primary_transition_count_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "continuity": {
+    "full_level_rest_comparison": true,
+    "future_backfill": false,
+    "generation_increment_on_initial_rest_state": true,
+    "generation_increment_on_matching_reconciliation": false,
+    "generation_increment_on_reconnect_rest_state": true,
+    "generation_increment_on_rest_reconciliation_mismatch": true,
+    "generation_increment_on_rest_recovery_after_missing": true,
+    "matching_reconciliation_updates_stale_guard_without_generation_increment": true,
+    "reconnect_may_create_primary_transition": false,
+    "rest_snapshot_may_create_primary_transition": false,
+    "state_error_triggers_immediate_rest_resync": true,
+    "transition_may_cross_connection": false,
+    "transition_may_cross_generation": false,
+    "ws_book_snapshot_generation_rule": "No generation increment while local state is valid; increment generation if a WS full-book snapshot restores an invalid or uninitialized local state."
+  },
+  "engineering_inheritance": {
+    "h6_m1_capture_contract": {
+      "path": "research/h6_m1_capture_contract.json",
+      "sha256": "97380ad5f75b999cc9f0253dabcb90542b43e1829e42fc3189ca38f0a9342a3b"
+    },
+    "h6_m1_collector": {
+      "path": "collectors/polymarket/h6_m1_collector.py",
+      "sha256": "a7ec54ca9a19856e138af8962c3ae68f267e7fed8c14191cb91ba5c81b35ab3d"
+    },
+    "inherited_without_scientific_change": [
+      "raw websocket text preservation",
+      "single local receive timestamp per frame",
+      "initial full REST snapshot",
+      "connection_id continuity",
+      "book_generation continuity",
+      "frame atomicity",
+      "absolute aggregated price_change size semantics",
+      "stale venue-timestamp guard",
+      "immediate REST resync after state error",
+      "REST reconciliation",
+      "generation increment on reconciliation mismatch",
+      "no transition across connection boundary",
+      "no transition across generation boundary",
+      "no future backfill",
+      "boundary-state preservation"
+    ],
+    "source": "H6-M1 proven dedicated CLOB collector"
+  },
+  "frozen_inputs": {
+    "h6_m0_independence_policy": {
+      "path": "research/h6_m0_independence_policy.json",
+      "sha256": "13b58c64e5c63275c533be12272eec2a96a7a71a5da2b79eb3bc52f995637c32"
+    },
+    "h6_m0_mechanism_data_design": {
+      "path": "research/h6_m0_mechanism_data_design.json",
+      "sha256": "bcbcf5e5ffc72517df5c6162771da62fc11113c2b514b297c9848172444e9213"
+    },
+    "h6_m2_development_contract": {
+      "path": "research/h6_m2_development_contract.json",
+      "sha256": "b33934981bc945d36247b013ba68f85a909a8185f2e55f179ab8ae025adbeb38"
+    },
+    "h6_m2_registrar": {
+      "path": "research/h6_m2_register.py",
+      "sha256": "5a19dc1633830285cf46ccd9b8809fb03f73e405837a79f45db55f440c41fb82"
+    },
+    "h6_m2_registry": {
+      "path": "data/research/h6/m2/registry.jsonl",
+      "sha256": "d69dafb85b2e046e8361749bedea6dfa95d179dadf3f957b32af17115721cbfb"
+    },
+    "h6_m2_registry_receipt": {
+      "path": "research/h6_m2_registry_freeze.json",
+      "sha256": "5e29a4ef7ac4e3551ed8bdc04c11b87a5d083fa18f97d55ebb97b6977dfe3e8c"
+    }
+  },
+  "m2_operational_compatibility": {
+    "chosen_reconciliation_seconds": 30,
+    "development_contract_reconciliation_max_seconds": 60,
+    "market_count": 30,
+    "primary_window_seconds": 1800,
+    "reason": "Retain the H6-M1 proven 30-second reconciliation cadence. It is stricter than the H6-M2 maximum of 60 seconds.",
+    "token_count": 60
+  },
+  "m2_readout_boundary": {
+    "all_six_frozen_horizons_remain_unread_during_capture": true,
+    "collector_does_not_calculate_future_response": true,
+    "collector_does_not_calculate_primary_transitions": true,
+    "collector_does_not_decide_m2_verdict": true,
+    "development_analysis_only_after_capture_integrity_validation": true,
+    "separate_m2_analyzer_required": true,
+    "separate_manifest_and_replay_validator_required": true
+  },
+  "milestone": "H6-M2-CAPTURE",
+  "orderbook_semantics": {
+    "book_event": "authoritative full aggregated book snapshot for the token within the current connection/generation",
+    "frame_atomicity": "all changes for a token in one received raw frame are applied before any post-frame state is emitted",
+    "ingest_sequence_semantics": "Reserve exactly one monotonically increasing ingest_sequence per top-level decoded websocket message immediately after frame parsing. The mutation pass and all normalized records belonging to that top-level message share that reserved sequence; changes within one price_change message are ordered by change_index. No second sequence increment occurs during normalization.",
+    "p0_role": "captured for integrity diagnostics only",
+    "p1_primary": "registry p1_token_id only",
+    "price_change_side_buy": "bid level",
+    "price_change_side_sell": "ask level",
+    "price_change_size": "absolute current aggregated size at the specified price level, not an additive delta",
+    "price_change_size_zero": "remove that price level",
+    "raw_frame_receive_time": "timestamp exactly once before JSON parsing; all normalized records from the frame inherit it",
+    "stale_ws_guard": "A state-mutating WS book/price_change/tick_size_change with venue timestamp strictly older than the token last authoritative venue timestamp is preserved raw/normalized but not applied to local state.",
+    "venue_timestamp_ordering_role": "engineering reconstruction only; never H6 causal/event clock"
+  },
+  "parent_git_commit": "8300d99128be0d27f75d58c878c12a7ade0f65ba",
+  "registry_requirements": {
+    "development_contract_sha_must_match": true,
+    "exact_market_count": 30,
+    "exact_token_count": 60,
+    "path": "data/research/h6/m2/registry.jsonl",
+    "receipt": "research/h6_m2_registry_freeze.json",
+    "receipt_status": "DEVELOPMENT_REGISTRY_FROZEN",
+    "registrar_sha_must_match": true,
+    "registry_sha256": "d69dafb85b2e046e8361749bedea6dfa95d179dadf3f957b32af17115721cbfb",
+    "registry_sha_must_match_receipt": true
+  },
+  "status": "CAPTURE_CONTRACT_FREEZE",
+  "streams": {
+    "boundary_states": "boundary_states.jsonl",
+    "capture_complete": "capture_complete.json",
+    "capture_start": "capture_start.json",
+    "control": "control.jsonl",
+    "normalized": "normalized.jsonl",
+    "raw_frames": "raw_frames.jsonl",
+    "rest_snapshots": "rest_snapshots.jsonl"
+  },
+  "study": "H6"
+}
