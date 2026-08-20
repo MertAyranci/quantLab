@@ -26,6 +26,7 @@ INDEPENDENCE = RESEARCH / "h6_m0_independence_policy.json"
 DEVELOPMENT_CONTRACT = RESEARCH / "h6_m2_development_contract.json"
 REGISTRAR = RESEARCH / "h6_m2_register.py"
 CAPTURE_CONTRACT = RESEARCH / "h6_m2_capture_contract.json"
+SCALABILITY_AMENDMENT = RESEARCH / "h6_m2_capture_scalability_amendment.json"
 
 REGISTRY = REPO / "data" / "research" / "h6" / "m2" / "registry.jsonl"
 REGISTRY_RECEIPT = RESEARCH / "h6_m2_registry_freeze.json"
@@ -34,7 +35,8 @@ CAPTURE_ROOT = REPO / "data" / "research" / "h6" / "m2" / "capture"
 CLOB = "https://clob.polymarket.com"
 WS_URI = "wss://ws-subscriptions-clob.polymarket.com/ws/market"
 
-EXPECTED_PARENT_HEAD = "89262baa8e0463dd21cb93a77da8d165134bc8c9"
+EXPECTED_CAPTURE_CONTRACT_COMMIT = "89262baa8e0463dd21cb93a77da8d165134bc8c9"
+EXPECTED_SCALABILITY_AMENDMENT_COMMIT = "0e8f035c41a3ef2c21db95b85b80f2d37960920a"
 
 EXPECTED_M0_SHA = (
     "bcbcf5e5ffc72517df5c6162771da62f"
@@ -59,6 +61,16 @@ EXPECTED_REGISTRAR_SHA = (
 EXPECTED_CAPTURE_CONTRACT_SHA = (
     "ed6ae0e09608a3d9f0e0a4899dd6d620"
     "26e05a844c51bc36b6f43bf978f25ed1"
+)
+
+EXPECTED_SCALABILITY_AMENDMENT_SHA = (
+    "402acdd4e74b0b96b72f40b9008bac0a"
+    "65ea1336e9f0c5a4748608af965ec0c9"
+)
+
+EXPECTED_PRE_AMENDMENT_COLLECTOR_SHA = (
+    "879cb4af849e31fa2653bdd79ef2f551"
+    "56703c5e596e9ce9ced73549c152d50e"
 )
 
 EXPECTED_REGISTRY_SHA = (
@@ -375,6 +387,7 @@ def validate_frozen_inputs(*, require_committed_self: bool):
         DEVELOPMENT_CONTRACT: EXPECTED_DEVELOPMENT_CONTRACT_SHA,
         REGISTRAR: EXPECTED_REGISTRAR_SHA,
         CAPTURE_CONTRACT: EXPECTED_CAPTURE_CONTRACT_SHA,
+        SCALABILITY_AMENDMENT: EXPECTED_SCALABILITY_AMENDMENT_SHA,
         REGISTRY: EXPECTED_REGISTRY_SHA,
         REGISTRY_RECEIPT: EXPECTED_REGISTRY_RECEIPT_SHA,
     }
@@ -392,11 +405,141 @@ def validate_frozen_inputs(*, require_committed_self: bool):
                 f"actual={actual}"
             )
 
-    if not git_is_ancestor(EXPECTED_PARENT_HEAD):
+    if not git_is_ancestor(
+        EXPECTED_CAPTURE_CONTRACT_COMMIT
+    ):
         raise RuntimeError(
             "frozen H6-M2 capture-contract commit "
             "is not an ancestor of HEAD"
         )
+
+    if not git_is_ancestor(
+        EXPECTED_SCALABILITY_AMENDMENT_COMMIT
+    ):
+        raise RuntimeError(
+            "frozen H6-M2 scalability-amendment "
+            "commit is not an ancestor of HEAD"
+        )
+
+    amendment = json.loads(
+        SCALABILITY_AMENDMENT.read_text(
+            encoding="utf-8"
+        )
+    )
+
+    if (
+        amendment.get("status")
+        != "FROZEN_BEFORE_M2_ACQUISITION"
+    ):
+        raise RuntimeError(
+            "unexpected scalability-amendment status"
+        )
+
+    if (
+        amendment.get("verdict")
+        !=
+        "OPERATIONAL_SCALABILITY_ONLY; "
+        "NO H6-M2 SCIENTIFIC CHANGE"
+    ):
+        raise RuntimeError(
+            "unexpected scalability-amendment verdict"
+        )
+
+    if (
+        amendment.get("parent_git_commit")
+        !=
+        "987490e0b10dea5aa720d547029c6e8086b63a3b"
+    ):
+        raise RuntimeError(
+            "scalability-amendment parent mismatch"
+        )
+
+    op = amendment.get(
+        "operational_change",
+        {},
+    )
+
+    if (
+        op.get("per_market_prearm_seconds")
+        != PREARM_SECONDS
+    ):
+        raise RuntimeError(
+            "scalability amendment prearm mismatch"
+        )
+
+    if (
+        op.get("primary_window_seconds")
+        != PRIMARY_WINDOW_SECONDS
+    ):
+        raise RuntimeError(
+            "scalability amendment window mismatch"
+        )
+
+    if (
+        op.get("primary_window_rule_unchanged")
+        is not True
+    ):
+        raise RuntimeError(
+            "scalability amendment changed "
+            "primary-window semantics"
+        )
+
+    if (
+        op.get("future_backfill")
+        is not False
+    ):
+        raise RuntimeError(
+            "scalability amendment permits "
+            "future backfill"
+        )
+
+    if (
+        op.get("data_dependent_activation")
+        is not False
+    ):
+        raise RuntimeError(
+            "scalability amendment permits "
+            "data-dependent activation"
+        )
+
+    before = (
+        amendment
+        .get("frozen_provenance", {})
+        .get(
+            "collector_before_amendment",
+            {},
+        )
+        .get("sha256")
+    )
+
+    if (
+        before
+        != EXPECTED_PRE_AMENDMENT_COLLECTOR_SHA
+    ):
+        raise RuntimeError(
+            "scalability amendment collector "
+            "provenance mismatch"
+        )
+
+    state = amendment.get(
+        "state_at_amendment",
+        {},
+    )
+
+    for key in (
+        "h6_m2_network_capture_started",
+        "h6_m2_rest_books_called",
+        "h6_m2_websocket_opened",
+        "h6_transition_calculated",
+        "h6_response_calculated",
+        "h6_horizon_readout_performed",
+        "pnl_calculated",
+    ):
+        if state.get(key) is not False:
+            raise RuntimeError(
+                "invalid pre-capture amendment "
+                f"state: {key}"
+            )
 
     c = json.loads(
         CAPTURE_CONTRACT.read_text(
@@ -800,6 +943,8 @@ class CaptureWriter:
             "collector_path": "collectors/polymarket/h6_m2_collector.py",
             "collector_sha256": sha256_file(Path(__file__).resolve()),
             "capture_contract_sha256": EXPECTED_CAPTURE_CONTRACT_SHA,
+            "scalability_amendment_sha256": EXPECTED_SCALABILITY_AMENDMENT_SHA,
+            "scalability_amendment_commit": EXPECTED_SCALABILITY_AMENDMENT_COMMIT,
             "development_contract_sha256": EXPECTED_DEVELOPMENT_CONTRACT_SHA,
             "registrar_sha256": EXPECTED_REGISTRAR_SHA,
             "registry_sha256": bundle["registry_sha256"],
@@ -892,11 +1037,24 @@ class H6Capture:
             for role in ("p1", "p0"):
                 token = str(row[f"{role}_token_id"])
                 self.states[token] = BookState(token=token)
+                window_start = (
+                    start
+                    - timedelta(
+                        seconds=PRIMARY_WINDOW_SECONDS
+                    )
+                )
+
                 self.token_meta[token] = {
                     "condition_id": cid,
                     "role": role,
                     "game_start": start,
-                    "window_start": start - timedelta(seconds=PRIMARY_WINDOW_SECONDS),
+                    "window_start": window_start,
+                    "activation_start": (
+                        window_start
+                        - timedelta(
+                            seconds=PREARM_SECONDS
+                        )
+                    ),
                 }
 
     def all_tokens(self):
@@ -904,9 +1062,34 @@ class H6Capture:
 
     def active_tokens(self, now: datetime | None = None):
         now = now or utcnow()
+
         return sorted(
-            token for token in self.states
-            if self.before_game_start(token, now)
+            token
+            for token, meta
+            in self.token_meta.items()
+            if (
+                meta["activation_start"]
+                <= now
+                < meta["game_start"]
+            )
+        )
+
+    def next_activation_time(
+        self,
+        now: datetime | None = None,
+    ) -> datetime | None:
+        now = now or utcnow()
+
+        future = [
+            meta["activation_start"]
+            for meta in self.token_meta.values()
+            if meta["activation_start"] > now
+        ]
+
+        return (
+            min(future)
+            if future
+            else None
         )
 
     def latest_start(self):
@@ -916,7 +1099,10 @@ class H6Capture:
         return min(meta["window_start"] for meta in self.token_meta.values())
 
     def prearm_time(self):
-        return self.earliest_window_start() - timedelta(seconds=PREARM_SECONDS)
+        return min(
+            meta["activation_start"]
+            for meta in self.token_meta.values()
+        )
 
     def in_primary_window(self, token: str, capture_time: datetime) -> bool:
         meta = self.token_meta[token]
@@ -1449,125 +1635,423 @@ class H6Capture:
     async def run(self) -> str:
         now = utcnow()
         prearm = self.prearm_time()
+
         if now > prearm:
             raise RuntimeError(
-                "late H6-M2 launch: collector must start before frozen prearm time"
+                "late H6-M2 launch: collector must "
+                "start no later than frozen global "
+                "earliest prearm time"
             )
 
         self.control(
             "collector_waiting_for_prearm",
             prearm_time_utc=prearm,
-            earliest_primary_window_start_utc=self.earliest_window_start(),
+            earliest_primary_window_start_utc=(
+                self.earliest_window_start()
+            ),
             latest_game_start_utc=self.latest_start(),
+            activation_policy=(
+                "per_market_window_minus_"
+                "1800s_minus_120s"
+            ),
         )
 
         while utcnow() < prearm:
-            if shutil.disk_usage(REPO).free < MIN_FREE_DISK_BYTES:
-                raise RuntimeError("disk safety gate failed while waiting for prearm")
-            remaining = (prearm - utcnow()).total_seconds()
-            await asyncio.sleep(min(5.0, max(0.05, remaining)))
+            if (
+                shutil.disk_usage(REPO).free
+                < MIN_FREE_DISK_BYTES
+            ):
+                raise RuntimeError(
+                    "disk safety gate failed "
+                    "while waiting for prearm"
+                )
 
-        async with httpx.AsyncClient(headers=UA, timeout=30) as http:
-            while utcnow() < self.latest_start():
-                if shutil.disk_usage(REPO).free < MIN_FREE_DISK_BYTES:
+            remaining = (
+                prearm - utcnow()
+            ).total_seconds()
+
+            await asyncio.sleep(
+                min(
+                    5.0,
+                    max(0.05, remaining),
+                )
+            )
+
+        async with httpx.AsyncClient(
+            headers=UA,
+            timeout=30,
+        ) as http:
+
+            while (
+                utcnow()
+                < self.latest_start()
+            ):
+                now = utcnow()
+
+                self.record_due_boundaries(
+                    now
+                )
+
+                if (
+                    shutil.disk_usage(REPO).free
+                    < MIN_FREE_DISK_BYTES
+                ):
                     return "DISK_SAFETY"
 
-                self.conn_id = str(uuid.uuid4())
+                active_tokens = (
+                    self.active_tokens(now)
+                )
+
+                # Frozen scalability amendment:
+                # make NO network subscription while
+                # no registered market is inside its
+                # deterministic per-market prearm.
+                if not active_tokens:
+                    next_activation = (
+                        self.next_activation_time(
+                            now
+                        )
+                    )
+
+                    if next_activation is None:
+                        break
+
+                    self.control(
+                        "waiting_for_next_market_activation",
+                        next_activation_utc=(
+                            next_activation
+                        ),
+                    )
+
+                    while (
+                        utcnow()
+                        < next_activation
+                    ):
+                        now = utcnow()
+
+                        self.record_due_boundaries(
+                            now
+                        )
+
+                        if (
+                            shutil.disk_usage(
+                                REPO
+                            ).free
+                            < MIN_FREE_DISK_BYTES
+                        ):
+                            return "DISK_SAFETY"
+
+                        remaining = (
+                            next_activation
+                            - now
+                        ).total_seconds()
+
+                        await asyncio.sleep(
+                            min(
+                                5.0,
+                                max(
+                                    0.05,
+                                    remaining,
+                                ),
+                            )
+                        )
+
+                    continue
+
+                self.conn_id = str(
+                    uuid.uuid4()
+                )
+
                 self.frame_sequence = 0
                 self.ingest_sequence = 0
-                active_tokens = self.active_tokens()
-                if not active_tokens:
-                    break
-                self.control("connection_start", subscribed_tokens=len(active_tokens))
+
+                subscribed_tokens = set(
+                    active_tokens
+                )
+
+                self.control(
+                    "connection_start",
+                    subscribed_tokens=len(
+                        subscribed_tokens
+                    ),
+                    subscribed_token_ids=sorted(
+                        subscribed_tokens
+                    ),
+                )
 
                 try:
-                    async with websockets.connect(WS_URI, max_size=None) as ws:
+                    async with websockets.connect(
+                        WS_URI,
+                        max_size=None,
+                    ) as ws:
+
                         await ws.send(
                             json.dumps(
                                 {
-                                    "assets_ids": active_tokens,
-                                    "type": "market",
-                                    "custom_feature_enabled": True,
+                                    "assets_ids":
+                                        sorted(
+                                            subscribed_tokens
+                                        ),
+
+                                    "type":
+                                        "market",
+
+                                    "custom_feature_enabled":
+                                        True,
                                 }
                             )
                         )
+
                         await self.rest_resync(
                             http,
-                            tokens=active_tokens,
+                            tokens=sorted(
+                                subscribed_tokens
+                            ),
                             reason="connect",
                             require_all=True,
                         )
-                        self.last_message_monotonic = time.monotonic()
-                        last_ping = time.monotonic()
-                        last_reconcile = time.monotonic()
-                        self.control("capture_initialized")
 
-                        while utcnow() < self.latest_start():
+                        self.last_message_monotonic = (
+                            time.monotonic()
+                        )
+
+                        last_ping = (
+                            time.monotonic()
+                        )
+
+                        last_reconcile = (
+                            time.monotonic()
+                        )
+
+                        self.control(
+                            "capture_initialized",
+                            subscribed_tokens=len(
+                                subscribed_tokens
+                            ),
+                        )
+
+                        while (
+                            utcnow()
+                            < self.latest_start()
+                        ):
                             now = utcnow()
-                            self.record_due_boundaries(now)
+
+                            self.record_due_boundaries(
+                                now
+                            )
+
+                            desired_tokens = set(
+                                self.active_tokens(
+                                    now
+                                )
+                            )
+
+                            # Deterministic active-set
+                            # boundaries are connection
+                            # boundaries. Reconnect with
+                            # the complete desired set.
+                            if (
+                                desired_tokens
+                                != subscribed_tokens
+                            ):
+                                self.control(
+                                    "active_token_set_change",
+                                    previous_token_ids=(
+                                        sorted(
+                                            subscribed_tokens
+                                        )
+                                    ),
+                                    next_token_ids=(
+                                        sorted(
+                                            desired_tokens
+                                        )
+                                    ),
+                                    previous_count=len(
+                                        subscribed_tokens
+                                    ),
+                                    next_count=len(
+                                        desired_tokens
+                                    ),
+                                )
+
+                                break
 
                             try:
-                                raw = await asyncio.wait_for(ws.recv(), timeout=0.25)
-                                self.last_message_monotonic = time.monotonic()
-                                if isinstance(raw, bytes):
-                                    self.control("binary_frame_ignored", bytes=len(raw))
-                                else:
-                                    capture_time = utcnow()
+                                raw = (
+                                    await asyncio.wait_for(
+                                        ws.recv(),
+                                        timeout=0.25,
+                                    )
+                                )
 
-                                    mismatches = self.process_text_frame(
-                                        raw,
-                                        capture_time=capture_time,
+                                self.last_message_monotonic = (
+                                    time.monotonic()
+                                )
+
+                                if isinstance(
+                                    raw,
+                                    bytes,
+                                ):
+                                    self.control(
+                                        "binary_frame_ignored",
+                                        bytes=len(raw),
+                                    )
+                                else:
+                                    capture_time = (
+                                        utcnow()
+                                    )
+
+                                    mismatches = (
+                                        self.process_text_frame(
+                                            raw,
+                                            capture_time=(
+                                                capture_time
+                                            ),
+                                        )
                                     )
 
                                     if mismatches:
                                         self.control(
                                             "venue_tob_mismatch",
-                                            tokens=sorted(mismatches),
+                                            tokens=sorted(
+                                                mismatches
+                                            ),
                                         )
+
                                         await self.rest_resync(
                                             http,
-                                            tokens=sorted(mismatches),
-                                            reason="venue_tob_mismatch",
+                                            tokens=sorted(
+                                                mismatches
+                                            ),
+                                            reason=(
+                                                "venue_tob_mismatch"
+                                            ),
                                             require_all=True,
                                         )
+
                             except asyncio.TimeoutError:
                                 pass
 
-                            now_mono = time.monotonic()
-                            if now_mono - last_ping >= PING_SECONDS:
-                                await ws.send("PING")
-                                last_ping = now_mono
+                            now_mono = (
+                                time.monotonic()
+                            )
 
-                            if now_mono - last_reconcile >= RECONCILE_SECONDS:
-                                active = self.active_tokens()
-                                await self.reconcile(http, tokens=active)
-                                last_reconcile = now_mono
+                            if (
+                                now_mono
+                                - last_ping
+                                >= PING_SECONDS
+                            ):
+                                await ws.send(
+                                    "PING"
+                                )
 
-                            if now_mono - self.last_message_monotonic > SILENCE_SECONDS:
-                                raise RuntimeError("websocket silence watchdog fired")
+                                last_ping = (
+                                    now_mono
+                                )
+
+                            if (
+                                now_mono
+                                - last_reconcile
+                                >= RECONCILE_SECONDS
+                            ):
+                                current_active = set(
+                                    self.active_tokens()
+                                )
+
+                                # Do not reconcile across
+                                # a scheduled active-set
+                                # boundary. Let the outer
+                                # loop reconnect first.
+                                if (
+                                    current_active
+                                    != subscribed_tokens
+                                ):
+                                    self.control(
+                                        "active_token_set_change",
+                                        previous_token_ids=(
+                                            sorted(
+                                                subscribed_tokens
+                                            )
+                                        ),
+                                        next_token_ids=(
+                                            sorted(
+                                                current_active
+                                            )
+                                        ),
+                                        previous_count=len(
+                                            subscribed_tokens
+                                        ),
+                                        next_count=len(
+                                            current_active
+                                        ),
+                                    )
+
+                                    break
+
+                                await self.reconcile(
+                                    http,
+                                    tokens=sorted(
+                                        subscribed_tokens
+                                    ),
+                                )
+
+                                last_reconcile = (
+                                    now_mono
+                                )
+
+                            if (
+                                now_mono
+                                - self.last_message_monotonic
+                                > SILENCE_SECONDS
+                            ):
+                                raise RuntimeError(
+                                    "websocket silence "
+                                    "watchdog fired"
+                                )
 
                             self.writer.flush()
 
-                        self.record_due_boundaries(utcnow())
-                        return "ALL_REGISTERED_GAMES_REACHED_START"
+                    # Normal deterministic reconnect
+                    # returns here and the outer loop
+                    # recomputes the complete active set.
+                    continue
 
                 except asyncio.CancelledError:
                     raise
+
                 except Exception as exc:
-                    active = self.active_tokens()
+                    active = (
+                        self.active_tokens()
+                    )
+
                     self.control(
                         "connection_error",
-                        error_type=type(exc).__name__,
+                        error_type=(
+                            type(exc).__name__
+                        ),
                         invalidated_tokens=active,
                     )
+
                     for token in active:
-                        self.states[token].valid = False
-                    if utcnow() >= self.latest_start():
+                        self.states[
+                            token
+                        ].valid = False
+
+                    if (
+                        utcnow()
+                        >= self.latest_start()
+                    ):
                         break
+
                     await asyncio.sleep(1)
 
-        self.record_due_boundaries(utcnow())
-        return "ALL_REGISTERED_GAMES_REACHED_START"
+        self.record_due_boundaries(
+            utcnow()
+        )
+
+        return (
+            "ALL_REGISTERED_GAMES_REACHED_START"
+        )
 
 
 async def run_live(capture_id: str | None) -> None:
@@ -1626,12 +2110,26 @@ def validate_config_output() -> None:
     validate_frozen_inputs(require_committed_self=False)
     registry_frozen = REGISTRY.is_file() and REGISTRY_RECEIPT.is_file()
     print("H6-M2 COLLECTOR CONFIG: PASS")
-    print("parent capture-contract commit:", EXPECTED_PARENT_HEAD)
+    print(
+        "capture-contract commit:",
+        EXPECTED_CAPTURE_CONTRACT_COMMIT,
+    )
+    print(
+        "scalability-amendment commit:",
+        EXPECTED_SCALABILITY_AMENDMENT_COMMIT,
+    )
     print("M0 SHA:", EXPECTED_M0_SHA)
     print("independence SHA:", EXPECTED_INDEPENDENCE_SHA)
     print("development contract SHA:", EXPECTED_DEVELOPMENT_CONTRACT_SHA)
     print("registrar SHA:", EXPECTED_REGISTRAR_SHA)
-    print("capture contract SHA:", EXPECTED_CAPTURE_CONTRACT_SHA)
+    print(
+        "capture contract SHA:",
+        EXPECTED_CAPTURE_CONTRACT_SHA,
+    )
+    print(
+        "scalability amendment SHA:",
+        EXPECTED_SCALABILITY_AMENDMENT_SHA,
+    )
     print("market count:", MARKET_COUNT)
     print("primary window seconds:", PRIMARY_WINDOW_SECONDS)
     print("prearm seconds:", PREARM_SECONDS)

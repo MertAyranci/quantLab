@@ -633,3 +633,186 @@ def test_m2_source_has_no_external_or_other_hypothesis_data_reads():
 
     for token in forbidden:
         assert token not in source
+
+
+
+def test_per_market_activation_exact_boundaries():
+    c, _ = build_capture()
+
+    token = "p1-0"
+
+    activation = (
+        c.token_meta[token][
+            "activation_start"
+        ]
+    )
+
+    start = (
+        c.token_meta[token][
+            "game_start"
+        ]
+    )
+
+    assert token not in c.active_tokens(
+        activation
+        - timedelta(microseconds=1)
+    )
+
+    assert token in c.active_tokens(
+        activation
+    )
+
+    assert token in c.active_tokens(
+        start
+        - timedelta(microseconds=1)
+    )
+
+    assert token not in c.active_tokens(
+        start
+    )
+
+
+def test_first_prearm_does_not_activate_future_markets():
+    c, _ = build_capture()
+
+    first = c.prearm_time()
+
+    active = set(
+        c.active_tokens(first)
+    )
+
+    assert active == {
+        "p1-0",
+        "p0-0",
+    }
+
+
+def test_next_activation_time_is_deterministic():
+    c, _ = build_capture()
+
+    first = c.prearm_time()
+
+    assert (
+        c.next_activation_time(
+            first
+            - timedelta(seconds=1)
+        )
+        == first
+    )
+
+    second = (
+        first
+        + timedelta(minutes=5)
+    )
+
+    assert (
+        c.next_activation_time(
+            first
+        )
+        == second
+    )
+
+
+def test_prearm_is_120_seconds_before_primary_window():
+    c, _ = build_capture()
+
+    token = "p1-0"
+
+    assert (
+        c.token_meta[token][
+            "window_start"
+        ]
+        - c.token_meta[token][
+            "activation_start"
+        ]
+        == timedelta(
+            seconds=m.PREARM_SECONDS
+        )
+    )
+
+
+def test_scalability_amendment_is_frozen_input():
+    assert (
+        m.SCALABILITY_AMENDMENT.name
+        ==
+        "h6_m2_capture_scalability_amendment.json"
+    )
+
+    assert (
+        hashlib.sha256(
+            m.SCALABILITY_AMENDMENT.read_bytes()
+        ).hexdigest()
+        ==
+        m.EXPECTED_SCALABILITY_AMENDMENT_SHA
+    )
+
+
+def test_scheduler_contains_active_set_reconnect_boundary():
+    source = MODULE_PATH.read_text(
+        encoding="utf-8"
+    )
+
+    assert (
+        '"active_token_set_change"'
+        in source
+    )
+
+    compact = " ".join(
+        source.split()
+    )
+
+    assert (
+        "desired_tokens != subscribed_tokens"
+        in compact
+    )
+
+
+def test_scheduler_waits_without_network_when_no_token_active():
+    source = MODULE_PATH.read_text(
+        encoding="utf-8"
+    )
+
+    assert (
+        '"waiting_for_next_market_activation"'
+        in source
+    )
+
+    assert (
+        "next_activation_time"
+        in source
+    )
+
+
+def test_scalability_amendment_preserves_scientific_window():
+    amendment = json.loads(
+        m.SCALABILITY_AMENDMENT.read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert (
+        amendment[
+            "scientific_semantics"
+        ][
+            "primary_window_changed"
+        ]
+        is False
+    )
+
+    assert (
+        amendment[
+            "operational_change"
+        ][
+            "primary_window_seconds"
+        ]
+        == m.PRIMARY_WINDOW_SECONDS
+    )
+
+    assert (
+        amendment[
+            "operational_change"
+        ][
+            "per_market_prearm_seconds"
+        ]
+        == m.PREARM_SECONDS
+    )
