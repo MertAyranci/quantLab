@@ -1,0 +1,130 @@
+{
+  "amendment": "REGISTRATION_VISIBILITY_COMPATIBILITY",
+  "analysis_boundary": {
+    "external_consensus_calculated": false,
+    "external_odds_read": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h5_innovation_calculated": false,
+    "markout_calculated": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "engineering_trigger": {
+    "diagnosis": "Polymarket already exposes ample non-F19 eligible MLB moneyline markets, while the initial provider non-odds events endpoint currently exposes only near-term events. Waiting for provider event-ID visibility is an engineering availability constraint, not a market-availability or scientific-selection constraint.",
+    "external_non_odds_events_scan": {
+      "default_events": 9,
+      "explicit_future_window_union": 6,
+      "independent_eligible": 0
+    },
+    "gamma_metadata_scan": {
+      "eligible_upcoming_mlb_moneylines": 95,
+      "f19_overlap": 22,
+      "non_f19": 73
+    },
+    "observed_at_utc": "2026-08-20T17:16:35.442675+00:00"
+  },
+  "first_h5_observation_boundary": {
+    "allowed_before_stage1_registry_freeze": false,
+    "external_consensus_allowed_before_stage1_registry_freeze": false,
+    "odds_bearing_endpoint_allowed_before_stage1_registry_freeze": false,
+    "required_before_first_h5_observation": [
+      "stage1 condition registry frozen",
+      "external identity mapping frozen",
+      "at least 5 registered markets resolved to non-H2-burned external event IDs"
+    ]
+  },
+  "h6_independence_interpretation": {
+    "h5_condition_set_final_at_stage1_freeze": true,
+    "h5_external_id_resolution_required_for_h6_exclusion": false,
+    "h6_m2_may_use_stage1_frozen_h5_condition_ids_for_exclusion": true,
+    "reason": "H6 independence requires exclusion of all H5 condition IDs. Stage1 permanently freezes that condition-ID set before H6-M2 registration."
+  },
+  "milestone": "H5-M1A",
+  "parent": {
+    "h5_m0_exclusions_sha256": "fb4a268f3148e746e31232c658cdc8793c2e082a73c5a8260af6779d89b1949a",
+    "h5_m0_mechanism_data_design_sha256": "073730512baa587e5be730f534daf1e389c8934d301769a77f387e1fff0a553c",
+    "h5_m1a_acquisition_contract_sha256": "6da26ac94413b5a79566764dcc43d4584bff94c3b88531225dec09a4db99b1be"
+  },
+  "stage1_condition_registry": {
+    "allowed_selection_fields": [
+      "MLB team identities",
+      "Gamma gameStartTime",
+      "Gamma question",
+      "Gamma outcomes",
+      "sportsMarketType",
+      "active",
+      "closed",
+      "acceptingOrders",
+      "CLOB token IDs",
+      "condition_id"
+    ],
+    "eligibility": {
+      "accepting_orders": true,
+      "active": true,
+      "binary_two_token": true,
+      "closed": false,
+      "game_start_after_registration_plus_lead": true,
+      "reject_f19_condition_ids": true,
+      "sport": "MLB",
+      "sports_market_type": "moneyline"
+    },
+    "external_identity_status_at_stage1": "PENDING_PROVIDER_VISIBILITY",
+    "forbidden_selection_fields": [
+      "external odds levels",
+      "external consensus probability",
+      "Polymarket prices",
+      "spread",
+      "volume",
+      "liquidity",
+      "future response",
+      "winner",
+      "settlement",
+      "PnL"
+    ],
+    "immutability": "Once stage1 registry is frozen, condition IDs may never be added, deleted, replaced, or reordered.",
+    "minimum_lead_seconds": 1800,
+    "minimum_markets": 5,
+    "odds_game_id_at_stage1": null,
+    "purpose": "Freeze the H5 Polymarket market identities before any H5 external odds observation, even when The Odds API event IDs are not yet visible.",
+    "registry_path": "data/research/h5_m1/registry.jsonl",
+    "selection_order": [
+      "Gamma gameStartTime ascending",
+      "condition_id ascending"
+    ],
+    "source": "Gamma metadata only",
+    "take_rule": "first 10 otherwise eligible markets",
+    "target_markets": 10
+  },
+  "stage2_external_identity_resolution": {
+    "ambiguity_rule": "FAIL_CLOSED",
+    "h2_burned_rule": "If a resolved odds_game_id belongs to the frozen H2-v2 burned external-event set, that registered market is prohibited from H5 observation and is not replaced.",
+    "mapping_path": "data/research/h5_m1/external_id_map.jsonl",
+    "mapping_receipt": "research/h5_m1_external_id_map_freeze.json",
+    "mapping_rule": "exact normalized MLB team set + unique moneyline mapping + absolute commence-time delta <= 600 seconds",
+    "minimum_resolved_nonburned_markets_before_h5_acquisition": 5,
+    "registry_is_modified": false,
+    "replacement_after_stage1_freeze": false,
+    "resolution_may_use_external_odds": false,
+    "resolution_may_use_pm_prices": false,
+    "source": "The Odds API non-odds events endpoint"
+  },
+  "status": "PREREGISTERED_ENGINEERING_AMENDMENT",
+  "study": "H5",
+  "unchanged_scientific_semantics": {
+    "candidate_response_horizons_changed": false,
+    "external_exchange_families_changed": false,
+    "external_provider_changed": false,
+    "f19_exclusion_changed": false,
+    "h2_burned_exclusion_changed": false,
+    "h5_innovation_definition_changed": false,
+    "hypothesis_changed": false,
+    "mapping_team_rule_changed": false,
+    "maximum_start_delta_seconds_changed": false,
+    "minimum_markets_changed": false,
+    "minimum_registration_lead_seconds_changed": false,
+    "target_markets_changed": false
+  }
+}
