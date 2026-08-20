@@ -1,0 +1,87 @@
+{
+  "analysis_boundary": {
+    "book_depth_read": false,
+    "book_price_read": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h2_performance_read": false,
+    "h5_response_read": false,
+    "h6_response_calculated": false,
+    "h6_transition_calculated": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "burn_policy": {
+    "additions_after_freeze": false,
+    "all_m2_markets_burned_for_m4": true,
+    "deletions_after_freeze": false,
+    "replacements_after_freeze": false
+  },
+  "development_contract": {
+    "path": "research/h6_m2_development_contract.json",
+    "sha256": "b33934981bc945d36247b013ba68f85a909a8185f2e55f179ab8ae025adbeb38"
+  },
+  "frozen_exclusions": {
+    "cross_family_overlaps": {
+      "F19__H2_V2": [],
+      "F19__H5": [],
+      "F19__H6_M1": [
+        "0x34bee39a68d7459a5380229787d0361e0bf1e68e4b17bdea0720fce35be55d69",
+        "0x8fa7310a657aedfbbc22d3a3be7d639f4d2330bd44fa4bf5995fe783eb51d261",
+        "0x9ceaad602f0a1a97c697826274e7abce6fedd27f2c367d9520300e33dabe934e",
+        "0xa017e92b6db818247e679283ae2070ebf8c3600aa6e7648fad4f23bb6a2715d4",
+        "0xad64a42584abc3ad0a7958e553b9a82e68a96b72daf0d0290ecac118263a3b0e"
+      ],
+      "H5__H2_V2": [],
+      "H6_M1__H2_V2": [],
+      "H6_M1__H5": []
+    },
+    "distinct_union_count": 119,
+    "f19": {
+      "count": 100,
+      "sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b"
+    },
+    "h2_v2": {
+      "count": 9,
+      "identity_artifact_sha256": "0907e1bd4ccc2aaaf7cef332e7fe96b8fb05355afdfc2e912d412e2f10c78d73"
+    },
+    "h5": {
+      "count": 10,
+      "receipt_sha256": "61c96d789b4c3cc39984889be9209cb990022ee20f9e3c985551dd6cf52874c2",
+      "registry_sha256": "c73e65dea1ba76eea40f1d724aa7d96381c06db4cb77e411df2213ce8f7cf95b"
+    },
+    "h6_m1": {
+      "count": 5,
+      "sha256": "8484176202fff2f81974b698711145d100fda156c6598d5e734b3c6789850217"
+    }
+  },
+  "git_commit": "d21e777d67109e22def4ac02c18dedba9f95d432",
+  "milestone": "H6-M2",
+  "registered_at_utc": "2026-08-20T17:38:51.192689+00:00",
+  "registrar": {
+    "path": "research/h6_m2_register.py",
+    "sha256": "5a19dc1633830285cf46ccd9b8809fb03f73e405837a79f45db55f440c41fb82"
+  },
+  "registry": {
+    "distinct_condition_ids": 30,
+    "distinct_token_ids": 60,
+    "mutable": false,
+    "path": "data/research/h6/m2/registry.jsonl",
+    "row_count": 30,
+    "sha256": "d69dafb85b2e046e8361749bedea6dfa95d179dadf3f957b32af17115721cbfb"
+  },
+  "selection": {
+    "operational_lead_seconds": 3600,
+    "ordering": [
+      "game_start_time_utc ascending",
+      "condition_id ascending"
+    ],
+    "selected_exclusion_overlap": 0,
+    "source": "Polymarket Gamma metadata only",
+    "sport": "mlb",
+    "target_markets": 30
+  },
+  "status": "DEVELOPMENT_REGISTRY_FROZEN",
+  "study": "H6"
+}
