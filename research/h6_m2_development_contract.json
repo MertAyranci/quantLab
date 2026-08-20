@@ -1,0 +1,245 @@
+{
+  "analysis_boundary": {
+    "execution_economics_calculated": false,
+    "external_odds_used": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h5_external_states_read": false,
+    "h5_response_read": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "capture": {
+    "capture_window_seconds_per_market": 1800,
+    "data_dependent_extension_allowed": false,
+    "data_root": "data/research/h6/m2",
+    "dedicated_h6_capture_required": true,
+    "early_stop_based_on_transition_count_allowed": false,
+    "f20_may_substitute": false,
+    "future_backfill_allowed": false,
+    "h6_m1_data_may_substitute": false,
+    "hard_stop": "registered game start",
+    "immediate_resync_after_connect_or_reconnect": true,
+    "initial_full_rest_snapshot_required": true,
+    "normalized_events_preserved": true,
+    "periodic_rest_reconciliation_max_seconds": 60,
+    "pregame_only": true,
+    "raw_websocket_text_preserved_exactly": true,
+    "reconciliation_mismatch_action": "increment book generation, record authoritative full snapshot, and invalidate continuity across the boundary",
+    "rest_snapshot_is_signal_event": false,
+    "window_rule": "For every frozen M2 market, capture exactly the interval from 1800 seconds before registered game start until registered game start."
+  },
+  "development_data_sufficiency": {
+    "aggregate_valid_two_sided_l1_coverage": ">= 0.95",
+    "deterministic_replay": "PASS",
+    "future_backfill": 0,
+    "generation_or_connection_mixing": 0,
+    "in_play_primary_transitions": 0,
+    "initial_full_p1_snapshots": "100% of registered markets",
+    "minimum_markets_with_at_least_25_valid_transitions": 20,
+    "minimum_markets_with_valid_primary_transitions": 20,
+    "minimum_total_valid_primary_transitions": 5000,
+    "normalized_lineage_failures": 0,
+    "raw_frame_sha_failures": 0,
+    "reconstruction_integrity_errors": 0,
+    "registered_markets": 30
+  },
+  "frozen_parent_design": {
+    "h6_m0_independence_policy_sha256": "13b58c64e5c63275c533be12272eec2a96a7a71a5da2b79eb3bc52f995637c32",
+    "h6_m0_mechanism_data_design_sha256": "bcbcf5e5ffc72517df5c6162771da62fc11113c2b514b297c9848172444e9213"
+  },
+  "independence_exclusions": {
+    "candidate_overlap_with_any_exclusion": "INELIGIBLE",
+    "f19": {
+      "expected_rows": 100,
+      "registry": "data/prospective/rn1_f19/registry.jsonl",
+      "registry_sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b",
+      "required": true,
+      "use": "condition_id identifiers only"
+    },
+    "h2_v2": {
+      "condition_id_resolution_rule": "Before H6-M2 registration, perform an identifier-only read from the existing database: odds_games.polymarket_market_id joined to markets.condition_id for exactly the nine frozen legacy H2-v2 game IDs. Require exactly nine distinct non-null Polymarket condition IDs. If all nine cannot be resolved, registration must FAIL CLOSED.",
+      "expected_burned_games": 9,
+      "identifier_source": "research/h5_m0_exclusions.json",
+      "identifier_source_sha256": "fb4a268f3148e746e31232c658cdc8793c2e082a73c5a8260af6779d89b1949a",
+      "legacy_odds_game_ids": [
+        1915,
+        2177,
+        2178,
+        2179,
+        2180,
+        2181,
+        2182,
+        2183,
+        2184
+      ],
+      "performance_fields_may_be_read": false,
+      "required": true
+    },
+    "h5": {
+      "expected_rows": 10,
+      "receipt": "research/h5_m1_registry_freeze.json",
+      "registry": "data/research/h5_m1/registry.jsonl",
+      "registry_sha256": "c73e65dea1ba76eea40f1d724aa7d96381c06db4cb77e411df2213ce8f7cf95b",
+      "required": true,
+      "use": "condition_id identifiers only"
+    },
+    "h6_m1": {
+      "expected_rows": 5,
+      "registry": "data/research/h6/m1/registry.jsonl",
+      "registry_sha256": "8484176202fff2f81974b698711145d100fda156c6598d5e734b3c6789850217",
+      "required": true,
+      "use": "condition_id identifiers only"
+    },
+    "replacement_after_registry_freeze": false,
+    "replacement_before_registry_freeze": "skip candidate and take next candidate in frozen ordering"
+  },
+  "m2_analysis": {
+    "cluster_bootstrap": {
+      "interval": "percentile 95%",
+      "random_seed": 20260820,
+      "replicates": 10000,
+      "resampling_unit": "market"
+    },
+    "confirmation_claim_allowed": false,
+    "continuous_relationship": {
+      "dependent_variable": "p1_midpoint_as_of_target - p1_midpoint_at_event",
+      "independent_variable": "imbalance_change",
+      "model": "OLS with intercept",
+      "uncertainty": "market-cluster robust standard errors"
+    },
+    "for_each_horizon_report": [
+      "usable transition count",
+      "distinct market count",
+      "event-weighted mean directional response",
+      "market-equal mean directional response",
+      "median directional response",
+      "positive / zero / negative response counts",
+      "market-cluster bootstrap 95% confidence interval",
+      "continuous slope of raw future midpoint change on imbalance_change with market-clustered uncertainty",
+      "leave-one-market-out market-equal mean directional response"
+    ],
+    "market_concentration_robustness": {
+      "method": "leave one market out",
+      "reported_for_all_horizons": true
+    },
+    "multiple_horizon_policy": "M2 is development only. No horizon-specific p-value or confidence interval constitutes prospective confirmation.",
+    "primary_analysis_threshold_free": true
+  },
+  "m2_development_verdict": {
+    "fail_integrity_if": "any frozen causality, lineage, deterministic replay, generation/connection mixing, future backfill, in-play contamination, initial snapshot, or reconstruction integrity gate fails",
+    "inconclusive_if": "integrity gates pass but any frozen development data-sufficiency count/breadth/coverage gate fails",
+    "labels": [
+      "PROMISING_DEVELOPMENT",
+      "NOT_PROMISING_DEVELOPMENT",
+      "INCONCLUSIVE_DEVELOPMENT_DATA",
+      "FAIL_INTEGRITY"
+    ],
+    "otherwise": "NOT_PROMISING_DEVELOPMENT",
+    "promising_rule": "After integrity and sufficiency PASS, there must exist at least one pair of adjacent prespecified horizons for which both event-weighted and market-equal mean directional responses are positive at both horizons; at least one horizon in that pair must have market-cluster bootstrap 95% CI lower bound > 0, continuous relationship slope > 0, and positive leave-one-market-out market-equal mean in at least 80% of omissions."
+  },
+  "m3_if_promising": {
+    "m2_markets_permanently_burned_for_m4": true,
+    "m4_may_reuse_m2_markets": false,
+    "new_data_required_for_confirmation": true,
+    "primary_horizon_selection_rule": "Among horizons satisfying the frozen M2 promising criteria and belonging to a supportive adjacent pair, choose the shortest qualifying horizon. Freeze that horizon and the exact confirmatory statistic in M3 before M4 data."
+  },
+  "milestone": "H6-M2",
+  "parent_git_commit": "5e26b63598c25ce1f2b2e89407a78b1020403b47",
+  "prerequisites": {
+    "h5_external_identity_resolution_required_for_h6_m2": false,
+    "h5_stage1_receipt_sha256": "61c96d789b4c3cc39984889be9209cb990022ee20f9e3c985551dd6cf52874c2",
+    "h5_stage1_registry_sha256": "c73e65dea1ba76eea40f1d724aa7d96381c06db4cb77e411df2213ce8f7cf95b",
+    "h5_stage1_registry_status": "STAGE1_CONDITION_REGISTRY_FROZEN",
+    "h6_m1_authoritative_result_sha256": "db020910ef40daa11003777f367b3d0b25b89fcd6a079260300115baef5b176d",
+    "h6_m1_engineering_status": "PASS_ENGINEERING_FEASIBILITY",
+    "h6_m1_registry_sha256": "8484176202fff2f81974b698711145d100fda156c6598d5e734b3c6789850217"
+  },
+  "primary_transition": {
+    "at_least_one_best_size_changes": true,
+    "best_ask_price_unchanged": true,
+    "best_bid_price_unchanged": true,
+    "frame_atomicity": true,
+    "imbalance": "(best_bid_size - best_ask_size) / (best_bid_size + best_ask_size)",
+    "imbalance_change": "post_frame_imbalance - pre_frame_imbalance",
+    "minimum_absolute_imbalance_change": null,
+    "non_zero_imbalance_change_required": true,
+    "threshold_free": true,
+    "tick_size_unchanged": true,
+    "token": "direct Polymarket outcomeIndex == 0 (p1)",
+    "trade_cancel_classification_required": false,
+    "unit": "one valid p1 pre-frame state to one valid p1 post-frame state"
+  },
+  "purpose": "New-data development-stage study of whether price-stationary non-zero p1 L1 imbalance changes predict subsequent short-horizon Polymarket midpoint repricing. M2 is developmental and cannot confirm the H6 hypothesis.",
+  "registration": {
+    "accepting_orders": true,
+    "active": true,
+    "additions_after_registry_freeze": false,
+    "atomic_create_no_overwrite": true,
+    "binary_outcomes_exactly": 2,
+    "clob_tokens_exactly": 2,
+    "closed": false,
+    "condition_id_required": true,
+    "deletions_after_registry_freeze": false,
+    "gamma_market_id_required": true,
+    "minimum_scientific_registration_lead_seconds": 1800,
+    "ordering": [
+      "game_start_time_utc ascending",
+      "condition_id ascending"
+    ],
+    "question_team_set_must_equal_outcome_team_set": true,
+    "registrar_operational_lead_seconds": 3600,
+    "registry_freeze_receipt": "research/h6_m2_registry_freeze.json",
+    "registry_path": "data/research/h6/m2/registry.jsonl",
+    "replacements_after_registry_freeze": false,
+    "selection_may_not_use": [
+      "price",
+      "spread",
+      "displayed depth",
+      "liquidity",
+      "volume",
+      "trade count",
+      "H6 transition count",
+      "future response",
+      "winner",
+      "settlement",
+      "PnL"
+    ],
+    "selection_may_use": [
+      "sport tag",
+      "market type",
+      "binary outcome count",
+      "scheduled start time",
+      "active/closed/accepting metadata",
+      "condition_id",
+      "Gamma market id",
+      "token ids",
+      "team/outcome identity"
+    ],
+    "source": "Polymarket Gamma metadata only",
+    "sport": "MLB",
+    "sports_market_type": "moneyline",
+    "take_rule": "first exactly 30 eligible markets after all frozen exclusions",
+    "target_markets": 30
+  },
+  "response": {
+    "all_horizons_must_be_reported": true,
+    "candidate_horizons_seconds": [
+      1,
+      3,
+      5,
+      10,
+      30,
+      60
+    ],
+    "definition": "sign(imbalance_change) * (p1_midpoint_as_of_target_horizon - p1_midpoint_at_event)",
+    "events_whose_target_is_at_or_after_game_start": "response missing for that horizon",
+    "gap_rule": "If continuity becomes invalid between event time and target horizon, response is missing for that horizon. Never backfill across a gap.",
+    "positive_means": "subsequent midpoint repriced in the direction of the liquidity-pressure change",
+    "primary_horizon_selected_in_m2": false,
+    "target_state_rule": "Use the causally reconstructed p1 state valid as-of the exact target time. Last valid state may persist through target time. Never select a future update."
+  },
+  "status": "DEVELOPMENT_CONTRACT_FREEZE",
+  "study": "H6"
+}
