@@ -1,0 +1,145 @@
+{
+  "analysis_boundary": {
+    "external_odds_read": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h2_edge_read": false,
+    "h2_outcome_read": false,
+    "h2_performance_read": false,
+    "h2_prices_read": false,
+    "h5_response_read": false,
+    "h6_response_calculated": false,
+    "pnl_calculated": false
+  },
+  "artifact": "H2_V2_BURNED_IDENTITY_EXCLUSIONS",
+  "condition_ids": [
+    "0xf8c1aa1f4c9fbdea7ece6130078c1fc7d856e929c1d9dda7f5fdee804b625289",
+    "0xa5edceb68a5d36b4724455efcd16d57d640400782fc977ea3471f4ff5feed9e9",
+    "0x515cbccedc0e127857fd2b9411a20798d42d29e5b637c8cbe4389dae53b29563",
+    "0x5e0f8bcb8f5993748f7ff14590efdb8c8d02ed8f07b6792de4aab91217c33a57",
+    "0x823b02713ae3ebece7b6570713ef1e4960b7acb442a497f0c39f8b5b48e40913",
+    "0x31bf9d5f787df8ecee225d59d85c728623695748ed49612da63f58e559b2af13",
+    "0xf2cafdf9c307fbc34fd47c617ebfeb713d5a7750c85e33041f18bd9171ab5c81",
+    "0x1c2a42234825692176dfa6bcb224a500610f2f61015982680dc821b371eda96c",
+    "0xdcf08fabd8862eb3ad019b24357af3763cbc8ed13e17f3a9d08b597e8831ee2b"
+  ],
+  "distinct_condition_id_count": 9,
+  "expected_count": 9,
+  "git_head_at_resolution": "38d77d4716a696f757845258bee1e67ec879d974",
+  "h6_m2_contract": {
+    "path": "research/h6_m2_development_contract.json",
+    "sha256": "b33934981bc945d36247b013ba68f85a909a8185f2e55f179ab8ae025adbeb38"
+  },
+  "mappings": [
+    {
+      "away_team": "Kansas City Royals",
+      "commence_time_utc": "2026-08-13T02:10:00+00:00",
+      "condition_id": "0xf8c1aa1f4c9fbdea7ece6130078c1fc7d856e929c1d9dda7f5fdee804b625289",
+      "gamma_market_id": "3379578",
+      "gamma_slug": "mlb-kc-lad-2026-08-12",
+      "home_team": "Los Angeles Dodgers",
+      "legacy_odds_game_internal_id": 1915,
+      "oddsapi_event_id": "b0c3869f276e1d63fbbce0cfdcbf8f1c",
+      "polymarket_market_internal_id": 1817541
+    },
+    {
+      "away_team": "Texas Rangers",
+      "commence_time_utc": "2026-08-13T02:11:00+00:00",
+      "condition_id": "0xa5edceb68a5d36b4724455efcd16d57d640400782fc977ea3471f4ff5feed9e9",
+      "gamma_market_id": "3379576",
+      "gamma_slug": "mlb-tex-laa-2026-08-12",
+      "home_team": "Los Angeles Angels",
+      "legacy_odds_game_internal_id": 2177,
+      "oddsapi_event_id": "746e8bca45aba61663687aab5e41ca8f",
+      "polymarket_market_internal_id": 1817542
+    },
+    {
+      "away_team": "Cleveland Guardians",
+      "commence_time_utc": "2026-08-13T17:11:00+00:00",
+      "condition_id": "0x515cbccedc0e127857fd2b9411a20798d42d29e5b637c8cbe4389dae53b29563",
+      "gamma_market_id": "3398694",
+      "gamma_slug": "mlb-cle-det-2026-08-13",
+      "home_team": "Detroit Tigers",
+      "legacy_odds_game_internal_id": 2178,
+      "oddsapi_event_id": "32dd5e1c6b71a610636cc0fb2087b9a4",
+      "polymarket_market_internal_id": 1769614
+    },
+    {
+      "away_team": "Pittsburgh Pirates",
+      "commence_time_utc": "2026-08-13T17:11:00+00:00",
+      "condition_id": "0x5e0f8bcb8f5993748f7ff14590efdb8c8d02ed8f07b6792de4aab91217c33a57",
+      "gamma_market_id": "3398710",
+      "gamma_slug": "mlb-pit-mia-2026-08-13",
+      "home_team": "Miami Marlins",
+      "legacy_odds_game_internal_id": 2179,
+      "oddsapi_event_id": "7f3d422253cc0ea2296a6cb920fc2186",
+      "polymarket_market_internal_id": 1769616
+    },
+    {
+      "away_team": "Seattle Mariners",
+      "commence_time_utc": "2026-08-13T17:36:00+00:00",
+      "condition_id": "0x823b02713ae3ebece7b6570713ef1e4960b7acb442a497f0c39f8b5b48e40913",
+      "gamma_market_id": "3398720",
+      "gamma_slug": "mlb-sea-nyy-2026-08-13",
+      "home_team": "New York Yankees",
+      "legacy_odds_game_internal_id": 2180,
+      "oddsapi_event_id": "3e1c279359817c97e285db96732ef225",
+      "polymarket_market_internal_id": 1769618
+    },
+    {
+      "away_team": "Cincinnati Reds",
+      "commence_time_utc": "2026-08-13T18:11:00+00:00",
+      "condition_id": "0x31bf9d5f787df8ecee225d59d85c728623695748ed49612da63f58e559b2af13",
+      "gamma_market_id": "3398728",
+      "gamma_slug": "mlb-cin-cws-2026-08-13",
+      "home_team": "Chicago White Sox",
+      "legacy_odds_game_internal_id": 2181,
+      "oddsapi_event_id": "7d03df008d15f138b3726ef4b85c983f",
+      "polymarket_market_internal_id": 1769620
+    },
+    {
+      "away_team": "Boston Red Sox",
+      "commence_time_utc": "2026-08-13T19:08:00+00:00",
+      "condition_id": "0xf2cafdf9c307fbc34fd47c617ebfeb713d5a7750c85e33041f18bd9171ab5c81",
+      "gamma_market_id": "3398735",
+      "gamma_slug": "mlb-bos-tor-2026-08-13",
+      "home_team": "Toronto Blue Jays",
+      "legacy_odds_game_internal_id": 2182,
+      "oddsapi_event_id": "3ed772c2f7f038e1b8d40c6a678ecc88",
+      "polymarket_market_internal_id": 1769625
+    },
+    {
+      "away_team": "Chicago Cubs",
+      "commence_time_utc": "2026-08-13T20:06:00+00:00",
+      "condition_id": "0x1c2a42234825692176dfa6bcb224a500610f2f61015982680dc821b371eda96c",
+      "gamma_market_id": "3398740",
+      "gamma_slug": "mlb-chc-wsh-2026-08-13",
+      "home_team": "Washington Nationals",
+      "legacy_odds_game_internal_id": 2183,
+      "oddsapi_event_id": "41d927261a15c8d84075af83997d53c1",
+      "polymarket_market_internal_id": 1769651
+    },
+    {
+      "away_team": "Philadelphia Phillies",
+      "commence_time_utc": "2026-08-13T23:30:00+00:00",
+      "condition_id": "0xdcf08fabd8862eb3ad019b24357af3763cbc8ed13e17f3a9d08b597e8831ee2b",
+      "gamma_market_id": "3398748",
+      "gamma_slug": "mlb-phi-min-2026-08-13",
+      "home_team": "Minnesota Twins",
+      "legacy_odds_game_internal_id": 2184,
+      "oddsapi_event_id": "9fa039b0c801332ed857fb145a2926b9",
+      "polymarket_market_internal_id": 1769658
+    }
+  ],
+  "milestone": "H6-M2",
+  "purpose": "Immutable identifier-only translation of the nine frozen H2-v2 burned development games to Polymarket condition IDs for H6-M2 exclusion.",
+  "resolution_rule": "odds_games.polymarket_market_id -> markets.id -> markets.condition_id, for exactly the nine frozen legacy H2-v2 odds_games IDs",
+  "resolution_source": "existing quantLab identity metadata only",
+  "resolved_count": 9,
+  "source_exclusion_artifact": {
+    "path": "research/h5_m0_exclusions.json",
+    "sha256": "fb4a268f3148e746e31232c658cdc8793c2e082a73c5a8260af6779d89b1949a"
+  },
+  "status": "IDENTITY_EXCLUSION_FREEZE",
+  "study": "H6"
+}
