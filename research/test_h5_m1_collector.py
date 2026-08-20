@@ -44,6 +44,35 @@ def reg_row(i: int = 1, *, start=None):
     }
 
 
+
+def runtime_bundle(rows):
+    return {
+        "rows":
+            rows,
+
+        "stage1_registry_sha256":
+            "r" * 64,
+
+        "stage1_receipt_sha256":
+            "s" * 64,
+
+        "stage2_map_sha256":
+            "m" * 64,
+
+        "stage2_receipt_sha256":
+            "t" * 64,
+
+        "compatibility_contract_sha256":
+            m.EXPECTED_COMPATIBILITY_CONTRACT_SHA,
+
+        "stage1_registered_market_count":
+            10,
+
+        "acquisition_market_count":
+            len(rows),
+    }
+
+
 def baseball_reg():
     return {
         "study": "H5",
@@ -241,11 +270,12 @@ def test_capture_writer_is_exclusive_and_raw_bytes_exact(tmp_path, monkeypatch):
     monkeypatch.setattr(m, "REPO", tmp_path)
     monkeypatch.setattr(m, "DATA_ROOT", tmp_path / "data" / "research" / "h5_m1")
     monkeypatch.setattr(m, "git_head", lambda: "test-head")
-    bundle = {
-        "rows": [reg_row(i) for i in range(1, 6)],
-        "registry_sha256": "r" * 64,
-        "receipt_sha256": "s" * 64,
-    }
+    bundle = runtime_bundle(
+        [
+            reg_row(i)
+            for i in range(1, 6)
+        ]
+    )
     w = m.CaptureWriter("cap", bundle)
     raw = b'{"exact":true}\n'
     meta = w.save_external_raw(1, raw)
@@ -257,12 +287,17 @@ def test_capture_writer_is_exclusive_and_raw_bytes_exact(tmp_path, monkeypatch):
 
 
 def _pm_bundle(start: datetime):
-    rows = [reg_row(i, start=start) for i in range(1, 6)]
-    return {
-        "rows": rows,
-        "registry_sha256": "r" * 64,
-        "receipt_sha256": "s" * 64,
-    }
+    rows = [
+        reg_row(
+            i,
+            start=start,
+        )
+        for i in range(1, 6)
+    ]
+
+    return runtime_bundle(
+        rows
+    )
 
 
 def test_pm_raw_frame_exact_and_required_event_normalized(tmp_path, monkeypatch):
@@ -371,3 +406,164 @@ def test_consensus_record_contains_no_change_or_response_fields():
     assert "pm_response" not in keys
     assert "change" not in keys
     assert "future" not in keys
+
+
+
+def test_collector_uses_frozen_compatibility_loader():
+    source = COLLECTOR_PATH.read_text(
+        encoding="utf-8"
+    )
+
+    assert (
+        "import h5_m1_collector_compat as compat"
+        in source
+    )
+
+    assert (
+        "import h5_m1_register"
+        not in source
+    )
+
+    assert (
+        "EXPECTED_REGISTRAR_SHA"
+        not in source
+    )
+
+    assert (
+        "registrar.norm_team"
+        not in source
+    )
+
+
+def test_registry_bundle_delegates_to_compat(
+    monkeypatch,
+):
+    sentinel = {
+        "rows":
+            ["sentinel"]
+    }
+
+    monkeypatch.setattr(
+        m,
+        "validate_frozen_engineering_inputs",
+        lambda **kwargs: None,
+    )
+
+    monkeypatch.setattr(
+        m.compat,
+        "load_runtime_bundle",
+        lambda: sentinel,
+    )
+
+    result = (
+        m.load_registry_bundle()
+    )
+
+    assert result is sentinel
+
+
+def test_capture_start_records_split_provenance(
+    tmp_path,
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        m,
+        "REPO",
+        tmp_path,
+    )
+
+    monkeypatch.setattr(
+        m,
+        "DATA_ROOT",
+        (
+            tmp_path
+            / "data"
+            / "research"
+            / "h5_m1"
+        ),
+    )
+
+    monkeypatch.setattr(
+        m,
+        "git_head",
+        lambda: "test-head",
+    )
+
+    bundle = runtime_bundle(
+        [
+            reg_row(i)
+            for i in range(1, 6)
+        ]
+    )
+
+    writer = m.CaptureWriter(
+        "prov",
+        bundle,
+    )
+
+    start = json.loads(
+        (
+            writer.capture_dir
+            / "capture_start.json"
+        ).read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert (
+        start[
+            "compatibility_contract_sha256"
+        ]
+        ==
+        m.EXPECTED_COMPATIBILITY_CONTRACT_SHA
+    )
+
+    assert (
+        start[
+            "stage1_registry_sha256"
+        ]
+        ==
+        "r" * 64
+    )
+
+    assert (
+        start[
+            "stage1_receipt_sha256"
+        ]
+        ==
+        "s" * 64
+    )
+
+    assert (
+        start[
+            "stage2_map_sha256"
+        ]
+        ==
+        "m" * 64
+    )
+
+    assert (
+        start[
+            "stage2_receipt_sha256"
+        ]
+        ==
+        "t" * 64
+    )
+
+    assert (
+        start[
+            "stage1_registered_market_count"
+        ]
+        == 10
+    )
+
+    assert (
+        start[
+            "acquisition_market_count"
+        ]
+        == 5
+    )
+
+    writer.finalize(
+        stop_reason="TEST"
+    )

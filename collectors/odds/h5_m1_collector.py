@@ -26,23 +26,45 @@ REPO = Path(__file__).resolve().parents[2]
 RESEARCH = REPO / "research"
 
 sys.path.insert(0, str(RESEARCH))
-import h5_m1_register as registrar  # noqa: E402
+import h5_m1_collector_compat as compat  # noqa: E402
 
 
 M1A_CONTRACT = RESEARCH / "h5_m1a_acquisition_contract.json"
-REGISTRY = REPO / "data" / "research" / "h5_m1" / "registry.jsonl"
-REGISTRY_RECEIPT = RESEARCH / "h5_m1_registry_freeze.json"
-REGISTRAR = RESEARCH / "h5_m1_register.py"
+
+COMPATIBILITY_CONTRACT = (
+    RESEARCH
+    / "h5_m1_collector_compatibility_contract.json"
+)
+
+COMPAT_LOADER = (
+    RESEARCH
+    / "h5_m1_collector_compat.py"
+)
 
 EXPECTED_M1A_SHA = (
     "6da26ac94413b5a79566764dcc43d4584"
     "bff94c3b88531225dec09a4db99b1be"
 )
 EXPECTED_M1A_COMMIT = "de347d585687a3aaf33e704f37b43a75ba7816a9"
-EXPECTED_REGISTRAR_SHA = (
-    "fe6bafa6c21aa6dbc7490d6b82109a1"
-    "90f0f563b8e42e93557ce9e245b6e5719"
+
+EXPECTED_COMPATIBILITY_CONTRACT_SHA = (
+    "f7e69a2f4fc0734e62fea7abd5615b99"
+    "25c86cf23438698ea014fa1a164eaecf"
 )
+
+EXPECTED_COMPAT_LOADER_SHA = (
+    "4bba3a0c46d227b2aa64e9ee8bdf18ac"
+    "35414f1135c3edbb2c0372a4c87e88dc"
+)
+
+EXPECTED_COMPAT_CONTRACT_COMMIT = (
+    "5f06e9b27125a7b2a02a0edaa4b72cf6d82ef10f"
+)
+
+EXPECTED_COMPAT_LOADER_COMMIT = (
+    "a7549f659583bb1b443d32a9ebaeb41aa25f571f"
+)
+
 PINNED_PROVENANCE = {
     "collectors/odds/h2_v2_sharp_collector.py": (
         "81d2a6abadc9d5fe2f218be35f301d33"
@@ -170,45 +192,180 @@ def header_int(headers, key: str) -> int | None:
         return None
 
 
-def validate_frozen_engineering_inputs(*, require_committed_self: bool):
+def validate_frozen_engineering_inputs(
+    *,
+    require_committed_self: bool,
+):
     if not M1A_CONTRACT.is_file():
-        raise RuntimeError("missing H5-M1A contract")
-    if sha256_file(M1A_CONTRACT) != EXPECTED_M1A_SHA:
-        raise RuntimeError("H5-M1A contract SHA mismatch")
-    if not REGISTRAR.is_file() or sha256_file(REGISTRAR) != EXPECTED_REGISTRAR_SHA:
-        raise RuntimeError("frozen H5 registrar SHA mismatch")
+        raise RuntimeError(
+            "missing H5-M1A contract"
+        )
 
-    contract = json.loads(M1A_CONTRACT.read_text(encoding="utf-8"))
-    source = contract["external_source"]
-    polling = contract["diagnostic_external_polling"]
-    capture = contract["polymarket_capture"]
+    if (
+        sha256_file(M1A_CONTRACT)
+        != EXPECTED_M1A_SHA
+    ):
+        raise RuntimeError(
+            "H5-M1A contract SHA mismatch"
+        )
 
-    if source["exchange_families"] != BOOKMAKERS:
-        raise RuntimeError("exchange-family order/set mismatch")
-    if source["maximum_source_age_seconds"] != 25:
-        raise RuntimeError("source-age freeze mismatch")
-    if source["minimum_fresh_complete_families"] != 2:
-        raise RuntimeError("fresh-family freeze mismatch")
-    if polling["interval_seconds"] != POLL_INTERVAL_SECONDS:
-        raise RuntimeError("poll interval freeze mismatch")
-    if polling["maximum_polls_initial_run"] != MAX_POLLS:
-        raise RuntimeError("poll-count freeze mismatch")
-    if polling["maximum_initial_run_seconds"] != INITIAL_RUN_SECONDS:
-        raise RuntimeError("run-duration freeze mismatch")
-    if capture["source"] != "live CLOB WebSocket":
-        raise RuntimeError("PM source freeze mismatch")
+    if (
+        not COMPATIBILITY_CONTRACT.is_file()
+        or
+        sha256_file(
+            COMPATIBILITY_CONTRACT
+        )
+        !=
+        EXPECTED_COMPATIBILITY_CONTRACT_SHA
+    ):
+        raise RuntimeError(
+            "H5 compatibility contract "
+            "SHA mismatch"
+        )
 
-    for rel, expected in PINNED_PROVENANCE.items():
-        path = REPO / rel
-        if not path.is_file() or sha256_file(path) != expected:
-            raise RuntimeError(f"pinned provenance SHA mismatch: {rel}")
+    if (
+        not COMPAT_LOADER.is_file()
+        or
+        sha256_file(
+            COMPAT_LOADER
+        )
+        !=
+        EXPECTED_COMPAT_LOADER_SHA
+    ):
+        raise RuntimeError(
+            "H5 compatibility loader "
+            "SHA mismatch"
+        )
+
+    # Static-only validation of the frozen
+    # Stage-1 / compatibility provenance.
+    # This performs no network access and does
+    # not require the Stage-2 map to exist.
+    compat.load_static_inputs()
+
+    contract = json.loads(
+        M1A_CONTRACT.read_text(
+            encoding="utf-8"
+        )
+    )
+
+    source = contract[
+        "external_source"
+    ]
+
+    polling = contract[
+        "diagnostic_external_polling"
+    ]
+
+    capture = contract[
+        "polymarket_capture"
+    ]
+
+    if (
+        source["exchange_families"]
+        != BOOKMAKERS
+    ):
+        raise RuntimeError(
+            "exchange-family order/set "
+            "mismatch"
+        )
+
+    if (
+        source[
+            "maximum_source_age_seconds"
+        ]
+        != 25
+    ):
+        raise RuntimeError(
+            "source-age freeze mismatch"
+        )
+
+    if (
+        source[
+            "minimum_fresh_complete_families"
+        ]
+        != 2
+    ):
+        raise RuntimeError(
+            "fresh-family freeze mismatch"
+        )
+
+    if (
+        polling["interval_seconds"]
+        != POLL_INTERVAL_SECONDS
+    ):
+        raise RuntimeError(
+            "poll interval freeze mismatch"
+        )
+
+    if (
+        polling[
+            "maximum_polls_initial_run"
+        ]
+        != MAX_POLLS
+    ):
+        raise RuntimeError(
+            "poll-count freeze mismatch"
+        )
+
+    if (
+        polling[
+            "maximum_initial_run_seconds"
+        ]
+        != INITIAL_RUN_SECONDS
+    ):
+        raise RuntimeError(
+            "run-duration freeze mismatch"
+        )
+
+    if (
+        capture["source"]
+        != "live CLOB WebSocket"
+    ):
+        raise RuntimeError(
+            "PM source freeze mismatch"
+        )
+
+    for rel, expected in (
+        PINNED_PROVENANCE.items()
+    ):
+        provenance_path = (
+            REPO / rel
+        )
+
+        if (
+            not provenance_path.is_file()
+            or
+            sha256_file(
+                provenance_path
+            )
+            != expected
+        ):
+            raise RuntimeError(
+                "pinned provenance SHA "
+                f"mismatch: {rel}"
+            )
 
     if require_committed_self:
-        if not git_is_ancestor(EXPECTED_M1A_COMMIT):
-            raise RuntimeError("H5-M1A freeze commit is not an ancestor of HEAD")
+        for ancestor in (
+            EXPECTED_M1A_COMMIT,
+            EXPECTED_COMPAT_CONTRACT_COMMIT,
+            EXPECTED_COMPAT_LOADER_COMMIT,
+        ):
+            if not git_is_ancestor(
+                ancestor
+            ):
+                raise RuntimeError(
+                    "required H5 freeze commit "
+                    "is not an ancestor of HEAD: "
+                    f"{ancestor}"
+                )
+
         if not committed_self_matches_head():
             raise RuntimeError(
-                "refusing live H5 capture: collector differs from committed HEAD"
+                "refusing live H5 capture: "
+                "collector differs from "
+                "committed HEAD"
             )
 
     return contract
@@ -261,58 +418,13 @@ def validate_registry_rows(rows: list[dict[str, Any]]):
 
 
 def load_registry_bundle():
-    validate_frozen_engineering_inputs(require_committed_self=True)
+    validate_frozen_engineering_inputs(
+        require_committed_self=True
+    )
 
-    if not REGISTRY.is_file() or not REGISTRY_RECEIPT.is_file():
-        raise RuntimeError(
-            "H5 registry is not frozen; live acquisition is prohibited"
-        )
-
-    rows = [
-        json.loads(line)
-        for line in REGISTRY.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
-    validate_registry_rows(rows)
-
-    receipt = json.loads(REGISTRY_RECEIPT.read_text(encoding="utf-8"))
-    if receipt.get("status") != "REGISTRY_FROZEN":
-        raise RuntimeError("H5 registry receipt status is not frozen")
-    if receipt.get("m1a_contract_sha256") != EXPECTED_M1A_SHA:
-        raise RuntimeError("registry receipt M1A SHA mismatch")
-    if receipt.get("registration_code", {}).get("sha256") != EXPECTED_REGISTRAR_SHA:
-        raise RuntimeError("registry receipt registrar SHA mismatch")
-
-    registry_sha = sha256_file(REGISTRY)
-    meta = receipt.get("registry", {})
-    if meta.get("sha256") != registry_sha:
-        raise RuntimeError("registry SHA does not match freeze receipt")
-    if int(meta.get("row_count", -1)) != len(rows):
-        raise RuntimeError("registry row count does not match freeze receipt")
-
-    boundary = receipt.get("analysis_boundary", {})
-    for key in (
-        "external_odds_read",
-        "external_consensus_calculated",
-        "h5_innovation_calculated",
-        "pm_price_used_for_selection",
-        "pm_response_calculated",
-        "future_pm_state_read",
-        "pnl_calculated",
-        "winner_used",
-        "settlement_used",
-        "f19_trade_content_read",
-        "f20_read",
-    ):
-        if boundary.get(key) is not False:
-            raise RuntimeError(f"registry freeze boundary invalid: {key}")
-
-    return {
-        "rows": rows,
-        "receipt": receipt,
-        "registry_sha256": registry_sha,
-        "receipt_sha256": sha256_file(REGISTRY_RECEIPT),
-    }
+    return (
+        compat.load_runtime_bundle()
+    )
 
 
 def decimal_price(outcome: dict[str, Any] | None) -> Decimal | None:
@@ -341,7 +453,7 @@ def outcomes_by_norm_name(market: dict[str, Any] | None):
         name = outcome.get("name")
         if not name:
             continue
-        key = registrar.norm_team(name)
+        key = compat.norm_team(name)
         if key in out:
             raise MappingError(f"duplicate normalized external outcome: {key}")
         out[key] = outcome
@@ -363,10 +475,10 @@ def api_odds_params(api_key: str, event_ids: list[str]):
 
 
 def _external_team_keys(reg: dict[str, Any]):
-    home_key = registrar.norm_team(reg["home_team"])
-    away_key = registrar.norm_team(reg["away_team"])
-    p1_key = registrar.norm_team(reg["p1_team"])
-    p0_key = registrar.norm_team(reg["p0_team"])
+    home_key = compat.norm_team(reg["home_team"])
+    away_key = compat.norm_team(reg["away_team"])
+    p1_key = compat.norm_team(reg["p1_team"])
+    p0_key = compat.norm_team(reg["p0_team"])
 
     expected = {home_key, away_key}
     if p1_key not in expected or p0_key not in expected or p1_key == p0_key:
@@ -389,8 +501,8 @@ def parse_external_observation(
 
     _, _, p1_key, p0_key = _external_team_keys(reg)
     game_teams = {
-        registrar.norm_team(game.get("home_team")),
-        registrar.norm_team(game.get("away_team")),
+        compat.norm_team(game.get("home_team")),
+        compat.norm_team(game.get("away_team")),
     }
     if game_teams != {p1_key, p0_key}:
         raise MappingError("Odds API game team-set mismatch")
@@ -533,9 +645,41 @@ class CaptureWriter:
             "collector_path": "collectors/odds/h5_m1_collector.py",
             "collector_sha256": sha256_file(Path(__file__).resolve()),
             "m1a_contract_sha256": EXPECTED_M1A_SHA,
-            "registry_sha256": bundle["registry_sha256"],
-            "registry_receipt_sha256": bundle["receipt_sha256"],
-            "registered_market_count": len(bundle["rows"]),
+            "compatibility_contract_sha256": (
+                bundle[
+                    "compatibility_contract_sha256"
+                ]
+            ),
+            "stage1_registry_sha256": (
+                bundle[
+                    "stage1_registry_sha256"
+                ]
+            ),
+            "stage1_receipt_sha256": (
+                bundle[
+                    "stage1_receipt_sha256"
+                ]
+            ),
+            "stage2_map_sha256": (
+                bundle[
+                    "stage2_map_sha256"
+                ]
+            ),
+            "stage2_receipt_sha256": (
+                bundle[
+                    "stage2_receipt_sha256"
+                ]
+            ),
+            "stage1_registered_market_count": (
+                bundle[
+                    "stage1_registered_market_count"
+                ]
+            ),
+            "acquisition_market_count": (
+                bundle[
+                    "acquisition_market_count"
+                ]
+            ),
             "poll_interval_seconds": POLL_INTERVAL_SECONDS,
             "maximum_polls": MAX_POLLS,
             "initial_run_seconds": INITIAL_RUN_SECONDS,
@@ -1171,19 +1315,118 @@ async def run_live(capture_id: str | None):
 
 
 def validate_config_output():
-    validate_frozen_engineering_inputs(require_committed_self=False)
-    registry_present = REGISTRY.is_file() and REGISTRY_RECEIPT.is_file()
-    print("H5-M1 COLLECTOR CONFIG: PASS")
-    print("M1A SHA:", EXPECTED_M1A_SHA)
-    print("registrar SHA:", EXPECTED_REGISTRAR_SHA)
-    print("registry frozen:", "YES" if registry_present else "NO")
-    print("live acquisition permitted now:", "YES" if registry_present and committed_self_matches_head() else "NO")
-    print("network calls made: NO")
-    print("H5 innovation calculated: NO")
-    print("PM response calculated: NO")
-    print("PnL calculated: NO")
-    print("F19 trade content read: NO")
-    print("F20 read: NO")
+    validate_frozen_engineering_inputs(
+        require_committed_self=False
+    )
+
+    map_exists = (
+        compat.STAGE2_MAP.is_file()
+    )
+
+    receipt_exists = (
+        compat.STAGE2_RECEIPT.is_file()
+    )
+
+    if map_exists != receipt_exists:
+        raise RuntimeError(
+            "incomplete H5 Stage-2 freeze: "
+            "map/receipt presence mismatch"
+        )
+
+    runtime_bundle = None
+
+    if (
+        map_exists
+        and
+        receipt_exists
+    ):
+        runtime_bundle = (
+            compat.load_runtime_bundle()
+        )
+
+    live_permitted = bool(
+        runtime_bundle is not None
+        and
+        committed_self_matches_head()
+    )
+
+    print(
+        "H5-M1 COLLECTOR CONFIG: PASS"
+    )
+
+    print(
+        "M1A SHA:",
+        EXPECTED_M1A_SHA,
+    )
+
+    print(
+        "compatibility contract SHA:",
+        EXPECTED_COMPATIBILITY_CONTRACT_SHA,
+    )
+
+    print(
+        "compatibility loader SHA:",
+        EXPECTED_COMPAT_LOADER_SHA,
+    )
+
+    print(
+        "Stage-1 registry frozen: YES"
+    )
+
+    print(
+        "Stage-2 map frozen:",
+        (
+            "YES"
+            if runtime_bundle is not None
+            else
+            "NO"
+        ),
+    )
+
+    print(
+        "acquisition markets:",
+        (
+            runtime_bundle[
+                "acquisition_market_count"
+            ]
+            if runtime_bundle is not None
+            else 0
+        ),
+    )
+
+    print(
+        "live acquisition permitted now:",
+        (
+            "YES"
+            if live_permitted
+            else
+            "NO"
+        ),
+    )
+
+    print(
+        "network calls made: NO"
+    )
+
+    print(
+        "H5 innovation calculated: NO"
+    )
+
+    print(
+        "PM response calculated: NO"
+    )
+
+    print(
+        "PnL calculated: NO"
+    )
+
+    print(
+        "F19 trade content read: NO"
+    )
+
+    print(
+        "F20 read: NO"
+    )
 
 
 def main():
