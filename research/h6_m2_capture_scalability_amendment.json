@@ -1,0 +1,94 @@
+{
+  "study": "H6",
+  "milestone": "H6-M2-CAPTURE",
+  "type": "PRE_CAPTURE_OPERATIONAL_SCALABILITY_AMENDMENT",
+  "status": "FROZEN_BEFORE_M2_ACQUISITION",
+  "parent_git_commit": "987490e0b10dea5aa720d547029c6e8086b63a3b",
+  "trigger": {
+    "description": "The inherited H6-M1 scheduler treats every token whose game has not yet started as active once the global earliest pre-arm begins. In the 30-market H6-M2 cohort, registered starts span more than two days, so this would unnecessarily subscribe later markets for many hours before their frozen final-30-minute windows.",
+    "earliest_game_start_utc": "2026-08-22T23:10:00+00:00",
+    "latest_game_start_utc": "2026-08-25T01:40:00+00:00",
+    "earliest_primary_window_start_utc": "2026-08-22T22:40:00+00:00",
+    "earliest_global_prearm_utc": "2026-08-22T22:38:00+00:00",
+    "observed_free_disk_bytes_approx": 7945689498,
+    "m2_capture_started": false,
+    "m2_capture_root_existed_at_detection": false
+  },
+  "operational_change": {
+    "process_launch_deadline_unchanged": true,
+    "process_must_start_no_later_than_global_earliest_prearm": true,
+    "per_market_activation_rule": "A registered token becomes capture-active at its registered game_start_time_utc minus 1800 seconds minus 120 seconds, and remains capture-active strictly until its registered game_start_time_utc.",
+    "per_market_prearm_seconds": 120,
+    "primary_window_seconds": 1800,
+    "primary_window_rule_unchanged": true,
+    "primary_window_rule": "registered game_start_time_utc - 1800s <= local raw-frame receive time < registered game_start_time_utc",
+    "when_no_tokens_are_active": "Collector remains armed but makes no market websocket subscription and waits until the next deterministic registered activation boundary.",
+    "when_active_token_set_changes": "End the current connection and reconnect using the complete currently active token set.",
+    "rest_initialization_on_connection": "Perform the frozen full REST initialization for every currently active token after each connection.",
+    "connection_generation_boundary_preserved": true,
+    "transition_may_cross_connection": false,
+    "transition_may_cross_generation": false,
+    "future_backfill": false,
+    "data_dependent_activation": false,
+    "extension_based_on_observed_transition_count": false
+  },
+  "scientific_semantics": {
+    "changed": false,
+    "registry_changed": false,
+    "registered_market_count": 30,
+    "registered_token_count": 60,
+    "market_selection_changed": false,
+    "primary_window_changed": false,
+    "event_clock_changed": false,
+    "orderbook_semantics_changed": false,
+    "reconciliation_seconds_changed": false,
+    "reconciliation_seconds": 30,
+    "prearm_duration_changed": false,
+    "response_horizons_changed": false,
+    "thresholds_added": false,
+    "development_sufficiency_rules_changed": false,
+    "m4_burn_policy_changed": false
+  },
+  "rationale": {
+    "scientific": "Only observations inside each frozen final-30-minute primary window are scientifically eligible. Maintaining 120 seconds of deterministic per-market pre-arm is sufficient to initialize causal book state before that window.",
+    "engineering": "Avoid unnecessary multi-day raw websocket and normalized capture for markets whose scientific windows have not begun.",
+    "storage": "Reduce disk exposure on the collector host while preserving all frozen H6-M2 scientific observations."
+  },
+  "frozen_provenance": {
+    "development_contract": {
+      "path": "research/h6_m2_development_contract.json",
+      "sha256": "b33934981bc945d36247b013ba68f85a909a8185f2e55f179ab8ae025adbeb38"
+    },
+    "capture_contract": {
+      "path": "research/h6_m2_capture_contract.json",
+      "sha256": "ed6ae0e09608a3d9f0e0a4899dd6d62026e05a844c51bc36b6f43bf978f25ed1"
+    },
+    "registry": {
+      "path": "data/research/h6/m2/registry.jsonl",
+      "sha256": "d69dafb85b2e046e8361749bedea6dfa95d179dadf3f957b32af17115721cbfb"
+    },
+    "registry_receipt": {
+      "path": "research/h6_m2_registry_freeze.json",
+      "sha256": "5e29a4ef7ac4e3551ed8bdc04c11b87a5d083fa18f97d55ebb97b6977dfe3e8c"
+    },
+    "collector_before_amendment": {
+      "path": "collectors/polymarket/h6_m2_collector.py",
+      "sha256": "879cb4af849e31fa2653bdd79ef2f55156703c5e596e9ce9ced73549c152d50e"
+    }
+  },
+  "state_at_amendment": {
+    "h6_m2_network_capture_started": false,
+    "h6_m2_rest_books_called": false,
+    "h6_m2_websocket_opened": false,
+    "h6_transition_calculated": false,
+    "h6_response_calculated": false,
+    "h6_horizon_readout_performed": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h5_response_read": false,
+    "winner_used": false,
+    "settlement_used": false,
+    "pnl_calculated": false
+  },
+  "verdict": "OPERATIONAL_SCALABILITY_ONLY; NO H6-M2 SCIENTIFIC CHANGE"
+}
