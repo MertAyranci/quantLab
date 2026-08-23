@@ -1,0 +1,78 @@
+{
+  "acquisition": {
+    "capture_manifest_exists": false,
+    "external_odds_observed": false,
+    "polymarket_capture_started": false,
+    "started": false
+  },
+  "analysis_boundary": {
+    "correlation_calculated": false,
+    "external_consensus_calculated": false,
+    "external_odds_read": false,
+    "external_state_differences_calculated": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "future_pm_state_read": false,
+    "h5_innovation_calculated": false,
+    "markout_calculated": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "closed_at_utc": "2026-08-23T22:18:55.555666+00:00",
+  "immutability": {
+    "late_stage2_freeze_allowed": false,
+    "retrospective_acquisition_allowed": false,
+    "stage1_markets_may_be_replaced": false,
+    "stage1_registry_may_be_modified": false
+  },
+  "interpretation": "No evidence for or against H5 was produced. The prospective acquisition cohort passed without satisfying and freezing the required Stage-2 external identity gate.",
+  "milestone": "H5-M1",
+  "next_step": {
+    "new_preregistration_required_before_selection": true,
+    "new_prospective_namespace_required": true,
+    "original_h5_m1_remains_closed": true,
+    "proposed_next_milestone": "H5-M1R1"
+  },
+  "scheduled_stage2_previews": [
+    {
+      "ambiguous": 0,
+      "minimum_acquisition_gate": false,
+      "pending_visibility": 7,
+      "provider_events_visible": 13,
+      "resolved_at_utc": "2026-08-21T09:00:00.225605+00:00",
+      "resolved_h2_burned": 0,
+      "resolved_nonburned": 3
+    },
+    {
+      "ambiguous": 0,
+      "minimum_acquisition_gate": false,
+      "pending_visibility": 7,
+      "provider_events_visible": 15,
+      "resolved_at_utc": "2026-08-21T15:00:00.184700+00:00",
+      "resolved_h2_burned": 0,
+      "resolved_nonburned": 3
+    }
+  ],
+  "scientific_verdict": "INCONCLUSIVE",
+  "stage1": {
+    "market_count": 10,
+    "mutable": false,
+    "receipt_sha256": "61c96d789b4c3cc39984889be9209cb990022ee20f9e3c985551dd6cf52874c2",
+    "registry_path": "data/research/h5_m1/registry.jsonl",
+    "registry_sha256": "c73e65dea1ba76eea40f1d724aa7d96381c06db4cb77e411df2213ce8f7cf95b"
+  },
+  "stage2_final_state": {
+    "acquisition_market_count": 0,
+    "map_frozen": false,
+    "receipt_frozen": false
+  },
+  "status": "CLOSED_INCONCLUSIVE_PROSPECTIVE_ACQUISITION_NOT_STARTED",
+  "study": "H5",
+  "visibility_log": {
+    "path": "logs/h5_stage2_visibility.log",
+    "sha256": "b0ecdfac112b873dcdc976a205b8c45c5bc0b038cbf693905888d4f9367c4384"
+  }
+}
