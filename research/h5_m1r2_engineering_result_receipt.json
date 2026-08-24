@@ -1,0 +1,97 @@
+{
+  "analysis_boundary": {
+    "correlation_calculated": false,
+    "directional_hit_rate_calculated": false,
+    "edge_calculated": false,
+    "external_consensus_difference_calculated": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "future_pm_price_change_calculated": false,
+    "h2_performance_read": false,
+    "h6_response_read": false,
+    "innovation_calculated": false,
+    "markout_calculated": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "authoritative_capture": {
+    "capture_complete_sha256": "c1c0d818b5dfe6783a8cb5a63e770fe03ac99ba847841f0e875defc2a9f018fe",
+    "capture_id": "h5m1r2_eng_20260824_a",
+    "capture_receipt_sha256": "ff70c5d8df4aa2966b3d565d7133a939410b0ab686d5cd7089fa1f2e15cf93f0",
+    "capture_start_sha256": "d943c5b77516eef7d2906c042cdd9bfbf54745212753c7342b30651efa52a78d"
+  },
+  "authoritative_result": {
+    "path": "data/research/h5_m1r2/validation/result.json",
+    "sha256": "5d5e1628cc43154e57aeda5a1a13e055e42eefdb171780ecfb107e67ab613ed0"
+  },
+  "closure_rules": {
+    "additional_r2_acquisition_permitted": false,
+    "edge_or_pnl_analysis_permitted": false,
+    "h5_response_analysis_permitted": false,
+    "market_replacement_permitted": false,
+    "primary_horizon_selection_permitted_from_r2": false,
+    "rerun_authoritative_validator_permitted": false
+  },
+  "engineering_sufficiency": {
+    "accepted_external_states": {
+      "observed": 71,
+      "passed": false,
+      "required_minimum": 100
+    },
+    "distinct_acquisition_markets": {
+      "observed": 7,
+      "passed": true,
+      "required_minimum": 5
+    },
+    "fresh_external_family_coverage": {
+      "observed": 0.16904761904761906,
+      "passed": false,
+      "required_minimum": 0.8
+    },
+    "pm_book_coverage": {
+      "observed": 1.0,
+      "passed": true,
+      "required_minimum": 0.95
+    }
+  },
+  "engineering_validation_status": "INCONCLUSIVE_ENGINEERING",
+  "hard_integrity": {
+    "all_passed": true,
+    "failed_gate_count": 0
+  },
+  "milestone": "H5-M1R2",
+  "pm_checkpoint_reconstruction": {
+    "coverage": 1.0,
+    "eligible_checkpoints": 420,
+    "invalid_by_reason": {},
+    "valid_checkpoints": 420
+  },
+  "scientific_interpretation": "H5-M1R2 established clean synchronized engineering capture and perfect causal PM checkpoint reconstructability, but failed the preregistered external-source sufficiency requirements. No H5 predictive or economic claim may be made from this run.",
+  "status": "CLOSED_INCONCLUSIVE_ENGINEERING",
+  "study": "H5",
+  "validation_contract_sha256": "4462598b64077f5fadbbe112a4eae6f5943d952b2fd7d1d1433a8f6430ecf8dc",
+  "validator": {
+    "git_commit": "31e891ebb7476b99638d8b962737bf0157ecb04f",
+    "path": "research/h5_m1r2_validate.py",
+    "sha256": "e2b691ec1a58ce83d91553b8e4907d7adc01f39d16ac40e0f52f23f0c1756be0",
+    "test_sha256": "0189764b0a3de2c98ea8b37230b9e819f13628d658758fad0ee6b2d763970d71"
+  },
+  "what_r2_did_establish": [
+    "capture integrity",
+    "mapping integrity",
+    "pregame boundary integrity",
+    "causal PM checkpoint reconstructability",
+    "PM checkpoint book coverage of 1.0"
+  ],
+  "what_r2_did_not_establish": [
+    "sufficient fresh external consensus coverage",
+    "H5 innovation signal existence",
+    "PM response to external innovation",
+    "predictive value",
+    "economic edge",
+    "PnL"
+  ]
+}
