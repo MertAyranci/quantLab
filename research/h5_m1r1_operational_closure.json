@@ -1,0 +1,78 @@
+{
+  "acquisition": {
+    "external_odds_observed": false,
+    "market_count": 0,
+    "polymarket_capture_started": false,
+    "started": false
+  },
+  "analysis_boundary": {
+    "correlation_calculated": false,
+    "edge_calculated": false,
+    "external_consensus_calculated": false,
+    "external_odds_read": false,
+    "external_state_difference_calculated": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h2_performance_read": false,
+    "h6_response_read": false,
+    "markout_calculated": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "closed_at_utc": "2026-08-24T22:12:24.749802+00:00",
+  "first_real_gamma_preview": {
+    "eligible_condition_count": 15,
+    "freeze_gate": "FAIL",
+    "gamma_projection_market_count": 2898,
+    "gamma_selection_projection_sha256": "618526be40ef29719469e3bf8d1be6b90ee1de0e3b424df1748a591dffb1f439",
+    "receipt_written": false,
+    "registrar_sha256": "9708621434c3cee8d1ef5bf101beaf023079afbd5aea0ed95716ce8e36605ace",
+    "registry_written": false,
+    "required_exact_condition_count": 10,
+    "selection_anchor_utc": "2026-08-24T22:10:29.257437+00:00",
+    "window_lower_utc": "2026-08-25T06:10:29.257437+00:00",
+    "window_upper_utc": "2026-08-26T06:10:29.257437+00:00"
+  },
+  "git_head": "9bc332a871212473fbea2f32019889758e7bcffb",
+  "immutability": {
+    "r1_may_be_reinterpreted_as_first_10": false,
+    "r1_may_be_reopened": false,
+    "r1_registry_may_be_created_later": false,
+    "retrospective_acquisition_allowed": false
+  },
+  "milestone": "H5-M1R1",
+  "next_step": {
+    "acquisition_semantics_changes": false,
+    "new_prospective_namespace_required": true,
+    "proposed_milestone": "H5-M1R2",
+    "proposed_stage1_mechanical_fix": "Require at least 10 eligible conditions inside the same frozen window, then select the deterministic first 10 by (game_start_time_utc, condition_id).",
+    "scientific_hypothesis_changes": false
+  },
+  "protocol_interpretation": {
+    "changing_target_allowed": false,
+    "changing_window_allowed": false,
+    "freeze_gate_in_preregistration": "exactly 10 eligible conditions must exist",
+    "post_preview_relaxation_allowed": false,
+    "pre_preview_resolution": "The exact-10 freeze gate was treated as authoritative and stricter than the first-10 selection language.",
+    "repeated_preview_until_gate_passes": false,
+    "selection_rule_in_preregistration": "first 10 eligible rows after all frozen exclusions",
+    "truncating_15_to_10_allowed": false
+  },
+  "reason": "The first committed-registrar Gamma-metadata-only preview observed 15 eligible conditions inside the frozen [anchor+8h, anchor+32h) Stage-1 window. The preregistered freeze gate required exactly 10. Therefore Stage-1 was not frozen.",
+  "scientific_verdict": "INCONCLUSIVE",
+  "stage1": {
+    "markets_selected_authoritatively": 0,
+    "registry_exists": false,
+    "registry_frozen": false
+  },
+  "stage2": {
+    "map_frozen": false,
+    "provider_identity_read": false,
+    "started": false
+  },
+  "status": "CLOSED_INCONCLUSIVE_STAGE1_FREEZE_GATE_NOT_MET",
+  "study": "H5"
+}
