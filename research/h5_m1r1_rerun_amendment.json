@@ -1,0 +1,191 @@
+{
+  "acquisition": {
+    "backfill": false,
+    "in_play": false,
+    "late_mapping_repair": false,
+    "late_registry_repair": false,
+    "may_begin_only_after": [
+      "Stage-1 registry frozen",
+      "Stage-2 external identity map frozen",
+      ">=5 RESOLVED_NONBURNED mappings",
+      "collector implementation frozen and committed"
+    ],
+    "only_status_acquired": "RESOLVED_NONBURNED",
+    "provider_ids_merged_into_stage1_file": false,
+    "runtime_market_count_max": 10,
+    "runtime_market_count_min": 5,
+    "stage1_order_authoritative": true
+  },
+  "analysis_boundary_at_r1_preregistration": {
+    "correlation_calculated": false,
+    "edge_calculated": false,
+    "external_identity_read": false,
+    "external_state_difference_calculated": false,
+    "f19_content_read": false,
+    "f20_read": false,
+    "h6_response_read": false,
+    "markout_calculated": false,
+    "odds_read": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "created_at_utc": "2026-08-24T21:54:17.359648+00:00",
+  "engineering_success_gates": {
+    "fresh_family_coverage_min_fraction": 0.8,
+    "h2_burned_overlap": 0,
+    "in_play_capture": 0,
+    "mapping_failures": 0,
+    "minimum_accepted_external_states": 100,
+    "minimum_distinct_acquisition_markets": 5,
+    "pm_book_coverage_min_fraction": 0.95
+  },
+  "frozen_parent_artifacts": {
+    "h5_m0_design_sha256": "073730512baa587e5be730f534daf1e389c8934d301769a77f387e1fff0a553c",
+    "h5_m0_exclusions_sha256": "fb4a268f3148e746e31232c658cdc8793c2e082a73c5a8260af6779d89b1949a",
+    "h5_m1_collector_compat_loader_sha256": "4bba3a0c46d227b2aa64e9ee8bdf18ac35414f1135c3edbb2c0372a4c87e88dc",
+    "h5_m1_collector_compatibility_contract_sha256": "f7e69a2f4fc0734e62fea7abd5615b9925c86cf23438698ea014fa1a164eaecf",
+    "h5_m1_final_collector_sha256": "68fa5c07d37e5a5c91409de4b7e1b35fb0d8990434cafc3736978946a081b44f",
+    "h5_m1_registration_visibility_amendment_sha256": "5cd23a68e1fea185acff187bd9a9556fc0e86c53d9a5b649a01ca0f74ce27dda",
+    "h5_m1_stage1_registrar_sha256": "c8453b9394bd476677e9eaa986a56c0d2f57164c581efe510bfa95f2bb735b4f",
+    "h5_m1_stage2_resolver_sha256": "e2ff82690ce0428c9e7785a8b1fa92092da30b08c93c8f7cecde2ef3b54d7ac1",
+    "h5_m1a_acquisition_contract_sha256": "6da26ac94413b5a79566764dcc43d4584bff94c3b88531225dec09a4db99b1be"
+  },
+  "milestone": "H5-M1R1",
+  "parent_git_commit": "b3ac5ec969fda2742d261cb23070d1bf500896e3",
+  "post_m1_boundary": {
+    "h5_primary_response_horizon_frozen_now": false,
+    "if_engineering_passes": "Freeze a separate H5 response-analysis protocol/horizon before any PM response analysis on a later permitted stage.",
+    "response_analysis_permitted_in_m1r1": false
+  },
+  "predecessor": {
+    "final_status": "CLOSED_INCONCLUSIVE_PROSPECTIVE_ACQUISITION_NOT_STARTED",
+    "may_be_backfilled": false,
+    "may_be_reopened": false,
+    "may_receive_replacement_markets": false,
+    "milestone": "H5-M1",
+    "operational_closure_path": "research/h5_m1_operational_closure.json",
+    "operational_closure_sha256": "60f56eb7978c37ca5a5792e04b2ced3464cf1857841f12640fa242470d84f732",
+    "original_acquisition_markets": 0,
+    "original_stage1_receipt_sha256": "61c96d789b4c3cc39984889be9209cb990022ee20f9e3c985551dd6cf52874c2",
+    "original_stage1_registry_sha256": "c73e65dea1ba76eea40f1d724aa7d96381c06db4cb77e411df2213ce8f7cf95b",
+    "original_stage2_map_frozen": false,
+    "scientific_verdict": "INCONCLUSIVE"
+  },
+  "purpose": "Run a separately named prospective H5-M1 engineering cohort after original H5-M1 closed operationally inconclusive because provider identity visibility was insufficient before the registered cohort passed. R1 changes registration timing/namespace only; the H5 hypothesis and M1 acquisition science remain unchanged.",
+  "r1_namespace": {
+    "capture_root": "data/research/h5_m1r1/capture",
+    "original_h5_m1_files_may_be_modified": false,
+    "stage1_receipt": "research/h5_m1r1_registry_freeze.json",
+    "stage1_registry": "data/research/h5_m1r1/registry.jsonl",
+    "stage2_map": "data/research/h5_m1r1/external_id_map.jsonl",
+    "stage2_receipt": "research/h5_m1r1_external_id_map_freeze.json",
+    "validator_result_root": "data/research/h5_m1r1/validation"
+  },
+  "r1_outcome_policy": {
+    "CLOSED_INCONCLUSIVE_NO_ACQUISITION": "Stage-2 mapping gate is not reached before the frozen map-freeze deadline; do not replace markets or late-freeze.",
+    "FAIL_INTEGRITY": "Any frozen registry, mapping, capture, causality, overlap, in-play, or provenance integrity gate fails.",
+    "INCONCLUSIVE_ENGINEERING": "Acquisition is valid and integrity passes but one or more frozen engineering sufficiency gates fail.",
+    "PASS_ENGINEERING_FEASIBILITY": "All frozen M1 engineering success gates pass."
+  },
+  "scientific_hypothesis": {
+    "economic_claim_allowed": false,
+    "m1_role": "ENGINEERING_FEASIBILITY_ONLY",
+    "predictive_claim_allowed": false,
+    "statement": "Fresh external sharp-market consensus changes may precede subsequent same-direction Polymarket repricing.",
+    "unchanged_from_h5_m0": true
+  },
+  "stage1_exclusions": {
+    "exclusions_may_be_changed_after_registry_freeze": false,
+    "h2_burned": true,
+    "original_h5_m1_conditions": true,
+    "reason_original_h5_m1_conditions": "R1 is a separate prospective cohort and must not recycle conditions from the operationally closed original M1."
+  },
+  "stage1_registration": {
+    "eligible_game_start_window": {
+      "lower_bound_inclusive": true,
+      "maximum_hours_after_selection_anchor": 32,
+      "minimum_hours_after_selection_anchor": 8,
+      "upper_bound_inclusive": false
+    },
+    "external_provider_calls_before_stage1_freeze": false,
+    "freeze_gate": "Exactly 10 eligible conditions must exist inside the deterministic 8-32 hour window; otherwise do not freeze.",
+    "market_type": "MLB moneyline",
+    "odds_read_before_stage1_freeze": false,
+    "provider_identity_read_before_stage1_freeze": false,
+    "registry_mutable_after_freeze": false,
+    "registry_target": 10,
+    "replacement_markets_after_freeze": false,
+    "required_outcomes": 2,
+    "required_state": [
+      "active",
+      "not closed",
+      "accepting orders",
+      "pregame"
+    ],
+    "selection_anchor": "UTC timestamp captured once at the irreversible Stage-1 --freeze invocation",
+    "selection_order": [
+      "game_start_time_utc ascending",
+      "condition_id ascending"
+    ],
+    "selection_rule": "first 10 eligible rows after all frozen exclusions",
+    "selection_source": "Polymarket Gamma metadata only"
+  },
+  "stage2_identity_resolution": {
+    "endpoint_class": "non-odds /events identity metadata only",
+    "if_gate_never_reached": "CLOSE_R1_INCONCLUSIVE_NO_ACQUISITION",
+    "join": "in memory only",
+    "latest_permitted_map_freeze": "30 minutes before the earliest registered game start",
+    "map_freeze_maximum_rows": 10,
+    "map_freeze_minimum_resolved_nonburned": 5,
+    "map_freeze_policy": "Freeze at the first post-Stage1 resolver invocation for which >=5 rows are RESOLVED_NONBURNED and ambiguity count is 0.",
+    "map_freeze_requires_ambiguity_count": 0,
+    "matching": {
+      "ambiguity": "FAIL_CLOSED",
+      "market": "moneyline only",
+      "maximum_absolute_commence_time_delta_seconds": 600,
+      "team_normalization": "preserve frozen historical H5 normalization exactly",
+      "team_set": "exact normalized MLB team set",
+      "unique_match_required": true
+    },
+    "may_begin_only_after_stage1_frozen": true,
+    "odds_read": false,
+    "pm_prices_read_for_resolution": false,
+    "preview_retries_allowed": true,
+    "preview_retry_basis": "provider identity visibility only; no odds",
+    "resolved_status": "RESOLVED_NONBURNED",
+    "source": "The Odds API",
+    "stage1_registry_modified_by_stage2": false,
+    "unresolved_rows_replaceable": false,
+    "winner_or_settlement_read": false
+  },
+  "status": "PROSPECTIVE_ENGINEERING_RERUN_PREREGISTRATION",
+  "study": "H5",
+  "unchanged_acquisition_semantics": {
+    "consensus": "median",
+    "correlation_calculated": false,
+    "edge_calculated": false,
+    "exchanges": [
+      "betfair_ex_uk",
+      "matchbook",
+      "smarkets"
+    ],
+    "external_family_freshness_seconds_max": 25,
+    "external_source": "The Odds API",
+    "external_state_difference_calculated": false,
+    "market": "h2h",
+    "markout_calculated": false,
+    "maximum_acquisition_duration_seconds": 600,
+    "maximum_poll_count": 60,
+    "minimum_fresh_complete_exchange_families": 2,
+    "pm_book_capture_semantics": "unchanged from frozen H5-M1 collector contract",
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "poll_interval_seconds": 10,
+    "regression_calculated": false,
+    "sport": "baseball_mlb",
+    "team_normalization": "preserve frozen historical H5 normalization exactly"
+  }
+}
