@@ -1,0 +1,130 @@
+{
+  "study": "H5",
+  "milestone": "H5-M1R2",
+  "stage": "ENGINEERING_VALIDATION",
+  "status": "FROZEN_BEFORE_REMAINING_ENGINEERING_READOUT",
+
+  "purpose": "Evaluate only engineering integrity, temporal reconstructability, and frozen M1 feasibility gates. No H5 mechanism or predictive response analysis is permitted.",
+
+  "authoritative_capture": {
+    "capture_id": "h5m1r2_eng_20260824_a",
+    "capture_receipt_sha256": "ff70c5d8df4aa2966b3d565d7133a939410b0ab686d5cd7089fa1f2e15cf93f0",
+    "capture_receipt_commit": "425e8cf8a3e8f300ed0e80e2f361594b640c4ca9",
+    "capture_start_sha256": "d943c5b77516eef7d2906c042cdd9bfbf54745212753c7342b30651efa52a78d",
+    "capture_complete_sha256": "c1c0d818b5dfe6783a8cb5a63e770fe03ac99ba847841f0e875defc2a9f018fe",
+    "additional_acquisition_permitted": false
+  },
+
+  "frozen_provenance": {
+    "h5_m1a_contract_sha256": "6da26ac94413b5a79566764dcc43d4584bff94c3b88531225dec09a4db99b1be",
+    "h5_m1r2_preregistration_sha256": "b805cc2fc9a01e1cd4b4d2d5c7966fded4e19840bcbefcb72f102d50a0c380ed",
+    "runtime_sha256": "a6af862e27e36ab998a307ea60127af1f0caacb8be468330988f232fdfb1697c",
+    "runtime_commit": "a9b944c0e78b8110fe032a06d7b42f4d01d5a664",
+    "collector_sha256": "34c5d5b6be2d9025fce6f784dc7636254b500019533fe9702aae9327786e7166",
+    "collector_commit": "44d1c7889fa399d63cdfd05644ea18198fb48d03",
+    "stage1_registry_sha256": "1084436712172bc00126ba04cb4b7eb0840f28730ca75cc209a528bc88c6a078",
+    "stage1_receipt_sha256": "848970dd4cb40cdb499c6c0c29d00ffeeb61acdc824d1fa528d16fdfef7a9137",
+    "stage2_attempt_sha256": "5bed76b90b7f502e7c344994d6d7534022e85d1be9eaa0af6318196d311a77e8",
+    "stage2_map_sha256": "d00f1195e6261cf062b340645103cd24afebe4807460a590b8ab72b6e50f3a4b",
+    "stage2_receipt_sha256": "5f857a14c0c671a3c0f3d495fc542ad43fb9fa414b8ec24d1a7eae560ea19415"
+  },
+
+  "verdict_rule": {
+    "FAIL_INTEGRITY": "At least one frozen hard integrity or protocol gate fails.",
+    "INCONCLUSIVE_ENGINEERING": "All hard integrity gates pass but at least one frozen engineering sufficiency gate fails.",
+    "PASS_ENGINEERING_FEASIBILITY": "All hard integrity gates and all engineering sufficiency gates pass."
+  },
+
+  "hard_integrity_gates": {
+    "frozen_artifact_hashes_match": true,
+    "capture_provenance_matches": true,
+    "only_authoritative_r2_capture_used": true,
+    "analysis_boundary_all_false": true,
+    "team_mapping_failures": 0,
+    "f19_overlap": 0,
+    "h2_burned_overlap": 0,
+    "clock_fields_missing": 0,
+    "in_play_external_records_admitted": 0,
+    "normalized_pm_post_start_records_admitted": 0,
+    "normalized_resolution_events_admitted": 0,
+    "capture_stream_hash_failures": 0,
+    "raw_external_hash_failures": 0,
+    "unexpected_market_or_token_identity": 0
+  },
+
+  "engineering_sufficiency_gates": {
+    "minimum_distinct_acquisition_markets": 5,
+    "minimum_accepted_external_states": 100,
+    "fresh_external_family_coverage_minimum": 0.80,
+    "pm_book_coverage_minimum": 0.95
+  },
+
+  "known_pre_validation_sufficiency_observations": {
+    "distinct_acquisition_markets": 7,
+    "accepted_external_states": 71,
+    "eligible_external_observations": 420,
+    "fresh_external_family_coverage": 0.16904761904761906,
+    "accepted_state_gate_passed": false,
+    "fresh_family_coverage_gate_passed": false,
+    "pass_engineering_feasibility_already_impossible": true
+  },
+
+  "pm_checkpoint_rule": {
+    "denominator": "Every eligible external observation occurring after PM capture initialization and before the frozen canonical commence time.",
+    "valid_checkpoint": "At response_received_at_utc, locally known P1 state has both valid best bid and best ask, descends from an initialized book or REST resync snapshot, and has no unresolved continuity gap.",
+    "future_backfill_permitted": false,
+    "connection_start_or_error_invalidates_prior_continuity_until_new_book_or_resync": true
+  },
+
+  "allowed_engineering_metrics": [
+    "market count",
+    "poll count",
+    "accepted external state count",
+    "fresh-family coverage",
+    "source-age distribution",
+    "family source-update interval distribution",
+    "HTTP request latency distribution",
+    "PM message-rate diagnostics",
+    "PM connection/control diagnostics",
+    "PM checkpoint book coverage",
+    "clock-field completeness",
+    "in-play admission counts",
+    "mapping and exclusion integrity",
+    "stream and raw-file hashes"
+  ],
+
+  "prohibited_metrics": [
+    "external consensus difference",
+    "innovation magnitude",
+    "innovation sign",
+    "future PM price change",
+    "same-direction PM response",
+    "directional hit rate",
+    "correlation",
+    "regression",
+    "markout",
+    "edge",
+    "PnL",
+    "winner",
+    "settlement"
+  ],
+
+  "analysis_boundary": {
+    "external_consensus_difference_calculated": false,
+    "innovation_calculated": false,
+    "pm_response_calculated": false,
+    "future_pm_price_change_calculated": false,
+    "directional_hit_rate_calculated": false,
+    "correlation_calculated": false,
+    "regression_calculated": false,
+    "markout_calculated": false,
+    "edge_calculated": false,
+    "pnl_calculated": false,
+    "winner_used": false,
+    "settlement_used": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h2_performance_read": false,
+    "h6_response_read": false
+  }
+}
