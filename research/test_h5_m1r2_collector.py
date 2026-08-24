@@ -638,3 +638,127 @@ def test_r2_collector_has_no_analysis_logic():
 
     for token in forbidden:
         assert token not in source
+
+
+def test_r2_capture_manifest_and_labels_are_r2(
+    tmp_path,
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        m,
+        "REPO",
+        tmp_path,
+    )
+
+    monkeypatch.setattr(
+        m,
+        "DATA_ROOT",
+        (
+            tmp_path
+            / "data"
+            / "research"
+            / "h5_m1r2"
+            / "capture"
+        ),
+    )
+
+    monkeypatch.setattr(
+        m,
+        "git_head",
+        lambda: "test-head",
+    )
+
+    bundle = runtime_bundle(
+        [
+            reg_row(i)
+            for i in range(1, 6)
+        ]
+    )
+
+    w = m.CaptureWriter(
+        "r2label",
+        bundle,
+    )
+
+    start = json.loads(
+        (
+            w.capture_dir
+            / "capture_start.json"
+        ).read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert start["study"] == "H5"
+
+    assert (
+        start["milestone"]
+        == "H5-M1R2"
+    )
+
+    assert (
+        start["collector_path"]
+        ==
+        "collectors/odds/h5_m1r2_collector.py"
+    )
+
+    final = w.finalize(
+        stop_reason="TEST"
+    )
+
+    assert (
+        final["milestone"]
+        == "H5-M1R2"
+    )
+
+    complete = json.loads(
+        (
+            w.capture_dir
+            / "capture_complete.json"
+        ).read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert (
+        complete["milestone"]
+        == "H5-M1R2"
+    )
+
+
+def test_r2_collector_has_no_legacy_live_labels():
+    source = COLLECTOR_PATH.read_text(
+        encoding="utf-8"
+    )
+
+    assert (
+        '"milestone": "H5-M1",'
+        not in source
+    )
+
+    assert (
+        '"h5m1_" + utcnow().strftime'
+        not in source
+    )
+
+    assert (
+        '"H5-M1 SYNCHRONIZED CAPTURE COMPLETE"'
+        not in source
+    )
+
+    assert (
+        source.count(
+            '"milestone": "H5-M1R2",'
+        )
+        == 2
+    )
+
+    assert (
+        '"h5m1r2_" + utcnow().strftime'
+        in source
+    )
+
+    assert (
+        '"H5-M1R2 SYNCHRONIZED CAPTURE COMPLETE"'
+        in source
+    )

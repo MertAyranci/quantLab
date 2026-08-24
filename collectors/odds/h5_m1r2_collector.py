@@ -703,7 +703,7 @@ class CaptureWriter:
 
         start_manifest = {
             "study": "H5",
-            "milestone": "H5-M1",
+            "milestone": "H5-M1R2",
             "status": "CAPTURE_STARTED",
             "capture_id": capture_id,
             "created_at_utc": utcnow(),
@@ -847,7 +847,7 @@ class CaptureWriter:
         ]
         final = {
             "study": "H5",
-            "milestone": "H5-M1",
+            "milestone": "H5-M1R2",
             "status": "CAPTURE_COMPLETE",
             "capture_id": self.capture_id,
             "completed_at_utc": utcnow(),
@@ -1323,7 +1323,7 @@ async def run_live(capture_id: str | None):
         raise RuntimeError("disk safety gate failed before capture")
 
     capture_id = capture_id or (
-        "h5m1_" + utcnow().strftime("%Y%m%dT%H%M%SZ") + "_" + uuid.uuid4().hex[:8]
+        "h5m1r2_" + utcnow().strftime("%Y%m%dT%H%M%SZ") + "_" + uuid.uuid4().hex[:8]
     )
     writer = CaptureWriter(capture_id, bundle)
     stop_event = asyncio.Event()
@@ -1390,7 +1390,7 @@ async def run_live(capture_id: str | None):
         )
 
     print("========================================")
-    print("H5-M1 SYNCHRONIZED CAPTURE COMPLETE")
+    print("H5-M1R2 SYNCHRONIZED CAPTURE COMPLETE")
     print("========================================")
     print("capture_id:", capture_id)
     print("stop_reason:", stop_reason)
