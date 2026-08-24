@@ -1,0 +1,338 @@
+{
+  "analysis_boundary": {
+    "execution_economics_calculated": false,
+    "external_odds_used": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h5_external_states_read": false,
+    "h5_response_read": false,
+    "pnl_calculated": false,
+    "real_h6_m2_future_response_calculated": false,
+    "real_h6_m2_horizon_readout_performed": false,
+    "real_h6_m2_transition_count_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "authoritative_reconstruction": {
+    "boundary_states_role": "scheduled-boundary reconstruction cross-check only",
+    "connection_change": "continuity boundary",
+    "control_stream_role": "connection, resync, reconciliation, activation and boundary cross-check only",
+    "deterministic_replay": {
+      "passes": 2,
+      "required": true,
+      "rule": "Replay authoritative inputs twice from pristine state using identical code. Canonical engineering summaries, transition identities, coverage intervals, generation history and final reconstructed states must produce the same canonical SHA256 digest."
+    },
+    "future_state_backfill_allowed": false,
+    "generation_change": "continuity boundary",
+    "normalized_stream_role": "lineage and deterministic cross-check only; never authoritative state source",
+    "primary_clock": "local collector receive time",
+    "raw_frame_effective_time": "raw_frames.capture_time",
+    "raw_websocket_frames": true,
+    "reconciliation_can_create_primary_transition": false,
+    "reconnect_can_create_primary_transition": false,
+    "registry": true,
+    "rest_snapshot_can_create_primary_transition": false,
+    "rest_snapshot_effective_time": "rest_snapshots.response_received_at_utc",
+    "rest_snapshots": true
+  },
+  "capture_binding": {
+    "capture_complete": {
+      "must_bind_all_stream_hashes": true,
+      "must_exist_before_real_validation": true,
+      "must_have_status": "CAPTURE_COMPLETE",
+      "must_preserve_false_analysis_boundary": true,
+      "path": "data/research/h6/m2/capture/h6m2_dev_20260822T223600Z/capture_complete.json"
+    },
+    "capture_data_may_be_modified": false,
+    "capture_id": "h6m2_dev_20260822T223600Z",
+    "capture_root": "data/research/h6/m2/capture/h6m2_dev_20260822T223600Z",
+    "capture_start": {
+      "collector_sha256": "0a2591f168cb569f5e2036fea0221b036168691435b10785c7d72de7877f3c83",
+      "git_head": "4407e6cec1f149be6d2642ab63b2035766bf7626",
+      "path": "data/research/h6/m2/capture/h6m2_dev_20260822T223600Z/capture_start.json",
+      "sha256": "69bcc9ed24de71665ca4c91cafcf73c2f034db2d5fee35b97fb35311ecf711e7"
+    },
+    "data_dependent_extension_allowed": false,
+    "future_backfill_allowed": false,
+    "stream_files": [
+      "raw_frames.jsonl",
+      "normalized.jsonl",
+      "rest_snapshots.jsonl",
+      "control.jsonl",
+      "boundary_states.jsonl"
+    ]
+  },
+  "capture_state_at_contract_freeze": {
+    "bootstrap_calculated": false,
+    "capture_complete_exists": false,
+    "capture_id": "h6m2_dev_20260822T223600Z",
+    "capture_start_exists": true,
+    "directional_hit_rate_calculated": false,
+    "directional_response_calculated": false,
+    "future_midpoint_change_calculated": false,
+    "imbalance_change_calculated": false,
+    "l1_imbalance_calculated": false,
+    "lomo_calculated": false,
+    "pnl_calculated": false,
+    "primary_transition_count_calculated": false,
+    "real_engineering_validator_run": false,
+    "real_scientific_analyzer_run": false,
+    "regression_calculated": false
+  },
+  "cluster_bootstrap": {
+    "duplicate_sampled_markets": "each sampled occurrence contributes its same market-level mean as one bootstrap cluster occurrence",
+    "interval": "percentile 95%",
+    "lower_quantile": 0.025,
+    "numpy_quantile_method": "linear",
+    "random_seed": 20260820,
+    "replicates": 10000,
+    "resampling_unit": "market",
+    "rng_rule": "For each horizon independently instantiate numpy.random.default_rng(20260820).",
+    "sample_size_per_replicate": "number of distinct contributing markets at that horizon",
+    "sampling": "with replacement",
+    "statistic": "market-equal mean directional response",
+    "underspecified_choice_frozen_now": "The parent M2 contract specified a market-cluster bootstrap CI but did not identify which reported mean receives it. Before any real M2 readout, this contract freezes the CI statistic as the market-equal mean directional response.",
+    "upper_quantile": 0.975
+  },
+  "continuous_relationship": {
+    "cluster": "condition_id / market",
+    "covariance": "market-cluster robust",
+    "dependent_variable": "raw_future_midpoint_change",
+    "if_uncertainty_not_estimable": "report missing clustered uncertainty; the horizon cannot satisfy the strong promising criterion",
+    "independent_variable": "imbalance_change",
+    "minimum_clusters_for_clustered_uncertainty": 2,
+    "model": "OLS with intercept",
+    "report": [
+      "slope",
+      "cluster-robust standard error",
+      "95% confidence interval",
+      "number of observations",
+      "number of market clusters"
+    ],
+    "statsmodels_rule": "OLS.fit(cov_type='cluster', cov_kwds={'groups': market_groups, 'use_correction': True, 'df_correction': True})",
+    "weights": null
+  },
+  "created_at_utc": "2026-08-24T21:22:15.648471+00:00",
+  "development_verdict": {
+    "adjacent_horizon_pairs": [
+      [
+        1,
+        3
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        5,
+        10
+      ],
+      [
+        10,
+        30
+      ],
+      [
+        30,
+        60
+      ]
+    ],
+    "labels": [
+      "PROMISING_DEVELOPMENT",
+      "NOT_PROMISING_DEVELOPMENT",
+      "INCONCLUSIVE_DEVELOPMENT_DATA",
+      "FAIL_INTEGRITY"
+    ],
+    "m3_primary_horizon_if_promising": "Among strong-criterion horizons belonging to at least one supportive adjacent pair, select the shortest horizon. This selection is developmental only and must be frozen in H6-M3 before any new M4 confirmation data.",
+    "otherwise": "NOT_PROMISING_DEVELOPMENT",
+    "promising_rule": "After engineering integrity and data sufficiency PASS, at least one supportive adjacent horizon pair must exist and at least one horizon within that pair must satisfy the strong horizon criterion.",
+    "strong_horizon_criterion": "bootstrap 95% CI lower bound for the market-equal mean directional response is > 0; OLS slope is > 0; and positive LOMO fraction is >= 0.80.",
+    "supportive_adjacent_pair": "At both horizons in the pair, both the event-weighted mean directional response and market-equal mean directional response must be strictly > 0."
+  },
+  "engineering_validation": {
+    "coverage": {
+      "aggregate_denominator_seconds": 54000,
+      "numerator": "scheduled p1 pregame wall-clock seconds during which the causally reconstructed state is initialized, continuity-valid, two-sided, has positive best sizes, and best_bid < best_ask",
+      "per_market_95_percent_gate": false,
+      "per_market_coverage_reported": true,
+      "scheduled_market_count": 30,
+      "seconds_per_market": 1800
+    },
+    "data_sufficiency_gates": {
+      "aggregate_valid_two_sided_l1_coverage": ">= 0.95",
+      "minimum_markets_with_at_least_25_valid_transitions": 20,
+      "minimum_markets_with_valid_primary_transitions": 20,
+      "minimum_total_valid_primary_transitions": 5000
+    },
+    "integrity_gates": {
+      "deterministic_replay": "PASS",
+      "future_backfill": 0,
+      "generation_or_connection_mixing": 0,
+      "in_play_primary_transitions": 0,
+      "initial_full_p1_snapshots": "100% of 30 registered markets",
+      "normalized_lineage_failures": 0,
+      "raw_frame_sha_failures": 0,
+      "reconstruction_integrity_errors": 0,
+      "registered_markets": 30
+    },
+    "may_calculate": [
+      "frame and message counts",
+      "connection counts",
+      "REST resync counts",
+      "reconciliation counts and mismatches",
+      "generation counts",
+      "raw-frame SHA integrity",
+      "normalized lineage integrity",
+      "deterministic replay digest",
+      "valid-state wall-clock coverage",
+      "price-stationary nonzero imbalance transition count",
+      "transition count by market",
+      "market breadth counts",
+      "in-play contamination count",
+      "generation or connection mixing count",
+      "future-backfill violation count"
+    ],
+    "must_not_calculate": [
+      "future midpoint response",
+      "directional response",
+      "directional hit rate",
+      "horizon-specific performance",
+      "correlation with future price",
+      "regression of future price",
+      "bootstrap confidence interval",
+      "leave-one-market-out response",
+      "markout",
+      "edge",
+      "PnL"
+    ],
+    "validator_verdicts": {
+      "FAIL_INTEGRITY": "At least one causality, lineage, deterministic replay, generation/connection mixing, future-backfill, in-play, initial snapshot, raw-frame, or reconstruction integrity gate fails.",
+      "INCONCLUSIVE_DEVELOPMENT_DATA": "All integrity gates pass but at least one frozen coverage/count/breadth sufficiency gate fails.",
+      "PASS_ENGINEERING_AND_DATA_SUFFICIENCY": "All integrity and all data-sufficiency gates pass."
+    }
+  },
+  "frozen_scientific_inputs": {
+    "h6_m0_independence_policy_sha256": "13b58c64e5c63275c533be12272eec2a96a7a71a5da2b79eb3bc52f995637c32",
+    "h6_m0_mechanism_data_design_sha256": "bcbcf5e5ffc72517df5c6162771da62fc11113c2b514b297c9848172444e9213",
+    "h6_m2_capture_contract_sha256": "ed6ae0e09608a3d9f0e0a4899dd6d62026e05a844c51bc36b6f43bf978f25ed1",
+    "h6_m2_collector_sha256": "0a2591f168cb569f5e2036fea0221b036168691435b10785c7d72de7877f3c83",
+    "h6_m2_development_contract_sha256": "b33934981bc945d36247b013ba68f85a909a8185f2e55f179ab8ae025adbeb38",
+    "h6_m2_registrar_sha256": "5a19dc1633830285cf46ccd9b8809fb03f73e405837a79f45db55f440c41fb82",
+    "h6_m2_registry_receipt_sha256": "5e29a4ef7ac4e3551ed8bdc04c11b87a5d083fa18f97d55ebb97b6977dfe3e8c",
+    "h6_m2_registry_sha256": "d69dafb85b2e046e8361749bedea6dfa95d179dadf3f957b32af17115721cbfb",
+    "h6_m2_scalability_amendment_sha256": "402acdd4e74b0b96b72f40b9008bac0a65ea1336e9f0c5a4748608af965ec0c9"
+  },
+  "implementation_freeze": {
+    "analyzer_path": "research/h6_m2_analyze.py",
+    "analyzer_tests_path": "research/test_h6_m2_analyze.py",
+    "code_freeze_receipt": "research/h6_m2_readout_code_freeze.json",
+    "code_freeze_receipt_must_bind": [
+      "readout contract SHA256",
+      "validator SHA256",
+      "validator-tests SHA256",
+      "analyzer SHA256",
+      "analyzer-tests SHA256",
+      "capture-start SHA256",
+      "capture-complete SHA256",
+      "capture stream SHA256 values"
+    ],
+    "code_freeze_receipt_required_before_real_readout": true,
+    "implementation_changes_after_code_freeze": false,
+    "synthetic_tests_required_before_code_freeze": true,
+    "validator_and_analyzer_must_be_committed_before_real_readout": true,
+    "validator_path": "research/h6_m2_validate.py",
+    "validator_tests_path": "research/test_h6_m2_validate.py"
+  },
+  "leave_one_market_out": {
+    "omission_unit": "one contributing market",
+    "positive_definition": "> 0",
+    "positive_fraction": "number of omissions with statistic > 0 divided by number of valid omissions",
+    "report_every_omission": true,
+    "statistic": "market-equal mean directional response"
+  },
+  "market_equal_statistic": {
+    "aggregate": "unweighted arithmetic mean of the contributing market-level means",
+    "market_level_value": "arithmetic mean directional response within each contributing market"
+  },
+  "milestone": "H6-M2-READOUT",
+  "parent_git_commit": "b333a7dfee798f05c19d222bc26e6ebc84a9959b",
+  "primary_transition": {
+    "at_least_one_best_size_changes": true,
+    "best_ask_price_unchanged": true,
+    "best_bid_price_unchanged": true,
+    "imbalance_change": "post_frame_imbalance - pre_frame_imbalance",
+    "imbalance_formula": "(best_bid_size - best_ask_size) / (best_bid_size + best_ask_size)",
+    "minimum_absolute_imbalance_change": null,
+    "non_zero_imbalance_change_required": true,
+    "post_state_valid_required": true,
+    "pre_state_valid_required": true,
+    "pregame_only": true,
+    "same_connection_required": true,
+    "same_generation_required": true,
+    "threshold_free": true,
+    "tick_size_unchanged": true,
+    "token_role": "p1 only",
+    "trade_cancel_classification_required": false,
+    "unit": "at most one valid p1 transition per received raw websocket frame",
+    "venue_tob_mismatch_frame_can_create_transition": false,
+    "window_seconds_before_game_start": 1800
+  },
+  "purpose": "Freeze the complete engineering-validation and H6-M2 developmental scientific-readout procedure before any real H6-M2 transition, future midpoint response, horizon performance, or predictive statistic is calculated.",
+  "real_readout_policy": {
+    "authoritative_scientific_runs": 1,
+    "authoritative_validator_runs": 1,
+    "early_partial_capture_readout_allowed": false,
+    "execution_economics": false,
+    "manual_market_exclusion_after_readout": false,
+    "pnl": false,
+    "same_capture_may_be_reanalyzed_with_changed_rules": false,
+    "scientific_result_create_only": true,
+    "scientific_result_path": "data/research/h6/m2/readout/h6m2_dev_20260822T223600Z_development.json",
+    "threshold_or_horizon_tuning_after_readout": false,
+    "validator_result_create_only": true,
+    "validator_result_path": "data/research/h6/m2/validation/h6m2_dev_20260822T223600Z_engineering.json",
+    "winner_or_settlement_conditioning": false
+  },
+  "scientific_readout": {
+    "all_horizons_must_be_reported": true,
+    "candidate_horizons_seconds": [
+      1,
+      3,
+      5,
+      10,
+      30,
+      60
+    ],
+    "development_only": true,
+    "directional_response": "sign(imbalance_change) * raw_future_midpoint_change",
+    "event_midpoint": "(post-event best_bid + post-event best_ask) / 2",
+    "event_time": "capture_time of the raw websocket frame creating the frozen primary transition",
+    "game_start_rule": "If target time is at or after registered game start, response is missing.",
+    "gap_rule": "If continuity becomes invalid at any point after the event and through the target horizon, the response is missing for that event/horizon. A later generation may not repair that event's missing response.",
+    "per_horizon_outputs": [
+      "usable transition count",
+      "distinct market count",
+      "event-weighted mean directional response",
+      "market-equal mean directional response",
+      "median directional response",
+      "positive response count",
+      "zero response count",
+      "negative response count",
+      "market-cluster bootstrap 95% CI for market-equal mean directional response",
+      "OLS slope of raw future midpoint change on imbalance_change",
+      "market-cluster robust OLS standard error and 95% CI",
+      "leave-one-market-out market-equal means",
+      "positive leave-one-market-out fraction"
+    ],
+    "positive_response_means": "subsequent midpoint repriced in the direction of the liquidity-pressure change",
+    "prospective_confirmation_claim_allowed": false,
+    "raw_future_midpoint_change": "p1_midpoint_as_of_target - p1_midpoint_at_event",
+    "target_state_rule": "Use the causally reconstructed p1 state valid as-of the exact target time. The last valid state may persist through the target. Never select a future update."
+  },
+  "scientific_readout_gate": {
+    "analyzer_may_run_if_validator_fail_integrity": false,
+    "analyzer_may_run_if_validator_inconclusive": false,
+    "required_validator_verdict": "PASS_ENGINEERING_AND_DATA_SUFFICIENCY"
+  },
+  "status": "READOUT_CONTRACT_FREEZE",
+  "study": "H6"
+}
