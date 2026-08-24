@@ -1,0 +1,283 @@
+{
+  "acquisition_started": false,
+  "analysis_boundary": {
+    "correlation_calculated": false,
+    "edge_calculated": false,
+    "external_consensus_calculated": false,
+    "external_odds_read": false,
+    "external_state_difference_calculated": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h2_performance_read": false,
+    "h6_response_read": false,
+    "markout_calculated": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "attempt_marker_path": "data/research/h5_m1r2/stage2_authoritative_attempt.json",
+  "attempt_marker_sha256": "5bed76b90b7f502e7c344994d6d7534022e85d1be9eaa0af6318196d311a77e8",
+  "authoritative_provider_attempt": 1,
+  "frozen_at_utc": "2026-08-24T22:29:26.233066+00:00",
+  "gate": {
+    "counts": {
+      "AMBIGUOUS_FAIL_CLOSED": 0,
+      "PENDING_PROVIDER_VISIBILITY": 3,
+      "RESOLVED_H2_BURNED_PROHIBITED": 0,
+      "RESOLVED_NONBURNED": 7
+    },
+    "maximum_ambiguous": 0,
+    "minimum_resolved_nonburned": 5,
+    "passed": true
+  },
+  "git_head": "966b975648f69eea41ccbe8e25e3db1346c01fe9",
+  "h2_identity_exclusions_sha256": "0907e1bd4ccc2aaaf7cef332e7fe96b8fb05355afdfc2e912d412e2f10c78d73",
+  "latest_permitted_freeze_utc": "2026-08-25T22:10:00+00:00",
+  "map_path": "data/research/h5_m1r2/external_id_map.jsonl",
+  "map_row_count": 7,
+  "map_sha256": "d00f1195e6261cf062b340645103cd24afebe4807460a590b8ab72b6e50f3a4b",
+  "mapping_rule": {
+    "maximum_absolute_commence_time_delta_seconds": 600,
+    "team_set": "exact_normalized_MLB_team_set",
+    "unique_provider_event_required": true
+  },
+  "milestone": "H5-M1R2",
+  "network_boundary": {
+    "api_key_persisted": false,
+    "endpoint": "/v4/sports/baseball_mlb/events",
+    "identity_only": true,
+    "odds_bearing_endpoint_used": false,
+    "odds_read": false
+  },
+  "provider_identity_projection": {
+    "allowed_fields": [
+      "id",
+      "home_team",
+      "away_team",
+      "commence_time"
+    ],
+    "event_count": 22,
+    "events": [
+      {
+        "away_team": "Boston Red Sox",
+        "commence_time": "2026-08-24T22:41:00+00:00",
+        "home_team": "Miami Marlins",
+        "id": "4849fd0ae15d275efe31050173d07d4e"
+      },
+      {
+        "away_team": "Tampa Bay Rays",
+        "commence_time": "2026-08-24T22:41:00+00:00",
+        "home_team": "Detroit Tigers",
+        "id": "b5df91df571dbd961d2781f345abe770"
+      },
+      {
+        "away_team": "Colorado Rockies",
+        "commence_time": "2026-08-24T22:46:00+00:00",
+        "home_team": "Washington Nationals",
+        "id": "e3da176886eb60e63e5b0017a5f213bc"
+      },
+      {
+        "away_team": "Texas Rangers",
+        "commence_time": "2026-08-24T23:41:00+00:00",
+        "home_team": "Chicago White Sox",
+        "id": "e22d48c563e1729e04698e0cdbe8c548"
+      },
+      {
+        "away_team": "Cleveland Guardians",
+        "commence_time": "2026-08-25T01:39:00+00:00",
+        "home_team": "Los Angeles Angels",
+        "id": "edcd5c7c7dde7d1aa67403952e1dd586"
+      },
+      {
+        "away_team": "Pittsburgh Pirates",
+        "commence_time": "2026-08-25T01:40:00+00:00",
+        "home_team": "San Diego Padres",
+        "id": "2ab56418bedb6fb0868a59b06da5a155"
+      },
+      {
+        "away_team": "Chicago Cubs",
+        "commence_time": "2026-08-25T01:40:00+00:00",
+        "home_team": "Arizona Diamondbacks",
+        "id": "c5a5e268823c62f5cdee679faf9b778c"
+      },
+      {
+        "away_team": "Philadelphia Phillies",
+        "commence_time": "2026-08-25T01:41:00+00:00",
+        "home_team": "Seattle Mariners",
+        "id": "2e44a824f3dff9caa3501c74ba68fe03"
+      },
+      {
+        "away_team": "Minnesota Twins",
+        "commence_time": "2026-08-25T01:41:00+00:00",
+        "home_team": "Athletics",
+        "id": "8e1262b8729ca1c5b33dc4667cb1bd1a"
+      },
+      {
+        "away_team": "Cincinnati Reds",
+        "commence_time": "2026-08-25T01:45:00+00:00",
+        "home_team": "San Francisco Giants",
+        "id": "b8eb14e08e109af0db5e66685ac4a2ff"
+      },
+      {
+        "away_team": "Tampa Bay Rays",
+        "commence_time": "2026-08-25T22:41:00+00:00",
+        "home_team": "Detroit Tigers",
+        "id": "259b6ad0c039c2a2dd00d378d88eb549"
+      },
+      {
+        "away_team": "Houston Astros",
+        "commence_time": "2026-08-25T23:06:00+00:00",
+        "home_team": "New York Yankees",
+        "id": "187cbd24b1e45a99e9ecaf256baeb7c1"
+      },
+      {
+        "away_team": "Kansas City Royals",
+        "commence_time": "2026-08-25T23:08:00+00:00",
+        "home_team": "Toronto Blue Jays",
+        "id": "587e76b251f060a951bfa47ee07cf6ac"
+      },
+      {
+        "away_team": "Milwaukee Brewers",
+        "commence_time": "2026-08-25T23:11:00+00:00",
+        "home_team": "New York Mets",
+        "id": "5adabe1a546de0ad6f64e2789b2b8f8d"
+      },
+      {
+        "away_team": "Los Angeles Dodgers",
+        "commence_time": "2026-08-25T23:16:00+00:00",
+        "home_team": "Atlanta Braves",
+        "id": "d7bed76714eb2b887f979d5156f6863c"
+      },
+      {
+        "away_team": "Texas Rangers",
+        "commence_time": "2026-08-25T23:41:00+00:00",
+        "home_team": "Chicago White Sox",
+        "id": "6e7150d8c439882971bcb51d92f290ca"
+      },
+      {
+        "away_team": "Cleveland Guardians",
+        "commence_time": "2026-08-26T01:38:00+00:00",
+        "home_team": "Los Angeles Angels",
+        "id": "57e5de55a9616dbe31da6693615d0af8"
+      },
+      {
+        "away_team": "Minnesota Twins",
+        "commence_time": "2026-08-26T01:40:00+00:00",
+        "home_team": "Athletics",
+        "id": "3c57e2dd92e3e26dff7fb8c2898891bd"
+      },
+      {
+        "away_team": "Philadelphia Phillies",
+        "commence_time": "2026-08-26T01:40:00+00:00",
+        "home_team": "Seattle Mariners",
+        "id": "50491a98ba9ab1b1502809e59c3cd776"
+      },
+      {
+        "away_team": "Pittsburgh Pirates",
+        "commence_time": "2026-08-26T01:40:00+00:00",
+        "home_team": "San Diego Padres",
+        "id": "ccb7afafeeb739ec9623deb9cba63f64"
+      },
+      {
+        "away_team": "Chicago Cubs",
+        "commence_time": "2026-08-26T01:40:00+00:00",
+        "home_team": "Arizona Diamondbacks",
+        "id": "f4592955744665289f90514e92145dcf"
+      },
+      {
+        "away_team": "Cincinnati Reds",
+        "commence_time": "2026-08-26T01:46:00+00:00",
+        "home_team": "San Francisco Giants",
+        "id": "26d4c80fbedae27b50bb14b2ae483938"
+      }
+    ],
+    "sha256": "e9d51b6b6384d7a4045f27a8b38af33e1876569c11d97ebe762148dada3be77b"
+  },
+  "r2_preregistration_sha256": "b805cc2fc9a01e1cd4b4d2d5c7966fded4e19840bcbefcb72f102d50a0c380ed",
+  "resolution_statuses": [
+    {
+      "condition_id": "0x05ff1067b2364ce08405755318bf741631756ee48a174c47262005618529c0f6",
+      "gamma_slug": "mlb-bos-mia-2026-08-25",
+      "registration_index": 1,
+      "status": "PENDING_PROVIDER_VISIBILITY"
+    },
+    {
+      "condition_id": "0x64280f02c9a3acf788486dad96db015799002e1e14b6c3317e764772aea83c51",
+      "gamma_slug": "mlb-tb-det-2026-08-25",
+      "odds_game_id": "259b6ad0c039c2a2dd00d378d88eb549",
+      "registration_index": 2,
+      "start_delta_seconds": 60.0,
+      "status": "RESOLVED_NONBURNED"
+    },
+    {
+      "condition_id": "0xd92e91fe396901fb2193904dff03f84b1345f551ac98d9daef89498f5b1256f9",
+      "gamma_slug": "mlb-col-wsh-2026-08-25",
+      "registration_index": 3,
+      "status": "PENDING_PROVIDER_VISIBILITY"
+    },
+    {
+      "condition_id": "0x455017aeeb812643f1ff38fede7650be6258297043384222b28ec9c59f1cf10c",
+      "gamma_slug": "mlb-hou-nyy-2026-08-25",
+      "odds_game_id": "187cbd24b1e45a99e9ecaf256baeb7c1",
+      "registration_index": 4,
+      "start_delta_seconds": 60.0,
+      "status": "RESOLVED_NONBURNED"
+    },
+    {
+      "condition_id": "0x3f7a4f6b8cf81878aae8614a47f1c52431faa20bd300dcb897a12fc9c258ae2c",
+      "gamma_slug": "mlb-kc-tor-2026-08-25",
+      "odds_game_id": "587e76b251f060a951bfa47ee07cf6ac",
+      "registration_index": 5,
+      "start_delta_seconds": 60.0,
+      "status": "RESOLVED_NONBURNED"
+    },
+    {
+      "condition_id": "0x9e12343e61b66ee66778d0afd33c7209f0d7fc7fe882ece7514bbf525a968973",
+      "gamma_slug": "mlb-mil-nym-2026-08-25",
+      "odds_game_id": "5adabe1a546de0ad6f64e2789b2b8f8d",
+      "registration_index": 6,
+      "start_delta_seconds": 60.0,
+      "status": "RESOLVED_NONBURNED"
+    },
+    {
+      "condition_id": "0x57ab38386fb9d1f9829e40a4a8d3815c1d3dc0a7becc4c48d77e5b18e11f664a",
+      "gamma_slug": "mlb-lad-atl-2026-08-25",
+      "odds_game_id": "d7bed76714eb2b887f979d5156f6863c",
+      "registration_index": 7,
+      "start_delta_seconds": 60.0,
+      "status": "RESOLVED_NONBURNED"
+    },
+    {
+      "condition_id": "0xa2174f2a45a69d9fc1593f0c10822a05becef5622efffe0868741e7a27bd2b0a",
+      "gamma_slug": "mlb-tex-cws-2026-08-25",
+      "odds_game_id": "6e7150d8c439882971bcb51d92f290ca",
+      "registration_index": 8,
+      "start_delta_seconds": 60.0,
+      "status": "RESOLVED_NONBURNED"
+    },
+    {
+      "condition_id": "0xfba3cd2f8e23251472f8e211e99cb766e64a597f18fc701473341b245f544f60",
+      "gamma_slug": "mlb-bal-stl-2026-08-25",
+      "registration_index": 9,
+      "status": "PENDING_PROVIDER_VISIBILITY"
+    },
+    {
+      "condition_id": "0xff14e839f47b1b292ee9424f5429d8fa299f6d411bc2479be53c27405095d9a7",
+      "gamma_slug": "mlb-cle-laa-2026-08-25",
+      "odds_game_id": "57e5de55a9616dbe31da6693615d0af8",
+      "registration_index": 10,
+      "start_delta_seconds": 0.0,
+      "status": "RESOLVED_NONBURNED"
+    }
+  ],
+  "resolver_path": "research/h5_m1r2_stage2_resolve.py",
+  "resolver_sha256": "ef80268b3206a1389fa4eccd5a4dd8d69a91ea8f08cbcc54b57367d160bbff75",
+  "retry_permitted": false,
+  "stage1_receipt_sha256": "848970dd4cb40cdb499c6c0c29d00ffeeb61acdc824d1fa528d16fdfef7a9137",
+  "stage1_registry_sha256": "1084436712172bc00126ba04cb4b7eb0840f28730ca75cc209a528bc88c6a078",
+  "stage2_execution_addendum_sha256": "f49da0a5d9083c63740f1939ca88f5ed7e6e77a668e7f01aa325da0723a190b5",
+  "status": "STAGE2_EXTERNAL_ID_MAP_FROZEN",
+  "study": "H5"
+}
