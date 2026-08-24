@@ -1,0 +1,53 @@
+{
+  "analysis_boundary": {
+    "correlation_calculated": false,
+    "edge_calculated": false,
+    "external_odds_read": false,
+    "h2_edge_read": false,
+    "h2_outcome_read": false,
+    "h2_performance_read": false,
+    "h2_prices_read": false,
+    "h6_response_read": false,
+    "markout_calculated": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "created_at_utc": "2026-08-24T21:57:53.480967+00:00",
+  "identity_source": {
+    "artifact": "H2_V2_BURNED_IDENTITY_EXCLUSIONS",
+    "condition_id_count": 9,
+    "path": "research/h6_m2_h2_identity_exclusions.json",
+    "sha256": "0907e1bd4ccc2aaaf7cef332e7fe96b8fb05355afdfc2e912d412e2f10c78d73",
+    "source_type": "identifier_metadata_only"
+  },
+  "milestone": "H5-M1R1",
+  "parent_git_commit": "af4826ea520c8c1dbb210c13c95f75fb18008294",
+  "purpose": "Operationalize the already-preregistered H5-M1R1 H2-burned Stage-1 exclusion using an immutable identifier-only translation artifact that became available before R1 registration. No scientific parameter or selection window is changed.",
+  "r1_preregistration": {
+    "path": "research/h5_m1r1_rerun_amendment.json",
+    "sha256": "bcfd8b2433d6c8bb4d55c5d478c29ab0540ef1ed956eaf2040c39aad3b69ab61"
+  },
+  "r1_stage1_rule": {
+    "condition_id_set_size": 9,
+    "provider_identity_used_for_selection": false,
+    "provider_odds_used_for_selection": false,
+    "reject_if_condition_id_in_h2_burned_identity_set": true,
+    "replacement_after_stage1_freeze": false
+  },
+  "status": "PREREGISTERED_IDENTITY_EXCLUSION_IMPLEMENTATION_ADDENDUM",
+  "study": "H5",
+  "unchanged_r1_parameters": {
+    "maximum_hours_after_anchor": 32,
+    "minimum_hours_after_anchor": 8,
+    "registry_target": 10,
+    "selection_order": [
+      "game_start_time_utc ascending",
+      "condition_id ascending"
+    ],
+    "selection_source": "Polymarket Gamma metadata only",
+    "stage2_minimum_resolved_nonburned": 5
+  }
+}
