@@ -1,0 +1,149 @@
+{
+  "analysis_boundary": {
+    "correlation_calculated": false,
+    "edge_calculated": false,
+    "external_consensus_calculated": false,
+    "external_odds_read": false,
+    "external_state_difference_calculated": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h2_performance_read": false,
+    "h6_response_read": false,
+    "markout_calculated": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "created_at_utc": "2026-08-24T22:14:44.039844+00:00",
+  "engineering_success_gates": {
+    "fresh_family_coverage_min_fraction": 0.8,
+    "h2_burned_overlap": 0,
+    "in_play_capture": 0,
+    "mapping_failures": 0,
+    "minimum_accepted_external_states": 100,
+    "minimum_distinct_acquisition_markets": 5,
+    "pm_book_coverage_min_fraction": 0.95
+  },
+  "frozen_input_hashes": {
+    "h2_identity_exclusions": "0907e1bd4ccc2aaaf7cef332e7fe96b8fb05355afdfc2e912d412e2f10c78d73",
+    "h5_m0_design": "073730512baa587e5be730f534daf1e389c8934d301769a77f387e1fff0a553c",
+    "h5_m0_exclusions": "fb4a268f3148e746e31232c658cdc8793c2e082a73c5a8260af6779d89b1949a",
+    "h5_m1a_contract": "6da26ac94413b5a79566764dcc43d4584bff94c3b88531225dec09a4db99b1be",
+    "original_h5_closure": "60f56eb7978c37ca5a5792e04b2ced3464cf1857841f12640fa242470d84f732",
+    "original_h5_registry": "c73e65dea1ba76eea40f1d724aa7d96381c06db4cb77e411df2213ce8f7cf95b"
+  },
+  "milestone": "H5-M1R2",
+  "namespace": {
+    "capture_root": "data/research/h5_m1r2/capture",
+    "registry": "data/research/h5_m1r2/registry.jsonl",
+    "registry_receipt": "research/h5_m1r2_registry_freeze.json",
+    "stage2_map": "data/research/h5_m1r2/external_id_map.jsonl",
+    "stage2_receipt": "research/h5_m1r2_external_id_map_freeze.json",
+    "validation_root": "data/research/h5_m1r2/validation"
+  },
+  "parent_git_commit": "938d3bab7e3660e3d76e9badf4d8ae6e588e817c",
+  "predecessor": {
+    "acquisition_started": false,
+    "authoritative_selected_markets": 0,
+    "closure_path": "research/h5_m1r1_operational_closure.json",
+    "closure_sha256": "05c6af8442b4c03a0cdc0c5d9ba50718369d262ac3ee8c5a488ffcfd19d063b4",
+    "first_gamma_preview_eligible_count": 15,
+    "milestone": "H5-M1R1",
+    "reason_for_r2": "Resolve the R1 protocol inconsistency prospectively. R1 simultaneously specified deterministic first-10 selection and an exact-10 freeze gate. The stricter exact-10 gate was honored and R1 was closed. R2 changes only that mechanical gate.",
+    "scientific_verdict": "INCONCLUSIVE",
+    "stage2_started": false,
+    "status": "CLOSED_INCONCLUSIVE_STAGE1_FREEZE_GATE_NOT_MET"
+  },
+  "scientific_hypothesis": {
+    "economic_claim_allowed": false,
+    "m1_role": "ENGINEERING_FEASIBILITY_ONLY",
+    "predictive_claim_allowed": false,
+    "statement": "Fresh external sharp-market consensus changes may precede subsequent same-direction Polymarket repricing.",
+    "unchanged": true
+  },
+  "stage1_exclusions": {
+    "f19_100_frozen_conditions": true,
+    "h2_9_burned_condition_ids": true,
+    "original_h5_m1_10_conditions": true,
+    "r1_previewed_conditions_are_not_scientifically_burned": true,
+    "rationale": "R1 read Gamma identity metadata only. It froze no registry, read no provider identity or odds, captured no PM response, used no winner/settlement, and produced no H5 evidence. R2's deterministic selection rule is frozen before any second Gamma access."
+  },
+  "stage1_registration": {
+    "eligible_game_start_window": {
+      "lower_bound_inclusive": true,
+      "maximum_hours_after_selection_anchor": 32,
+      "minimum_hours_after_selection_anchor": 8,
+      "upper_bound_inclusive": false
+    },
+    "external_provider_calls_before_stage1_freeze": false,
+    "freeze_gate": {
+      "exactly_10_required": false,
+      "minimum_eligible_conditions": 10
+    },
+    "if_eligible_count_below_10": "FAIL_CLOSED_WITH_NO_WRITES_AND_CLOSE_R2_INCONCLUSIVE",
+    "odds_read_before_stage1_freeze": false,
+    "polymarket_price_fields_used_for_selection": false,
+    "provider_identity_read_before_stage1_freeze": false,
+    "real_gamma_preview_before_freeze": false,
+    "registry_mutable_after_freeze": false,
+    "registry_target": 10,
+    "repeated_preview_until_pass": false,
+    "replacement_markets_after_freeze": false,
+    "selection_anchor": "UTC timestamp captured once at the single irreversible Stage-1 --freeze invocation",
+    "selection_order": [
+      "game_start_time_utc ascending",
+      "condition_id ascending"
+    ],
+    "selection_rule": "If eligible_count >= 10, freeze exactly the deterministic first 10 after all frozen exclusions.",
+    "selection_source": "Polymarket Gamma metadata only",
+    "truncate_if_more_than_10": true,
+    "truncation_is_pre_registered_deterministic_selection": true
+  },
+  "stage2_identity_resolution": {
+    "endpoint_class": "non-odds /events identity metadata only",
+    "if_gate_never_reached": "CLOSE_R2_INCONCLUSIVE_NO_ACQUISITION",
+    "latest_permitted_map_freeze": "30 minutes before earliest registered game start",
+    "map_freeze_minimum_resolved_nonburned": 5,
+    "map_freeze_requires_ambiguity_count": 0,
+    "matching": {
+      "ambiguity": "FAIL_CLOSED",
+      "maximum_absolute_commence_time_delta_seconds": 600,
+      "team_set": "exact normalized MLB team set",
+      "unique_match_required": true
+    },
+    "may_begin_only_after_stage1_frozen": true,
+    "odds_read": false,
+    "pm_prices_read_for_resolution": false,
+    "source": "The Odds API",
+    "stage1_registry_modified_by_stage2": false,
+    "unresolved_rows_replaceable": false,
+    "winner_or_settlement_read": false
+  },
+  "status": "PROSPECTIVE_ENGINEERING_RERUN_PREREGISTRATION",
+  "study": "H5",
+  "unchanged_acquisition_semantics": {
+    "consensus": "median",
+    "correlation_calculated": false,
+    "edge_calculated": false,
+    "exchanges": [
+      "betfair_ex_uk",
+      "matchbook",
+      "smarkets"
+    ],
+    "external_family_freshness_seconds_max": 25,
+    "external_source": "The Odds API",
+    "external_state_difference_calculated": false,
+    "market": "h2h",
+    "markout_calculated": false,
+    "maximum_acquisition_duration_seconds": 600,
+    "maximum_poll_count": 60,
+    "minimum_fresh_complete_exchange_families": 2,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "poll_interval_seconds": 10,
+    "regression_calculated": false,
+    "sport": "baseball_mlb"
+  }
+}
