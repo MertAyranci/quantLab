@@ -1,0 +1,88 @@
+{
+  "analysis_boundary": {
+    "correlation_calculated": false,
+    "edge_calculated": false,
+    "external_consensus_calculated": false,
+    "external_odds_read": false,
+    "external_state_difference_calculated": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h2_performance_read": false,
+    "h6_response_read": false,
+    "markout_calculated": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "condition_ids": [
+    "0x05ff1067b2364ce08405755318bf741631756ee48a174c47262005618529c0f6",
+    "0x64280f02c9a3acf788486dad96db015799002e1e14b6c3317e764772aea83c51",
+    "0xd92e91fe396901fb2193904dff03f84b1345f551ac98d9daef89498f5b1256f9",
+    "0x455017aeeb812643f1ff38fede7650be6258297043384222b28ec9c59f1cf10c",
+    "0x3f7a4f6b8cf81878aae8614a47f1c52431faa20bd300dcb897a12fc9c258ae2c",
+    "0x9e12343e61b66ee66778d0afd33c7209f0d7fc7fe882ece7514bbf525a968973",
+    "0x57ab38386fb9d1f9829e40a4a8d3815c1d3dc0a7becc4c48d77e5b18e11f664a",
+    "0xa2174f2a45a69d9fc1593f0c10822a05becef5622efffe0868741e7a27bd2b0a",
+    "0xfba3cd2f8e23251472f8e211e99cb766e64a597f18fc701473341b245f544f60",
+    "0xff14e839f47b1b292ee9424f5429d8fa299f6d411bc2479be53c27405095d9a7"
+  ],
+  "distinct_condition_ids": 10,
+  "exclusion_counts": {
+    "f19": 100,
+    "h2_burned": 9,
+    "original_h5_m1": 10,
+    "union": 119
+  },
+  "external_identity_status": "PENDING_PROVIDER_VISIBILITY",
+  "freeze_gate": {
+    "minimum_eligible_conditions": 10,
+    "observed_eligible_count": 15,
+    "passed": true,
+    "replacement_used": false,
+    "selected_count": 10,
+    "truncation_rule": "deterministic_first_10_by_game_start_then_condition_id",
+    "truncation_used": true
+  },
+  "frozen_at_utc": "2026-08-24T22:20:27.401435+00:00",
+  "gamma_metadata": {
+    "mlb_tag_id": "100381",
+    "projection_contains_liquidity": false,
+    "projection_contains_prices": false,
+    "projection_contains_volume": false,
+    "selection_projection_market_count": 2898,
+    "selection_projection_sha256": "618526be40ef29719469e3bf8d1be6b90ee1de0e3b424df1748a591dffb1f439"
+  },
+  "git_head": "492064fd5ff8781768c9dc525416ea330591bba5",
+  "h2_identity_exclusions_sha256": "0907e1bd4ccc2aaaf7cef332e7fe96b8fb05355afdfc2e912d412e2f10c78d73",
+  "identity_exclusion_addendum_sha256": "a6ad0066a98d06f24075d28fa6fa45445affe3fa83de2b926ab992cb67721b31",
+  "m0_exclusions_sha256": "fb4a268f3148e746e31232c658cdc8793c2e082a73c5a8260af6779d89b1949a",
+  "m0_sha256": "073730512baa587e5be730f534daf1e389c8934d301769a77f387e1fff0a553c",
+  "m1a_sha256": "6da26ac94413b5a79566764dcc43d4584bff94c3b88531225dec09a4db99b1be",
+  "milestone": "H5-M1R2",
+  "network_boundary": {
+    "external_provider_identity_read": false,
+    "gamma_metadata_used": true,
+    "odds_api_called": false,
+    "odds_bearing_endpoint_used": false,
+    "polymarket_price_fields_inspected": false
+  },
+  "original_h5_m1_closure_sha256": "60f56eb7978c37ca5a5792e04b2ced3464cf1857841f12640fa242470d84f732",
+  "original_h5_m1_registry_sha256": "c73e65dea1ba76eea40f1d724aa7d96381c06db4cb77e411df2213ce8f7cf95b",
+  "r2_preregistration_sha256": "b805cc2fc9a01e1cd4b4d2d5c7966fded4e19840bcbefcb72f102d50a0c380ed",
+  "registrar_path": "research/h5_m1r1_register.py",
+  "registrar_sha256": "4ebcd686f5d10925491be8d60e1371b736b232b3b8b3ab53a5b7f035c34d9979",
+  "registry_mutable": false,
+  "registry_path": "data/research/h5_m1r2/registry.jsonl",
+  "registry_sha256": "1084436712172bc00126ba04cb4b7eb0840f28730ca75cc209a528bc88c6a078",
+  "row_count": 10,
+  "selection_window": {
+    "lower_inclusive": true,
+    "maximum_hours_after_anchor": 32,
+    "minimum_hours_after_anchor": 8,
+    "upper_inclusive": false
+  },
+  "status": "STAGE1_CONDITION_REGISTRY_FROZEN",
+  "study": "H5"
+}
