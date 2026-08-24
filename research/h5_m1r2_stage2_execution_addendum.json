@@ -1,0 +1,62 @@
+{
+  "acquisition_parameters_changed": false,
+  "analysis_boundary": {
+    "correlation_calculated": false,
+    "edge_calculated": false,
+    "external_consensus_calculated": false,
+    "external_odds_read": false,
+    "external_state_difference_calculated": false,
+    "f19_trade_content_read": false,
+    "f20_read": false,
+    "h2_performance_read": false,
+    "h6_response_read": false,
+    "markout_calculated": false,
+    "pm_response_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "created_at_utc": "2026-08-24T22:24:28.384141+00:00",
+  "frozen_stage1": {
+    "earliest_game_start_utc": "2026-08-25T22:40:00+00:00",
+    "latest_permitted_stage2_freeze_utc": "2026-08-25T22:10:00+00:00",
+    "market_count": 10,
+    "receipt_sha256": "848970dd4cb40cdb499c6c0c29d00ffeeb61acdc824d1fa528d16fdfef7a9137",
+    "registry_sha256": "1084436712172bc00126ba04cb4b7eb0840f28730ca75cc209a528bc88c6a078"
+  },
+  "milestone": "H5-M1R2",
+  "parent_git_commit": "7a2ce18a9b055bd0c6f93207a88193498f964aed",
+  "purpose": "Remove discretion over provider-visibility retry timing before any R2 provider identity metadata is read.",
+  "scientific_parameters_changed": false,
+  "stage1_market_selection_changed": false,
+  "stage2_execution": {
+    "authoritative_provider_attempt_count": 1,
+    "endpoint": "/v4/sports/baseball_mlb/events",
+    "endpoint_contains_odds": false,
+    "identity_fields_allowed": [
+      "id",
+      "home_team",
+      "away_team",
+      "commence_time"
+    ],
+    "if_gate_fails": "Write no Stage2 map or receipt and close H5-M1R2 INCONCLUSIVE_NO_ACQUISITION. Do not retry provider visibility.",
+    "if_gate_passes": "Freeze the Stage2 map and receipt during the same authoritative invocation.",
+    "matching": {
+      "ambiguity": "FAIL_CLOSED",
+      "maximum_absolute_commence_time_delta_seconds": 600,
+      "normalized_team_set_exact": true,
+      "unique_provider_event_required": true
+    },
+    "odds_read": false,
+    "preview_provider_calls": 0,
+    "retry_after_failed_attempt": false,
+    "source": "The Odds API",
+    "success_gate": {
+      "maximum_ambiguous": 0,
+      "minimum_resolved_nonburned": 5
+    }
+  },
+  "status": "PREREGISTERED_STAGE2_EXECUTION_RULE",
+  "study": "H5"
+}
