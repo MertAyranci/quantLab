@@ -1,0 +1,36 @@
+{
+  "as_produced_verdict": "NOT_PROMISING_DEVELOPMENT",
+  "degeneracy_observation": {
+    "all_six_horizons_exact_zero_event_weighted_mean": true,
+    "all_six_horizons_exact_zero_market_equal_mean": true,
+    "all_six_horizons_zero_negative_responses": true,
+    "all_six_horizons_zero_positive_responses": true,
+    "interpretation": "The frozen analyzer produced an all-zero future-midpoint response panel. The result is frozen exactly as produced. A separate read-only integrity diagnostic is permitted solely to determine whether the degeneracy reflects captured top-of-book price behavior or a readout-integrity problem. It may not redefine the H6 signal, horizon, response, threshold, exclusions, or verdict rule."
+  },
+  "milestone": "H6-M2-DEVELOPMENT",
+  "primary_transition_count": 9655,
+  "proposed_m3_primary_horizon_seconds": null,
+  "provenance": {
+    "analyzer_sha256": "e953152fee0b7bedcc7f2713d379255e93b4a9666c8e2efe951d1b8be906a521",
+    "engineering_result_receipt_sha256": "6a70df9df8174cc15c154bf4632e5c595ce0bd57d8142b0f786070789fee5da5",
+    "git_head_at_analysis": "9ad14b8759a31374e32e3544b4a96f8876ae743c",
+    "git_head_at_receipt_creation": "9ad14b8759a31374e32e3544b4a96f8876ae743c",
+    "readout_contract_sha256": "afca061d959bac4c4cc30c670521351447fc1c8508f73f4285fd75e3614ebc71",
+    "validator_result_sha256": "45de3db48dbb154cd288f72e2d2de77282ba6d022e68131ed3f14ed46055325b"
+  },
+  "scientific_governance": {
+    "analyzer_may_be_rerun": false,
+    "execution_economics_authorized": false,
+    "m3_authorized": false,
+    "pnl_authorized": false,
+    "post_hoc_horizon_selection": false,
+    "post_hoc_threshold_selection": false,
+    "same_capture_reanalysis_with_changed_rules": false
+  },
+  "scientific_result": {
+    "path": "data/research/h6/m2/readout/h6m2_dev_20260822T223600Z_development.json",
+    "sha256": "9d6b13a016f2775885a115019be9889a2f2b50cb35685d21deae882f31eb454c"
+  },
+  "status": "AUTHORITATIVE_DEVELOPMENT_RESULT_FROZEN_AS_PRODUCED",
+  "study": "H6"
+}
