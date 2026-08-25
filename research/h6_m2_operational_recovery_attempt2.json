@@ -1,0 +1,55 @@
+{
+  "analysis_boundary": {
+    "bootstrap_calculated": false,
+    "correlation_calculated": false,
+    "directional_hit_rate_calculated": false,
+    "directional_response_calculated": false,
+    "edge_calculated": false,
+    "future_midpoint_response_calculated": false,
+    "lomo_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "attempt_1": {
+    "cgroup_oom_kill_observed": true,
+    "completed_result": false,
+    "termination": "SIGKILL"
+  },
+  "attempt_number": 2,
+  "capture": {
+    "capture_complete_sha256": "fe3e3d5daca58170c7a88b695036195370e5f4c58a6bdb341d647ee1dfd76618",
+    "capture_id": "h6m2_dev_20260822T223600Z",
+    "capture_start_sha256": "69bcc9ed24de71665ca4c91cafcf73c2f034db2d5fee35b97fb35311ecf711e7",
+    "modified": false
+  },
+  "milestone": "H6-M2-READOUT",
+  "pre_attempt_state": {
+    "engineering_result_exists": false,
+    "scientific_result_exists": false
+  },
+  "python_environment": {
+    "executable": "/home/lab/quantLab/.venv/bin/python",
+    "version": "3.14.4"
+  },
+  "recovery_amendment_sha256": "d598be18397ca01d9e2bf1edb75749f4ffee18feacbd9d3dcee6e8a9c596c65d",
+  "resource_change": {
+    "only_change": "temporary_host_swap",
+    "persistent_fstab_change": false,
+    "swap_state": "/swapfile file 4294963200 0 -1"
+  },
+  "retry_policy": {
+    "scientific_analyzer_permitted_before_result": false,
+    "third_attempt_permitted": false,
+    "this_is_final_permitted_validator_invocation": true
+  },
+  "status": "OPERATIONAL_RECOVERY_ATTEMPT_2_ARMED",
+  "study": "H6",
+  "validator": {
+    "command": ".venv/bin/python research/h6_m2_validate.py --run-live",
+    "path": "research/h6_m2_validate.py",
+    "sha256": "faba97d57706bbbf399e3d8462e2232437d471e506d570ddeefbe3072b5ee6e8"
+  }
+}
