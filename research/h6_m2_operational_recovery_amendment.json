@@ -1,0 +1,104 @@
+{
+  "study": "H6",
+  "milestone": "H6-M2-READOUT",
+  "status": "FROZEN_BEFORE_OPERATIONAL_RECOVERY_RETRY",
+
+  "purpose": "Authorize one and only one operational recovery retry after the first authoritative engineering-validator invocation was terminated before producing any result artifact. This amendment changes execution resources only and does not modify any scientific, reconstruction, validation, horizon, threshold, gate, or verdict semantics.",
+
+  "parent_state": {
+    "git_head_before_amendment": "5ac59f1fcc4ee90ac4cb2f76b325f734234c56a9",
+    "readout_contract_sha256": "afca061d959bac4c4cc30c670521351447fc1c8508f73f4285fd75e3614ebc71",
+    "code_freeze_receipt_sha256": "eecba0142a2a35076fd6e27fa729d37a21568a0469ec5e6b66c63cf5e74bca62",
+    "validator_sha256": "faba97d57706bbbf399e3d8462e2232437d471e506d570ddeefbe3072b5ee6e8",
+    "validator_tests_sha256": "90206955b24b721fa7cea6a88e53fe870f4fd8a2db106ee904f491d7b0ab7874",
+    "analyzer_sha256": "e953152fee0b7bedcc7f2713d379255e93b4a9666c8e2efe951d1b8be906a521",
+    "analyzer_tests_sha256": "74b72dd42c52b30fc2da3d6c3bac3972e3bd956fc9a75b4a4433cadec4efb73f"
+  },
+
+  "capture_binding": {
+    "capture_id": "h6m2_dev_20260822T223600Z",
+    "capture_start_sha256": "69bcc9ed24de71665ca4c91cafcf73c2f034db2d5fee35b97fb35311ecf711e7",
+    "capture_complete_sha256": "fe3e3d5daca58170c7a88b695036195370e5f4c58a6bdb341d647ee1dfd76618",
+    "capture_stop_reason": "ALL_REGISTERED_GAMES_REACHED_START",
+    "capture_modification_permitted": false,
+    "future_backfill_permitted": false
+  },
+
+  "first_authoritative_invocation": {
+    "attempt_number": 1,
+    "command": ".venv/bin/python research/h6_m2_validate.py --run-live",
+    "process_outcome": "TERMINATED_BY_SIGKILL_BEFORE_RESULT_CREATION",
+    "terminal_observation": "Killed",
+    "engineering_result_created": false,
+    "scientific_result_created": false,
+    "engineering_verdict_produced": false,
+    "scientific_verdict_produced": false,
+    "completed_authoritative_validator_run": false
+  },
+
+  "resource_forensics_after_attempt_1": {
+    "system_memory_total_gib_approx": 3.7,
+    "system_swap_total_bytes": 0,
+    "capture_stream_bytes_total_approx": 828942479,
+    "cgroup_memory_max": "max",
+    "cgroup_memory_peak_bytes": 2369085440,
+    "cgroup_memory_events_oom_kill": 1,
+    "kernel_pid_specific_oom_log_available": false,
+    "interpretation": "The cgroup records one OOM kill and the validator was terminated with SIGKILL while holding memory-intensive parsed JSON structures. This strongly corroborates memory exhaustion, but no PID-specific kernel log was available, so attribution is recorded as strongly supported rather than uniquely proven."
+  },
+
+  "recovery_policy": {
+    "recovery_attempt_number": 2,
+    "maximum_additional_validator_invocations": 1,
+    "same_validator_bytes_required": true,
+    "same_capture_bytes_required": true,
+    "same_readout_contract_required": true,
+    "same_python_environment_required": true,
+    "same_validator_command_required": true,
+    "allowed_operational_change": [
+      "increase host virtual-memory support by enabling swap"
+    ],
+    "prohibited_changes": [
+      "validator source code",
+      "replay implementation",
+      "capture data",
+      "registry",
+      "transition definition",
+      "coverage definition",
+      "integrity gates",
+      "sufficiency gates",
+      "thresholds",
+      "horizons",
+      "verdict rules",
+      "market exclusions",
+      "scientific analyzer",
+      "scientific statistics"
+    ]
+  },
+
+  "retry_decision_rule": {
+    "if_engineering_result_is_created": "Accept the create-only validator result as the sole completed authoritative H6-M2 engineering readout and never run the validator again.",
+    "if_retry_terminates_without_engineering_result": "Close H6-M2 readout as INCONCLUSIVE_OPERATIONAL_VALIDATION_FAILURE. No third validator invocation is permitted and the scientific analyzer remains prohibited.",
+    "scientific_analyzer_permission": "The analyzer remains prohibited unless the completed engineering result status is exactly PASS_ENGINEERING_AND_DATA_SUFFICIENCY."
+  },
+
+  "analysis_boundary": {
+    "real_h6_m2_future_response_calculated": false,
+    "real_h6_m2_horizon_readout_performed": false,
+    "directional_response_calculated": false,
+    "directional_hit_rate_calculated": false,
+    "bootstrap_calculated": false,
+    "correlation_calculated": false,
+    "regression_calculated": false,
+    "lomo_calculated": false,
+    "markout_calculated": false,
+    "edge_calculated": false,
+    "pnl_calculated": false,
+    "winner_used": false,
+    "settlement_used": false,
+    "external_odds_used": false,
+    "h5_response_read": false,
+    "f19_trade_content_read": false,
+    "f20_read": false
+  }
+}
