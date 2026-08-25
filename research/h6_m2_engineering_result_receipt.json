@@ -1,0 +1,88 @@
+{
+  "analysis_boundary": {
+    "bootstrap_calculated": false,
+    "correlation_calculated": false,
+    "directional_hit_rate_calculated": false,
+    "directional_response_calculated": false,
+    "edge_calculated": false,
+    "future_midpoint_response_calculated": false,
+    "lomo_calculated": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "regression_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "capture_id": "h6m2_dev_20260822T223600Z",
+  "deterministic_replay": {
+    "digest_run_1": "97c7a9748f4b72d9235b7bcfdd031cb3b031ca7476d80f4708fa415559bab6c5",
+    "digest_run_2": "97c7a9748f4b72d9235b7bcfdd031cb3b031ca7476d80f4708fa415559bab6c5",
+    "status": "PASS"
+  },
+  "engineering_metrics": {
+    "aggregate_coverage_fraction": 0.999980502093,
+    "distinct_connections": 28,
+    "future_backfill": 0,
+    "generation_or_connection_mixing": 0,
+    "in_play_primary_transitions": 0,
+    "initial_full_p1_snapshot_count": 30,
+    "markets_with_at_least_25_transitions": 30,
+    "registered_markets": 30,
+    "state_errors": 0,
+    "transition_count_total": 9655,
+    "transition_distinct_markets": 30
+  },
+  "engineering_result": {
+    "path": "data/research/h6/m2/validation/h6m2_dev_20260822T223600Z_engineering.json",
+    "sha256": "45de3db48dbb154cd288f72e2d2de77282ba6d022e68131ed3f14ed46055325b"
+  },
+  "engineering_verdict": "PASS_ENGINEERING_AND_DATA_SUFFICIENCY",
+  "integrity_gates": {
+    "active_reconciliation_interval": true,
+    "capture_completed_normally": true,
+    "deterministic_replay": true,
+    "future_backfill": true,
+    "generation_or_connection_mixing": true,
+    "in_play_primary_transitions": true,
+    "initial_full_p1_snapshots": true,
+    "raw_and_normalized_lineage": true,
+    "reconstruction_integrity": true,
+    "registered_markets_exact": true
+  },
+  "milestone": "H6-M2-ENGINEERING",
+  "provenance": {
+    "attempt_1": "ABORTED_OOM_NO_RESULT",
+    "attempt_2": "COMPLETED_AUTHORITATIVE_RESULT",
+    "code_freeze_receipt_sha256": "eecba0142a2a35076fd6e27fa729d37a21568a0469ec5e6b66c63cf5e74bca62",
+    "git_head_at_completed_validator_run": "550fac1f2e41df87b0fdd1d1ea733b787b2d0fa2",
+    "git_head_at_receipt_creation": "550fac1f2e41df87b0fdd1d1ea733b787b2d0fa2",
+    "operational_recovery_amendment_sha256": "d598be18397ca01d9e2bf1edb75749f4ffee18feacbd9d3dcee6e8a9c596c65d",
+    "readout_contract_sha256": "afca061d959bac4c4cc30c670521351447fc1c8508f73f4285fd75e3614ebc71",
+    "recovery_attempt_2_marker_sha256": "aee22c1e4a8dfcfd59518692dc4e6aa37424d9130b3fd39c582c3d7b193ec557",
+    "validator_sha256": "faba97d57706bbbf399e3d8462e2232437d471e506d570ddeefbe3072b5ee6e8"
+  },
+  "resource_recovery": {
+    "additional_oom_kills_after_recovery": 0,
+    "observed_memory_peak_bytes": 3548225536,
+    "post_success_swap_used_approx_gib": 1.1,
+    "swap_size_bytes": 4294963200,
+    "temporary_swap_used": true
+  },
+  "scientific_readout": {
+    "authoritative_runs_remaining": 1,
+    "authorized": true,
+    "execution_economics_permitted": false,
+    "horizon_tuning_permitted": false,
+    "performed": false,
+    "pnl_permitted": false,
+    "threshold_tuning_permitted": false
+  },
+  "status": "AUTHORITATIVE_ENGINEERING_RESULT_FROZEN",
+  "study": "H6",
+  "sufficiency_gates": {
+    "aggregate_l1_coverage": true,
+    "market_breadth_25": true,
+    "total_primary_transitions": true,
+    "transition_market_breadth": true
+  }
+}
