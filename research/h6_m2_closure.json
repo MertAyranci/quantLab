@@ -1,0 +1,79 @@
+{
+  "as_produced_development_verdict": "NOT_PROMISING_DEVELOPMENT",
+  "capture_id": "h6m2_dev_20260822T223600Z",
+  "development_sample": {
+    "aggregate_l1_coverage_fraction": 0.999980502093,
+    "markets_with_at_least_25_transitions": 30,
+    "primary_transitions": 9655,
+    "registered_markets": 30,
+    "transition_markets": 30
+  },
+  "engineering_verdict": "PASS_ENGINEERING_AND_DATA_SUFFICIENCY",
+  "frozen_artifacts": {
+    "development_result_receipt": {
+      "path": "research/h6_m2_development_result_receipt.json",
+      "sha256": "cb76b5439307a9ec4581d6917e0e8bdf342642979a7746a5620684ce03b1296b"
+    },
+    "engineering_result_receipt": {
+      "path": "research/h6_m2_engineering_result_receipt.json",
+      "sha256": "6a70df9df8174cc15c154bf4632e5c595ce0bd57d8142b0f786070789fee5da5"
+    },
+    "scientific_result": {
+      "path": "data/research/h6/m2/readout/h6m2_dev_20260822T223600Z_development.json",
+      "sha256": "9d6b13a016f2775885a115019be9889a2f2b50cb35685d21deae882f31eb454c"
+    }
+  },
+  "git_head_at_closure_creation": "8f7a434bd2f6c0e7241bed4da7d9dcf89d77af59",
+  "governance": {
+    "execution_economics_authorized": false,
+    "future_h6_redesign_must_use_new_prospective_data": true,
+    "m3_authorized": false,
+    "pnl_authorized": false,
+    "post_hoc_horizon_selection_permitted": false,
+    "post_hoc_threshold_tuning_permitted": false,
+    "same_capture_reanalysis_permitted": false,
+    "scientific_analyzer_rerun_permitted": false
+  },
+  "milestone": "H6-M2-CLOSURE",
+  "post_readout_integrity_diagnostics": {
+    "ambiguous_price_move_source": 0,
+    "markets_with_any_observed_midpoint_change": 6,
+    "observed_bidask_changes": 14,
+    "observed_midpoint_changes": 14,
+    "price_moves_connection_change": 0,
+    "price_moves_generation_change": 14,
+    "price_moves_same_connection": 14,
+    "price_moves_same_generation": 0,
+    "price_moves_with_intervening_rest": 14,
+    "purpose": "Read-only diagnosis of the all-zero scientific response panel; no H6 response, transition eligibility, alternative horizon, or alternative verdict was recalculated.",
+    "registered_market_count": 30,
+    "rest_already_contained_new_midpoint": 14,
+    "rest_midpoint_unchanged_then_ws_moved": 0,
+    "rest_reason": "venue_tob_mismatch"
+  },
+  "scientific_interpretation": {
+    "analyzer_arithmetic_failure_found": false,
+    "clean_negative_claim_permitted": false,
+    "engineering_failure": false,
+    "identification_failure": true,
+    "reason": "Every observed midpoint repricing event occurred across a reconstruction-generation boundary and the new midpoint was already present in the intervening REST resynchronization snapshot. The frozen causal rule correctly excludes cross-generation future states. Therefore the capture did not provide continuity-preserving repricing events with which to identify whether eligible H6 size-pressure transitions predict actual repricing.",
+    "sample_sufficiency_failure": false
+  },
+  "scientific_readout": {
+    "all_horizons_event_weighted_mean_response": 0.0,
+    "all_horizons_market_equal_mean_response": 0.0,
+    "candidate_horizons_seconds": [
+      1,
+      3,
+      5,
+      10,
+      30,
+      60
+    ],
+    "proposed_m3_primary_horizon_seconds": null,
+    "qualifying_strong_horizons": [],
+    "supportive_adjacent_pairs": []
+  },
+  "status": "CLOSED_INCONCLUSIVE_SCIENTIFIC_IDENTIFICATION",
+  "study": "H6"
+}
