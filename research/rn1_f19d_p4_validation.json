@@ -1,0 +1,80 @@
+{
+  "activation_state": {
+    "activation_receipt_exists": false,
+    "authoritative_invocation_claimed": false,
+    "confirmatory_result_exists": false,
+    "scientific_invocations": 0
+  },
+  "analysis_boundary": {
+    "execution_economics_calculated": false,
+    "f20_read": false,
+    "parameter_optimization": false,
+    "pnl_calculated": false,
+    "prospective_markout_calculated": false,
+    "prospective_primary_metric_calculated": false,
+    "prospective_signal_calculated": false,
+    "prospective_trade_content_read": false,
+    "settlement_used": false,
+    "winner_read": false
+  },
+  "captured_at_utc": "2026-08-26T21:14:04.768937+00:00",
+  "code": {
+    "implementation_path": "research/rn1_f19d_p4_readout.py",
+    "implementation_sha256": "075ad34b41340eef3c1a35ff07088317dc35a1a3e280dcd3c0fc829a4fe00eaf",
+    "test_path": "research/test_rn1_f19d_p4_readout.py",
+    "test_sha256": "21c7495902c30b677045684a8941c00fad98ce342d171efe23ab5bf8ceda580d"
+  },
+  "governance": {
+    "activation_receipt_required": true,
+    "activation_requires_p3_ready": true,
+    "authoritative_scientific_invocations_max": 1,
+    "automatic_rerun_after_failure": false,
+    "invocation_claim_occurs_before_trade_json_parse": true,
+    "result_create_only": true
+  },
+  "live_manifest_only_readiness": {
+    "extra_acquisition_directories": 0,
+    "invalid_manifests": 0,
+    "markets_with_missing_referenced_raw_files": 0,
+    "orphan_condition_directories": 0,
+    "registry_rows": 100,
+    "remaining_markets": 4,
+    "status": "NOT_READY_FOR_CONFIRMATORY_READOUT",
+    "temporary_directories": 0,
+    "unique_conditions": 100,
+    "valid_finalized_markets": 96
+  },
+  "parent": {
+    "p4_contract_commit": "874593d1598620ee3336353897d8b7243cbea5d7",
+    "p4_contract_sha256": "88a8d08ddbe36e42a096e8dfb7868f29ecf5bd5830cee6ac4c4a94331c7fffef"
+  },
+  "static_audit": {
+    "forbidden_network_or_db_imports": [],
+    "imports": [
+      "__future__",
+      "argparse",
+      "dataclasses",
+      "datetime",
+      "decimal",
+      "hashlib",
+      "json",
+      "pathlib",
+      "rn1_f19d_p2_core",
+      "rn1_f19d_p3_adapter",
+      "rn1_f19d_p3_readiness",
+      "subprocess",
+      "typing"
+    ],
+    "network_or_db_client_present": false
+  },
+  "status": "PASS_SYNTHETIC_READOUT_ENGINEERING",
+  "study": "RN1-F19d-P4",
+  "synthetic_validation": {
+    "full_regression_stdout": "........................................................................ [ 79%]\n...................                                                      [100%]\n91 passed in 0.49s",
+    "full_regression_tests_passed": 91,
+    "p4_pytest_stdout": "............                                                             [100%]\n12 passed in 0.41s",
+    "p4_tests_passed": 12,
+    "static_config_validation": "PASS",
+    "syntax_check": "PASS"
+  }
+}
