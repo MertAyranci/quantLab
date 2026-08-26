@@ -1,0 +1,119 @@
+{
+  "activation_gate": {
+    "f20_may_be_read": false,
+    "invalid_manifests_exactly": 0,
+    "raw_trade_content_may_be_opened_before_ready": false,
+    "remaining_markets_exactly": 0,
+    "required_p3_status": "READY_FOR_ONE_TIME_CONFIRMATORY_READOUT",
+    "settlement_may_be_used": false,
+    "valid_finalized_markets_exactly": 100,
+    "winner_may_be_read": false
+  },
+  "activation_receipt": {
+    "create_only": true,
+    "markout_calculated_during_receipt": false,
+    "must_bind": [
+      "frozen registry SHA",
+      "100 acquisition manifest SHAs",
+      "all referenced pass-file SHAs",
+      "P1/P2/P3 artifact SHAs",
+      "P4 contract SHA",
+      "READY P3 snapshot",
+      "git HEAD"
+    ],
+    "pnl_calculated_during_receipt": false,
+    "required_before_scientific_run": true,
+    "signal_calculated_during_receipt": false
+  },
+  "analysis_boundary": {
+    "execution_economics_calculated": false,
+    "f20_read": false,
+    "parameter_optimization": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "authoritative_input_selection": {
+    "conditions": "all 100 frozen registry conditions exactly once",
+    "pass_2_role": "acquisition-time stability witness only",
+    "scientific_input_pass": "pass_1.json",
+    "selected_pass_must_match_manifest": [
+      "row_count",
+      "canonical_core_sha256"
+    ],
+    "streams_per_condition": [
+      "market_taker",
+      "rn1_all"
+    ]
+  },
+  "authoritative_run": {
+    "automatic_rerun_after_error_or_kill": false,
+    "maximum_scientific_invocations": 1,
+    "rerun_after_success": false,
+    "result_create_only": true,
+    "result_path": "data/prospective/rn1_f19/readout/rn1_f19d_p4_confirmatory.json"
+  },
+  "created_from_git_head": "46054da2645491fd4127ede29440310915b5e40e",
+  "decision_statuses": {
+    "both_primary_and_declustered_negative": "CONFIRMED",
+    "confirmed_and_bootstrap_upper_below_zero": "STRONGLY_CONFIRMED",
+    "insufficient_sample": "INCONCLUSIVE_INSUFFICIENT_SAMPLE",
+    "sample_pass_but_success_rule_fails": "NOT_CONFIRMED"
+  },
+  "frozen_acquisition": {
+    "additions_permitted": false,
+    "deletions_permitted": false,
+    "early_stopping_permitted": false,
+    "f19b_collector_sha256": "5d9970659dc0d8d0d7f5ae9b1122c1d70a4060e4871b889eb135467ad0c10760",
+    "f19b_contract_sha256": "2e43aff44ec9bae5813fa2b1fd154c7b7b04872b02170542bd2e99bc55b2625f",
+    "f19c_contract_sha256": "69a5274d7f1e42344c374fef0b24083a61083beaacd5d613b1afd738a3c4f569",
+    "f19c_operator_sha256": "87785beeb300656ba9fb9a21bd6647d89c8513651577f9450299fe3c015c54b6",
+    "registry_path": "data/prospective/rn1_f19/registry.jsonl",
+    "registry_rows_exactly": 100,
+    "registry_sha256": "e284e82699a60cae080ef100f095e1cb358a7dd85c2bc7c1fcbf06a25c68405b",
+    "replacements_permitted": false
+  },
+  "frozen_scientific_semantics": {
+    "adverse_threshold": -0.75,
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 19018,
+    "bootstrap_unit": "market",
+    "decision_lead_seconds": 5,
+    "decluster_seconds": 60,
+    "flow_window_seconds": 30,
+    "future_print_max_delay_seconds": 10,
+    "minimum_markets_with_usable_matched_pairs": 20,
+    "minimum_matched_flagged_events": 50,
+    "primary_horizon_seconds": 15
+  },
+  "parents": {
+    "p1_contract_sha256": "d4bebf4b8e231e2db1b190b47559d220b2ce34e3c25d7b23acd5179100f32004",
+    "p2_core_contract_sha256": "3b3ba485834bf8b2a6d91ebfc7828b312de5e34b876f1c0eda5da3ce14b38541",
+    "p2_core_sha256": "8f56015806bdeb5814901486e9348ff93119652e09ca8d438d826886eb53ca97",
+    "p2_validation_sha256": "6492d7851680b5237c56a05781811f8b3149d7a23ba23d4f6227aee859b7ec42",
+    "p3_adapter_sha256": "57c19a0fce3d05055182073f8e8bafe6a8bd04bb7f4c5ea06b17c0f1dddf042b",
+    "p3_contract_sha256": "1554b35ef3cee95b4ee8866132f38e5bae731eb913fb5dffb5b5d3ba6bc0ebac",
+    "p3_readiness_sha256": "8943239f39e9ebc5d1c2a0c9e51fd7d7298535cc8f93a2ccfeab5c042fa66d7f",
+    "p3_validation_sha256": "51fe091aee3886770297ecd13b574889ce02fcd21b9ff5f00b141de3dd6aa752"
+  },
+  "post_readout_governance": {
+    "CONFIRMED": "Freeze result first, then separately design execution economics.",
+    "INCONCLUSIVE_INSUFFICIENT_SAMPLE": "Close this 100-market study as inconclusive. Any future confirmation requires a new preregistered unseen cohort.",
+    "NOT_CONFIRMED": "Close F18/F19. No same-cohort rescue or retuning.",
+    "STRONGLY_CONFIRMED": "Freeze result first, then separately design execution economics.",
+    "result_receipt_required_before_next_stage": true
+  },
+  "purpose": "Freeze the activation, real-data input, orchestration, result-writing, and post-readout governance for the single RN1-F19 confirmatory analysis. P4 adds no new signal, matching, markout, aggregation, bootstrap, threshold, horizon, or statistical semantics.",
+  "rn1_identity_binding": {
+    "path": "config/research_wallets.json",
+    "sha256": "14213b73f859cf073decd50a462b4eb176131b1e23ac40673d97ebbba3e8467d",
+    "wallet_value_embedded_in_contract": false
+  },
+  "status": "ONE_TIME_CONFIRMATORY_READOUT_ORCHESTRATION_FREEZE",
+  "study": "RN1-F19d-P4",
+  "success_rule": {
+    "confirmation": "primary market-equal difference < 0 AND 60-second de-clustered market-equal difference < 0",
+    "sample_gate": "at least 50 matched flagged events and at least 20 markets with usable matched pairs",
+    "strong_confirmation_additional_requirement": "market-bootstrap 95% CI upper bound < 0"
+  }
+}
