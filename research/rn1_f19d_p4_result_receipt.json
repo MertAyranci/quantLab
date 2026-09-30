@@ -1,0 +1,60 @@
+{
+  "activation_receipt": {
+    "path": "research/rn1_f19d_p4_activation_receipt.json",
+    "sha256": "43cd514e160a774423a50b1b9f8fa71742fcb4961cf0243e5e28c7cc00396db8"
+  },
+  "analysis_boundary": {
+    "authoritative_readout_rerun_permitted": false,
+    "execution_economics_calculated": false,
+    "f20_read": false,
+    "parameter_optimization": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "winner_used": false
+  },
+  "authoritative_invocation": {
+    "path": "research/rn1_f19d_p4_authoritative_invocation.json",
+    "sha256": "bd51a0cd1d3cb106a7f6fa8729d561329f9f2a044c25319a63dc432f3cbd0c98"
+  },
+  "authoritative_result": {
+    "decision_status": "INCONCLUSIVE_INSUFFICIENT_SAMPLE",
+    "path": "data/prospective/rn1_f19/readout/rn1_f19d_p4_confirmatory.json",
+    "sha256": "e3d1d6afefa1a40f6814f63448fc5f265884807e68c28ebdd2dd0a3488310fd9"
+  },
+  "captured_at_utc": "2026-09-30T00:51:32.271471+00:00",
+  "formal_interpretation": {
+    "execution_economics_stage_authorized": false,
+    "f18_signal_prospectively_confirmed": false,
+    "f19_confirmatory_status": "INCONCLUSIVE_INSUFFICIENT_SAMPLE",
+    "formal_not_confirmed_status_reached": false,
+    "post_hoc_cohort_extension_permitted": false,
+    "reason": "The frozen event-count requirement passed, but the frozen usable-market breadth requirement failed.",
+    "same_cohort_rescue_permitted": false,
+    "same_cohort_retuning_permitted": false
+  },
+  "frozen_observed_result": {
+    "bootstrap_95_ci": {
+      "lower": "-0.02580000002",
+      "upper": "0.06600000222"
+    },
+    "declustered_market_equal": "0.02006666726",
+    "declustered_usable_events": 5,
+    "event_equal_secondary": "0.02006666726",
+    "matched_flagged_events": 250,
+    "primary_market_equal": "0.02006666726",
+    "usable_markets": 5,
+    "usable_matched_flagged_events": 5
+  },
+  "frozen_sample_gate": {
+    "matched_event_gate_passed": true,
+    "minimum_matched_flagged_events": 50,
+    "minimum_usable_markets": 20,
+    "observed_matched_flagged_events": 250,
+    "observed_usable_markets": 5,
+    "overall_sample_gate_passed": false,
+    "usable_market_gate_passed": false
+  },
+  "milestone": "RN1-F19d-P4-RESULT-RECEIPT",
+  "status": "FROZEN_CONFIRMATORY_RESULT_RECEIPT",
+  "study": "RN1-F19"
+}

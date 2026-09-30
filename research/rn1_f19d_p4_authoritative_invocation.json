@@ -1,0 +1,19 @@
+{
+  "activation_receipt_sha256": "43cd514e160a774423a50b1b9f8fa71742fcb4961cf0243e5e28c7cc00396db8",
+  "analysis_boundary_at_claim": {
+    "execution_economics_calculated": false,
+    "f20_read": false,
+    "markout_calculated": false,
+    "pnl_calculated": false,
+    "settlement_used": false,
+    "signal_calculated": false,
+    "trade_json_parsed": false,
+    "winner_used": false
+  },
+  "claimed_at_utc": "2026-09-30T00:48:11.139262+00:00",
+  "failure_governance": "If this invocation terminates without the create-only confirmatory result, do not invoke the scientific readout again. Freeze the operational outcome before any recovery decision.",
+  "git_head": "54373053d7200a67ed755563fe952b1e94be0af5",
+  "p4_contract_sha256": "88a8d08ddbe36e42a096e8dfb7868f29ecf5bd5830cee6ac4c4a94331c7fffef",
+  "status": "AUTHORITATIVE_INVOCATION_CLAIMED",
+  "study": "RN1-F19d-P4"
+}
