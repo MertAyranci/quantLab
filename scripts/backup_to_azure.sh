@@ -224,10 +224,9 @@ prune_old_raw
 
 check_free_space
 
-[ -d "$SRC" ] || {
-    echo "ERROR: no raw data directory for $DAY"
-    exit 1
-}
+# Raw snapshots stopped when the Day-1 collector was retired.
+# A missing raw day must not block the PostgreSQL backup.
+if [ -d "$SRC" ]; then
 
 
 echo
@@ -258,6 +257,10 @@ verify_remote_raw "$RAW_BLOB"
 echo "remote raw verification PASS"
 
 rm -f "$RAW_TMP"
+
+else
+    echo "no raw data directory for $DAY; skipping raw step"
+fi
 
 
 # Check again before creating the much larger PostgreSQL dump.
