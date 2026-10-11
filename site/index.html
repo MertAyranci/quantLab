@@ -92,7 +92,7 @@ h2{font-size:clamp(30px,4vw,46px);font-weight:700}
 .row span:last-child{font-family:var(--mono);color:var(--fg);text-align:right}
 .term-note{font-size:13px;color:var(--dim);line-height:1.6}
 .term-note b{color:var(--fg)}
-.c-go{color:var(--go)} .c-stop{color:var(--stop)} .c-hold{color:var(--hold)} .c-probe{color:var(--probe)}
+.c-go{color:var(--go)} .c-infra{color:var(--go)} .c-muted{color:var(--dim)} .c-stop{color:var(--stop)} .c-hold{color:var(--hold)} .c-probe{color:var(--probe)}
 
 /* gauge inside card */
 .gauge{display:grid;gap:8px}
@@ -191,6 +191,62 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;overflow:hidden}
 .foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;margin-top:36px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .foot p{margin:0;max-width:60ch;text-transform:none;letter-spacing:0;font-size:12px}
 
+
+/* ledger extras */
+.pill.open{color:var(--dim);background:color-mix(in srgb,var(--dim) 7%,transparent);border-style:dashed}
+.pill.infra{color:var(--go);background:color-mix(in srgb,var(--go) 7%,transparent)}
+.study-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.dive-btn{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--bg);background:var(--go);text-decoration:none;padding:9px 14px;border-radius:4px;white-space:nowrap}
+.dive-btn:hover{filter:brightness(1.08)}
+.parked{margin-top:28px;display:grid;gap:12px}
+.parked-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.parked-grid div{border:1px dashed var(--line-2);border-radius:8px;padding:16px;display:grid;gap:6px;align-content:start}
+.parked-grid b{font-size:14px;font-weight:600}
+.parked-grid span{font-size:13px;color:var(--muted);line-height:1.55}
+@media (max-width:880px){.parked-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.parked-grid{grid-template-columns:1fr}}
+
+/* deep dive */
+.dive{padding-block:clamp(28px,5vw,56px) clamp(64px,8vw,96px)}
+.crumbs{display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:36px}
+.crumbs a{color:var(--go);text-decoration:none;letter-spacing:.06em}
+.crumbs a:hover{text-decoration:underline}
+.dive-head{display:grid;gap:18px;max-width:860px;margin-bottom:44px}
+.dive-meta{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.dive-meta .did{color:var(--fg);font-size:15px}
+.dive h1{font-size:clamp(34px,5vw,58px)}
+.question{font-size:clamp(18px,1.8vw,21px);color:var(--dim);max-width:62ch;line-height:1.6;border-left:2px solid var(--go);padding-left:18px;margin:0}
+.dive-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(28px,4vw,56px);align-items:start}
+.dive-grid > *{min-width:0}
+@media (max-width:900px){.dive-grid{grid-template-columns:1fr}}
+.block{display:grid;gap:12px;padding-block:22px;border-top:1px solid var(--line)}
+.block:first-child{border-top:0;padding-top:0}
+.block h2{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--go)}
+.block p{margin:0;color:var(--dim);max-width:66ch}
+.block ol{margin:0;padding:0;list-style:none;display:grid;gap:10px;counter-reset:m}
+.block ol li{counter-increment:m;display:grid;grid-template-columns:28px 1fr;gap:8px;color:var(--dim)}
+.block ol li::before{content:counter(m,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:3px}
+.side{display:grid;gap:18px}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.block .tl li{display:grid;grid-template-columns:64px 14px 1fr;gap:10px;font-size:14px;color:var(--dim)}
+.tl time{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:2px;text-align:right}
+.tl i{position:relative;display:block}
+.tl i::before{content:"";position:absolute;left:4px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--go)}
+.tl i::after{content:"";position:absolute;left:7px;top:16px;bottom:-4px;width:1px;background:var(--line-2)}
+.tl li:last-child i::after{display:none}
+.block .tl li::before{content:none}
+.tl span{padding-bottom:14px}
+.files{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-family:var(--mono);font-size:12px;color:var(--dim);word-break:break-all}
+.files li::before{content:"› ";color:var(--muted)}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:48px}
+.pager a{border:1px solid var(--line);border-radius:8px;padding:16px 18px;text-decoration:none;display:grid;gap:4px;background:var(--surface)}
+.pager a:hover{border-color:var(--line-2);background:var(--raise)}
+.pager small{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.pager b{font-weight:600;font-size:15px}
+.pager .nx{text-align:right}
+.pager .empty{visibility:hidden}
+@media (max-width:520px){.pager{grid-template-columns:1fr}.pager .nx{text-align:left}}
+
 @media (prefers-reduced-motion:no-preference){
   .rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
   .rise.d2{animation-delay:.12s}
@@ -204,7 +260,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;overflow:hidden}
 
 
 <div class="strip" role="status">
-  <div class="strip-main"><span class="pip" aria-hidden="true"></span> Snapshot · Studies closed = <b class="num">9 / 9</b></div>
+  <div class="strip-main"><span class="pip" aria-hidden="true"></span> Snapshot · Hypotheses logged = <b class="num" id="n-logged">13</b></div>
   <div class="strip-sub num"><span>As of 9 Oct 2026</span><span>·</span><span>Edges confirmed: 0</span><span>·</span><span>DB backup <span class="ok">verified 9 Oct</span></span></div>
 </div>
 
@@ -219,6 +275,8 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;overflow:hidden}
     </div>
   </div>
 </nav>
+
+<div id="dive" class="dive" hidden></div>
 
 <main id="top">
   <div class="wrap hero">
@@ -257,18 +315,17 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;overflow:hidden}
     <div class="wrap">
       <div class="sec-head">
         <div class="eyebrow">The ledger</div>
-        <h2>Every hypothesis, and what ended it.</h2>
-        <p class="lede">Each study had a kill rule before it had data. Open one to see what was tested and the number that closed it.</p>
+        <h2>Every hypothesis since H1, and what ended it.</h2>
+        <p class="lede">Oldest first. Open a row for the short version, or the deep dive for the question, the method, the numbers and the timeline.</p>
       </div>
 
-      <div class="filters" role="group" aria-label="Filter by verdict">
-        <button class="chip" id="f-all" data-f="all" aria-pressed="true">All<span class="n">9</span></button>
-        <button class="chip" id="f-stop" data-f="stop" aria-pressed="false">Rejected<span class="n">5</span></button>
-        <button class="chip" id="f-hold" data-f="hold" aria-pressed="false">Inconclusive<span class="n">3</span></button>
-        <button class="chip" id="f-probe" data-f="probe" aria-pressed="false">Discovery only<span class="n">1</span></button>
-      </div>
+      <div class="filters" role="group" aria-label="Filter by verdict" id="filters"></div>
 
       <div class="ledger" id="ledger-list"></div>
+      <div class="parked">
+        <div class="comment">// parked ideas, noted but never scheduled</div>
+        <div class="parked-grid" id="parked"></div>
+      </div>
     </div>
   </section>
 
@@ -358,49 +415,222 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;overflow:hidden}
 </footer>
 
 <script>
-const studies=[
- {id:"RN1-F19",v:"hold",verdict:"Inconclusive",title:"Prospective test of the F18 adverse-flow signal",sub:"100 blind markets · read once on 30 Sep",
-  body:"F19 took F18's frozen rule to 100 unseen markets. Events were plentiful, but the markout needed a same-side taker print 15–25 seconds later, and only 5 events in 5 markets had one. The breadth gate required 20 markets.",
-  facts:[["events","250"],["usable","5"],["markets","5 / 20"],["diff","+0.0201"]],lesson:"a strict trade-print markout quietly filters for busy markets"},
- {id:"RN1-F18",v:"probe",verdict:"Discovery only",title:"Aggressive flow against a maker quote predicts adverse markout",sub:"30s flow window · −0.75 imbalance threshold",
-  body:"Strong one-sided taker flow against a proposed passive quote looked like it predicted a worse +15s markout, which would justify pulling quotes early. The discovery sample was small and F19 did not confirm it.",
-  facts:[["window","30s"],["threshold","−0.75"],["lead","5s"],["horizon","+15s"]],lesson:"interesting is not confirmed"},
- {id:"RN1-F21",v:"stop",verdict:"Rejected",title:"Shadow market-making with flow protection",sub:"Queue-aware replay of passive fills",
-  body:"An optimistic replay showed passive fills. Once queue position was modelled conservatively, with every order resting behind existing size, the positive-fill path produced zero fills.",
-  facts:[["conservative fills","0"],["PnL stage","not authorized"]],lesson:"fills are the hardest part of a maker backtest"},
- {id:"H6-M2",v:"hold",verdict:"Inconclusive",title:"Book repricing after identifiable events",sub:"30 markets · six horizons from 1s to 60s",
-  body:"Engineering was strong: 9,655 transitions with near-complete L1 coverage. The measured response was exactly zero at all six horizons, because midpoints barely moved, so the causal mechanism couldn't be identified.",
-  facts:[["transitions","9,655"],["markets","30"],["coverage","99.998%"],["response","0 at all horizons"]],lesson:"a clean pipeline can still measure nothing"},
- {id:"H5-M1",v:"hold",verdict:"Inconclusive",title:"Polymarket response to external state changes",sub:"Closed 24 Aug after three attempts",
-  body:"Polymarket checkpoints were fully valid, but the external-state feed never reached its coverage thresholds. Under the rules, no response, signal or PnL analysis was run.",
-  facts:[["PM checkpoints","valid"],["external coverage","below gate"]],lesson:"half a dataset is no dataset"},
- {id:"H4",v:"stop",verdict:"Conditional negative",title:"Last-mile underpricing of near-certain contracts",sub:"Execution replay + live paper soak · Aug",
-  body:"None of the 9 Grade-A sports markets reached 95¢ before resolving, so there was nothing to buy. The paper soak bought long-dated 95¢ markets instead: 19 positions and $332 tied up, drifting negative, with nothing resolved.",
-  facts:[["Grade-A markets","9"],["entries ≥95¢","0"],["paper capital","$332 locked"],["realized","$0"]],lesson:"capital lockup is a cost, even at 95¢"},
- {id:"H3",v:"stop",verdict:"Killed",title:"Favourite–longshot bias",sub:"1.46M resolved markets · 24 Jul",
-  body:"The naive curve showed about 5.9% edge on mid-priced longshots. Two artifacts explained it: activity filters that leaked the outcome into the sample, and multi-outcome events that make most contracts lose mechanically.",
-  facts:[["markets","1,462,357"],["price points","25.4M"],["naive edge","5.9%"],["after controls","≈0"]],lesson:"filtering on activity leaks the future"},
- {id:"H2-v2",v:"stop",verdict:"Not promising",title:"Sharp-book fair value vs Polymarket, executable",sub:"Development set · 9 games · 14 Aug",
-  body:"H2-v1 hinted that Polymarket converges toward sharp sportsbook prices. When the gap had to clear the actual Polymarket book at a 1% threshold, 0 of 9 markets qualified, against a gate of 3.",
-  facts:[["markets","9"],["cleared 1%","0 / 3 needed"],["tape rows","1,080"]],lesson:"a gap you can't execute isn't an edge"},
- {id:"H2-v1",v:"stop",verdict:"Rejected",title:"Taker lag behind sharp odds and RN1 flow",sub:"Statistical + tradeability tests · 12 Aug",
-  body:"Neither the sharp-odds signal nor the RN1 flow signal was statistically supported, and the economic proxy was not positive. One secondary result survived: the sharp–Polymarket gap tended to close, which motivated H2-v2.",
-  facts:[["sharp signal","not supported"],["RN1 signal","not supported"],["economic proxy","negative"]],lesson:"keep the side result; drop the strategy"}
+/* ===== EDIT HERE: one object per hypothesis, oldest first. ===== */
+const STUDIES=[
+ {slug:"h1",id:"H1",v:"open",verdict:"Not tested",dates:"Planned Jul 2026",
+  title:"Cross-venue pricing: Polymarket vs Kalshi",sub:"Same event, two venues · parked",
+  q:"When the same event trades on Polymarket and Kalshi, do the two prices drift apart by more than it costs to trade both sides?",
+  summary:"H1 was on the original roadmap as the cross-venue hypothesis. The Kalshi collector was never built. After the H3 result it lost priority, and moving to London raised a venue-access question that is still open.",
+  facts:[["Kalshi collector","not built"],["data collected","none"]],
+  lesson:"an untested idea, not a rejected one",
+  why:"The H3 and H4 write-ups name cross-venue relationships as one of the few places a retail edge could still exist, because two crowds pricing the same event do not have to agree.",
+  method:["Build a Kalshi collector alongside the Polymarket one.","Match identical events across venues.","Measure the executable gap after both venues' fees, and how long it lasts."],
+  results:[["Status","Never started"],["Blocker","Second venue collector, venue access from the UK"]],
+  ended:"Nothing ended it. It was deprioritised on 24 July when the weekly review moved Betfair up the list, and never restarted.",
+  timeline:[["Jul","Listed on the original roadmap as H1"],["24 Jul","Weekly review: Kalshi collector not started; Betfair moves up"]],
+  files:["journal.md (weekly review, 24 Jul)","writeup2.md"],
+  next:"Still a live candidate. H2-v2's frozen protocol lists cross-market and logical-consistency arbitrage as future, separate hypotheses."},
+
+ {slug:"h3",id:"H3",v:"stop",verdict:"Killed",dates:"24 Jul 2026",
+  title:"Favourite–longshot bias",sub:"1.46M resolved markets · first verdict",
+  q:"Are cheap contracts overpriced and expensive ones underpriced, as in horse racing and sports betting?",
+  summary:"The naive curve showed about 5.9% edge on mid-priced longshots. Four artifacts explained it away. On a clean population the largest buckets sit within 0.2pp of fair.",
+  facts:[["markets","1,462,357"],["price points","25.4M"],["naive edge","~5.9%"],["after controls","within ±3.6pp"]],
+  lesson:"filtering on activity leaks the future",
+  why:"Decades of betting-market research document the bias. If prediction markets inherit it, selling longshots should earn a premium.",
+  method:["Backfill Polymarket's full closed-market archive with daily price history.","Take each market's YES price at least 24h before resolution and bucket into 20 bins.","Compare implied probability with realised win rate, then add controls one at a time."],
+  results:[["Naive run (n=595k)","27.2¢ contracts won 22.9%"],["Activity filter","added ~8pp of fake edge"],["11+ sibling events","−23.4pp gap at ~50¢"],["Clean 50¢ bucket (n=56,167)","50.2% implied, 50.1% realised"],["'Up' crypto markets (n=45,583)","50.0% implied, 50.1% realised"]],
+  ended:"Four artifacts: activity filters that selected markets which moved toward their outcome, multi-outcome events where most contracts lose by construction, stale prices on long-lived markets, and pooling market types with different dynamics.",
+  timeline:[["19 Jul","Resolved-universe backfill"],["24 Jul","Backfill stopped at 1.46M markets; verdict memo committed"]],
+  files:["research/h3_favorite_longshot.md","writeup2.md"],
+  next:"The verdict reframed the project: the crowd isn't wrong about probabilities, so any edge has to come from speed, cross-venue gaps or microstructure."},
+
+ {slug:"h4",id:"H4",v:"stop",verdict:"Conditional negative",dates:"30 Jul – 5 Aug 2026",
+  title:"Last-mile underpricing of near-certain contracts",sub:"Calibration, execution replay, live paper soak",
+  q:"In the final hours before resolution, do contracts priced at 95¢ or more win more often than their price implies, by enough to beat the spread?",
+  summary:"None of the 9 Grade-A markets reached 95¢ before resolving, so there was nothing to buy. The live paper soak bought long-dated 95¢ markets instead and locked up capital that never resolved.",
+  facts:[["Grade-A markets","9"],["entries ≥95¢","0"],["paper capital","~$332 locked"],["realised","$0"]],
+  lesson:"capital lockup is a cost, even at 95¢",
+  why:"On day 1 a market whose outcome was already decided was still open and trading. If decided contracts stay below $1 until resolution, buying them late should pay.",
+  method:["H4-Cal: calibration at a 24h horizon on the historical archive.","Build a harvester that steers the WebSocket collector to watch markets through resolution.","H4-Exec: replay a ≥95¢ buy through the real recorded book at 1h, 30m and 15m.","Run the rule live on paper through the full risk, fill and ledger engine."],
+  results:[["H4-Cal, 572 markets at 24h","mean reference PnL +0.0025, inside its CI"],["H4-Exec, 9 markets","no entries at any horizon"],["Paper soak, ~1,490 passes","19 positions, ~$332 deployed"],["Soak P&L","about −$25 unrealised, $0 realised"]],
+  ended:"Fast-resolving markets jump from uncertain straight to resolved, so the window never opens. Parked near-certainties have the window but no liquidity, and the spread paid on entry was the same size as the theoretical 1–2¢ edge.",
+  timeline:[["30 Jul","H4-Cal backtester and Grade-A harvester"],["3 Aug","Paper-trading engine: risk, fills, positions, 48 tests"],["4 Aug","H4-Exec and verdict memo"],["5 Aug","Paper soak stopped; capital-lockup finding"]],
+  files:["H4_resolution_drift.md","backtest/h4_cal.py","backtest/h4_exec.py","execution/paper_soak.py"],
+  next:"Not a universal rejection: the sample was 9 markets and the harvester still runs every 15 minutes. The paper-trading engine built here is reusable for any future strategy."},
+
+ {slug:"h4-crypto",id:"H4-C",v:"open",verdict:"Unfinished",dates:"5 Aug 2026",
+  title:"Near-certainty in 5-minute crypto Up/Down markets",sub:"Capture built, verdict never run",
+  q:"Unlike sports, 5-minute crypto markets do reach near-certainty before they resolve. Can the H4 idea work there?",
+  summary:"The capture layer was built and passed its acceptance test the same day, across 8 assets. The H4-Exec readout was planned for the next session but no verdict was recorded in the repo.",
+  facts:[["assets","8"],["market length","5 min"],["BTC final-minute snaps","482"],["early XRP spread at T−60","22¢"]],
+  lesson:"slug timestamp is the start, not the end",
+  why:"H4 failed on sports because the window never opened. Crypto Up/Down markets resolve against a spot price every 5 minutes and often sit at 95¢ in the last minute.",
+  method:["Compute live market slugs from the clock instead of discovering them.","Keep every cohort until end time plus 15s; watch both outcome tokens.","Write a final REST checkpoint at resolution for every market.","Replay favourite (H4) and underdog (H4b) buys through the recorded book."],
+  results:[["Acceptance test","passed"],["Preliminary spread","very wide near resolution"],["Readout","not in the repo"]],
+  ended:"Nothing formally. Work moved to H2 on 7 August with this capture accumulating in the background.",
+  timeline:[["5 Aug","Crypto harvester, union retention, final checkpoint, crypto H4-Exec code"]],
+  files:["db/crypto_harvester.py","backtest/crypto_h4_exec.py","backtest/crypto_book_reader.py"],
+  next:"The strongest lead for a trading bot. Months of data may already be on the server, so the first step is a density check, not a new collector."},
+
+ {slug:"h2-v1",id:"H2-v1",v:"stop",verdict:"Rejected",dates:"7 – 12 Aug 2026",
+  title:"Polymarket lags sharp odds and a top sports wallet",sub:"42 MLB markets · stats + tradeability",
+  q:"Does Polymarket move after sharp-bookmaker odds move, or after the wallet RN1 trades, early enough to follow?",
+  summary:"Neither channel was statistically supported after the Holm correction. In the economic test all 20 sharp-signal trades lost after fees. One side result survived: the sharp-to-Polymarket gap tended to close.",
+  facts:[["markets","42 MLB"],["RN1 p (Holm)","0.187"],["sharp p (Holm)","0.315"],["trades net","20 of 20 negative"]],
+  lesson:"keep the side result; drop the strategy",
+  why:"If Polymarket reacts slowly to information, the information has to come from somewhere first. Sharp sportsbooks and large, consistently profitable wallets were the two obvious sources.",
+  method:["Collect pregame sportsbook and exchange odds; match games to Polymarket.","Pull RN1's maker and taker fills for every matched market.","Freeze the cohort, features and test before estimating any effect.","Test whether Polymarket later moves in the signal's direction, then price the trades with fees."],
+  results:[["RN1, 30s (106 events, 23 markets)","+0.0025, Holm p 0.187"],["Sharp, 60s (57 events, 29 markets)","+0.00098, Holm p 0.315"],["Sharp economic test","20 trades, net −3.4¢/share"],["Fees alone","2.4¢/share"]],
+  ended:"Both primary tests failed the frozen p < 0.05 rule, and the economic proxy was negative on every trade.",
+  timeline:[["4 Aug","Odds collector and event matcher"],["7 Aug","RN1 wallet collector"],["11 Aug","Cohort and features frozen"],["12 Aug","Statistical test, tradeability test, conclusion"]],
+  files:["research/h2_v1_m8_decision.json","research/h2_v1_m6_results.csv","research/h2_v1_m7_summary.csv","config/research_wallets.json"],
+  next:"The converging gap became H2-v2. RN1's fills became the discovery set for the RN1 F-series."},
+
+ {slug:"h2-v2",id:"H2-v2",v:"stop",verdict:"Not promising",dates:"12 – 14 Aug 2026",
+  title:"Buy when Polymarket is cheaper than sharp fair value",sub:"Development set · 9 games",
+  q:"When Polymarket's executable ask sits below a fresh sharp-exchange fair price after fees, does buying and holding to resolution make money?",
+  summary:"Ten engineering milestones rebuilt the real-time data and book replay until it was trustworthy. Then on 9 development games not one market showed a positive after-fee edge at the 1% threshold.",
+  facts:[["games","9"],["tape rows","1,080"],["markets ≥1% edge","0 of 3 needed"],["engineering milestones","10"]],
+  lesson:"a gap you can't execute isn't an edge",
+  why:"H2-v1 found that the sharp–Polymarket gap tends to close. If it closes from Polymarket's side, buying the cheap side should pay.",
+  method:["Fair value: median of fresh Betfair, Matchbook and Smarkets mid-prices, at most 10s old.","Replay the Polymarket book exactly and fill at the ask seen 500ms after the decision.","Gate before any out-of-sample test: at least 3 markets with a positive after-fee edge."],
+  results:[["Replay layer (M2h)","validated"],["Positive decision-time edges","0"],["Positive after 500ms","0"]],
+  ended:"The structural gate failed. Latency was not the cause: no positive edge existed even at decision time.",
+  timeline:[["12 Aug","Protocol frozen"],["13 Aug","M1 to M2h: feed fixes, replay failures, diagnosis, validated replay"],["14 Aug","M3a development feasibility: not promising"]],
+  files:["research/h2_v2_m3a_conclusion.json","research/h2_v2_m2h_conclusion.json"],
+  next:"Its maker branch (passive quoting instead of taking) became F20 and F21."},
+
+ {slug:"rn1-discovery",id:"RN1 F1–17",v:"probe",verdict:"Discovery",dates:"Aug 2026",
+  title:"Mining RN1's maker fills for adverse selection",sub:"Retrospective · 42 MLB markets",
+  q:"When strong taker flow runs against a resting maker quote, is that quote about to be picked off?",
+  summary:"Seventeen retrospective passes over RN1's fills ended with one shape that held up at +15 seconds: flagged fills marked out worse than matched controls. The sample was small, so discovery stopped there.",
+  facts:[["flagged events","917"],["matched","169"],["usable at +15s","29 in 13 markets"],["markets negative","9 of 13"]],
+  lesson:"stop searching before the search finds noise",
+  why:"RN1 is a large public sports market maker. Its fills are a free record of what happens to passive quotes, including the ones that lose.",
+  method:["Compare flagged maker fills with unflagged fills matched on market, side, game phase, price, size and time.","Measure markout at +5, +15, +30 and +60 seconds.","Check robustness by leaving out one market at a time."],
+  results:[["Flagged − control, +15s","−0.24¢/share"],["Market-equal, +15s","−0.81¢/share"],["Leave-one-market-out","negative in 12 of 13"],["+5s, +30s, +60s","not stable"]],
+  ended:"Discovery ended by design at F17 so the candidate could be frozen and tested on unseen markets.",
+  timeline:[["7 Aug","Wallet fills collected"],["15 Aug","F17 matched comparison; discovery closed"]],
+  files:["research/rn1_f18_conclusion.md","collectors/polymarket/wallet_collector.py"],
+  next:"Frozen as F18."},
+
+ {slug:"rn1-f18",id:"RN1-F18",v:"probe",verdict:"Candidate",dates:"15 Aug 2026",
+  title:"Pull quotes when flow turns against you",sub:"Frozen candidate for prospective test",
+  q:"Can a 30-second flow-imbalance signal tell a market maker when to cancel before being adversely selected?",
+  summary:"F18 froze the exact rule from discovery and the test that would confirm it. No threshold, horizon or filter could change after this point.",
+  facts:[["window","30s"],["threshold","≤ −0.75"],["decision lead","5s"],["horizon","+15s"]],
+  lesson:"interesting is not confirmed",
+  why:"A quote-protection overlay is useful to any maker strategy, so confirming it would unlock execution research.",
+  method:["Non-self aggressive flow over 30s, notional-weighted, relative to the quote's inventory direction.","Flag when imbalance is −0.75 or lower, observed 5s before the decision.","Confirmation needs 50 matched events across 20 markets, with both primary and de-clustered differences negative."],
+  results:[["Status","frozen, not confirmed"],["RN1 maker book without flagged fills","still negative"]],
+  ended:"Handed to F19 for a blind test.",
+  timeline:[["15 Aug","Candidate and prospective design frozen"]],
+  files:["research/rn1_f18_conclusion.md","research/rn1_f18_flow_protection_design.json"],
+  next:"F19."},
+
+ {slug:"rn1-f19",id:"RN1-F19",v:"hold",verdict:"Inconclusive",dates:"15 Aug – 30 Sep 2026",
+  title:"Blind test of F18 on 100 unseen markets",sub:"Prospective · read once on 30 Sep",
+  q:"Does the frozen F18 signal reproduce on 100 MLB markets nobody has looked at?",
+  summary:"Events were plentiful, but scoring one needed a same-side taker print 15–25 seconds later. Only 5 events, in 5 markets, had one. The gate required 20 markets.",
+  facts:[["events","250"],["usable","5"],["markets","5 / 20"],["diff","+0.0201"]],
+  lesson:"a strict trade-print markout quietly filters for busy markets",
+  why:"Discovery results are easy to fool yourself with. A one-shot test on unseen data is the only fair check.",
+  method:["Register 100 future markets forward in time; keep trade content unread.","Freeze the readout with 12/12 synthetic and 91/91 regression tests passing.","Bind the finished cohort with a create-only receipt, then run the readout exactly once."],
+  results:[["Matched flagged events","250 (min 50)"],["Usable markets","5 (min 20)"],["Market-equal difference","+0.0201 (F18 predicted negative)"],["Bootstrap 95% CI","[−0.026, +0.066]"]],
+  ended:"The breadth gate failed. The point estimate also had the opposite sign to discovery.",
+  timeline:[["15 Aug","Cohort bootstrapped; acquisition armed"],["16 Aug","Implementation, core and readiness gate frozen"],["26 Aug","Readout orchestration frozen"],["30 Sep","Activation receipt and one authoritative readout"]],
+  files:["research/rn1_f19d_p4_result_receipt.json","research/rn1_f19d_p2_core.py","research/rn1_f19d_p4_readout.py"],
+  next:"If RN1 is studied again: a new study on new markets, scoring markouts from the book rather than from trade prints."},
+
+ {slug:"rn1-f20",id:"RN1-F20",v:"infra",verdict:"Infrastructure",dates:"15 Aug 2026 →",
+  title:"Full CLOB capture for execution research",sub:"Running · not used as evidence",
+  q:"Not a hypothesis: capture complete order-book state so a confirmed signal could be priced honestly.",
+  summary:"F20 records the authoritative book for the F19 cohort, with a health monitor and nightly archive. It stayed unread during F19 so it could not leak into the result.",
+  facts:[["service","rn1-f20-m1-clob"],["health check","every 10 min"],["archive","nightly"]],
+  lesson:"build the measuring tool before you need it",
+  why:"Execution economics need queue position and cancels, which trade prints can't give.",
+  method:["Dedicated CLOB collector under systemd.","Health monitor timer and verified archival."],
+  results:[["Status","active"],["Used for F19","no, by rule"]],
+  ended:"Still running. F19 never confirmed, so the execution-economics stage it was built for was not authorised.",
+  timeline:[["15 Aug","Capture, health monitoring and archival armed"],["19 Aug","Health check fixed for live gzip files"]],
+  files:["collectors/polymarket/rn1_f20_m1_clob_collector.py","systemd/rn1-f20-m1-clob.service"],
+  next:"Candidate for retirement or reuse; it uses disk every day."},
+
+ {slug:"rn1-f21",id:"RN1-F21",v:"stop",verdict:"Rejected",dates:"16 Aug 2026",
+  title:"Shadow market-making with flow protection",sub:"Queue-aware replay on burned data",
+  q:"Would passive quotes, protected by F18, actually get filled under a conservative queue model?",
+  summary:"2,160 probe orders across 9 games, each resting behind the existing queue. Not one filled, because real trade volume never ate through the queue ahead.",
+  facts:[["probe orders","2,160"],["games","9"],["fills","0 (needed 20)"],["reached front of queue","2"]],
+  lesson:"fills are the hardest part of a maker backtest",
+  why:"A protection signal is worthless if the protected quotes never trade.",
+  method:["Freeze maker semantics, latency, accounting and venue rules.","Replay probe orders for 60s at 1,080 anchors in 9 burned games.","Diagnose any failure mechanically before drawing conclusions."],
+  results:[["Positive fills","0 (gate: 20 probes, 5 markets)"],["Probes with any qualifying trade","83"],["Invalidated probes","504"],["Queue model discrepancy","none"]],
+  ended:"The fill-path gate failed, and the queue diagnosis showed it was real rather than a bug.",
+  timeline:[["16 Aug","Semantics, replay engine, protection, accounting frozen; fill-path failure; queue diagnosis"]],
+  files:["research/rn1_f21_m7_burned_fill_path_validation.json","research/rn1_f21_m8_queue_diagnosis_validation.json","execution/rn1_f21_shadow_mm.py"],
+  next:"Any maker strategy needs a queue position edge first."},
+
+ {slug:"h5",id:"H5",v:"hold",verdict:"Inconclusive",dates:"16 – 24 Aug 2026",
+  title:"Polymarket repricing after sharp-odds moves",sub:"Three acquisition attempts",
+  q:"When a fresh external sharp-market consensus changes, does Polymarket reprice in the same direction afterwards?",
+  summary:"Polymarket capture was perfect, but the external odds never reached coverage. Fresh-family coverage was 16.9% against 80% required, so no response was ever measured.",
+  facts:[["attempts","3"],["PM book coverage","100%"],["external states","71 / 100"],["fresh coverage","16.9% / 80%"]],
+  lesson:"half a dataset is no dataset",
+  why:"Unlike H2-v2, H5 asks about the direction of moves, not the size of a gap, so it doesn't need a tradeable gap to exist.",
+  method:["Register games forward, map each to its external event.","Capture Polymarket and external odds together.","Validate engineering coverage before reading any response."],
+  results:[["M1","closed: identity gate not frozen in time"],["M1R1","closed: registration gate failed"],["M1R2","inconclusive engineering"]],
+  ended:"The external feed could not deliver fresh enough odds for enough games.",
+  timeline:[["16 Aug","Mechanism and acquisition design frozen"],["23 Aug","M1 closed"],["24 Aug","M1R1 and M1R2 closed"]],
+  files:["research/h5_m0_mechanism_data_design.json","research/h5_m1r2_engineering_result_receipt.json"],
+  next:"Needs a better odds source (direct exchange feed) before it is worth retrying."},
+
+ {slug:"h6",id:"H6",v:"hold",verdict:"Inconclusive",dates:"17 – 26 Aug 2026",
+  title:"Order-book imbalance predicts the next price move",sub:"30 markets · six horizons",
+  q:"When the best bid and ask don't change, does a shift in displayed size predict which way the midpoint moves next?",
+  summary:"Engineering was excellent: 9,655 transitions with 99.998% coverage. The response was exactly zero at every horizon, because the midpoints barely moved.",
+  facts:[["transitions","9,655"],["markets","30"],["coverage","99.998%"],["response","0 at all horizons"]],
+  lesson:"a clean pipeline can still measure nothing",
+  why:"Liquidity often moves before price. If size shifts lead the midpoint, a fast taker could front-run small repricings.",
+  method:["Rebuild the top of book causally per market, with connection and generation checks.","Measure signed midpoint change at 1, 3, 5, 10, 30 and 60 seconds.","Engineering pass on 5 markets, development study on 30 new ones."],
+  results:[["M1, 5 markets","engineering pass"],["M2 response, all six horizons","exactly 0"],["Verdict","not promising (development)"]],
+  ended:"The mechanism couldn't be identified because there was almost no midpoint movement to predict.",
+  timeline:[["17 Aug","Mechanism frozen"],["19 Aug","M1 engineering pass"],["25 Aug","M2 readout"],["26 Aug","Closed"]],
+  files:["research/h6_m0_mechanism_data_design.json","research/h6_m2_closure.json","research/h6_m2_analyze.py"],
+  next:"Might work on busier markets, such as the 5-minute crypto markets."}
 ];
+const PARKED=[
+ ["Wallet-level P&L","Do specific wallets profit consistently, and is following them a signal? Trades already carry wallet and transaction hash."],
+ ["LLM rule reader","Classify resolution fine print and flag ambiguous markets as a resolution-risk feature."],
+ ["Logical-consistency arbitrage","Mutually exclusive outcomes whose prices don't add up. Listed in the H2-v2 protocol."],
+ ["News and lineup latency","React to team news faster than the book. Listed in the H2-v2 protocol."]
+];
+
+const VERDICTS={stop:"Rejected",hold:"Inconclusive",probe:"Discovery",open:"Not tested",infra:"Infrastructure"};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const list=document.getElementById('ledger-list');
-const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-list.innerHTML=studies.map((s,i)=>`
- <div class="study" data-v="${s.v}" data-open="${i===0}">
-  <button class="study-head" id="s-${i}" aria-expanded="${i===0}" aria-controls="b-${i}">
-   <span class="sid">${s.id}</span>
-   <span class="stitle"><strong>${esc(s.title)}</strong><span>${esc(s.sub)}</span></span>
-   <span class="pill ${s.v}">${s.verdict}</span>
+document.getElementById('n-logged').textContent=STUDIES.length;
+
+/* filters */
+const counts={}; STUDIES.forEach(s=>counts[s.v]=(counts[s.v]||0)+1);
+document.getElementById('filters').innerHTML=
+  `<button class="chip" id="f-all" data-f="all" aria-pressed="true">All<span class="n">${STUDIES.length}</span></button>`+
+  Object.keys(VERDICTS).filter(k=>counts[k]).map(k=>`<button class="chip" id="f-${k}" data-f="${k}" aria-pressed="false">${VERDICTS[k]}<span class="n">${counts[k]}</span></button>`).join("");
+
+/* ledger rows */
+const latest=STUDIES.findIndex(s=>s.slug==="rn1-f19");
+list.innerHTML=STUDIES.map((s,i)=>`
+ <div class="study" data-v="${s.v}" data-open="${i===latest}">
+  <button class="study-head" id="s-${i}" aria-expanded="${i===latest}" aria-controls="b-${i}">
+   <span class="sid">${esc(s.id)}</span>
+   <span class="stitle"><strong>${esc(s.title)}</strong><span>${esc(s.sub)} · ${esc(s.dates)}</span></span>
+   <span class="pill ${s.v}">${esc(s.verdict)}</span>
    <span class="chev" aria-hidden="true">›</span>
   </button>
-  <div class="study-body" id="b-${i}" ${i===0?"":"hidden"}>
-   <p>${esc(s.body)}</p>
+  <div class="study-body" id="b-${i}" ${i===latest?"":"hidden"}>
+   <p>${esc(s.summary)}</p>
    <div class="facts num">${s.facts.map(f=>`<span class="fact"><em>${esc(f[0])}</em>${esc(f[1])}</span>`).join("")}</div>
-   <div class="lesson">${esc(s.lesson)}</div>
+   <div class="study-foot"><span class="lesson">${esc(s.lesson)}</span><a class="dive-btn" href="#${s.slug}">Deep dive →</a></div>
   </div>
  </div>`).join("");
 list.addEventListener('click',e=>{
@@ -409,11 +639,64 @@ list.addEventListener('click',e=>{
   row.dataset.open=open; b.setAttribute('aria-expanded',open);
   row.querySelector('.study-body').hidden=!open;
 });
-document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
-  document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===c));
+document.getElementById('filters').addEventListener('click',e=>{
+  const c=e.target.closest('.chip'); if(!c) return;
+  document.querySelectorAll('#filters .chip').forEach(x=>x.setAttribute('aria-pressed',x===c));
   const f=c.dataset.f;
   list.querySelectorAll('.study').forEach(r=>{r.hidden=!(f==="all"||r.dataset.v===f)});
-}));
+});
+document.getElementById('parked').innerHTML=PARKED.map(p=>`<div><b>${esc(p[0])}</b><span>${esc(p[1])}</span></div>`).join("");
+
+/* deep dive view, routed by #slug */
+const dive=document.getElementById('dive'), main=document.getElementById('top');
+function renderDive(i){
+  const s=STUDIES[i], prev=STUDIES[i-1], next=STUDIES[i+1];
+  dive.innerHTML=`<div class="wrap">
+   <div class="crumbs"><a href="#ledger">← All hypotheses</a><span class="num">${i+1} / ${STUDIES.length}</span></div>
+   <header class="dive-head">
+    <div class="dive-meta"><span class="did">${esc(s.id)}</span><span class="pill ${s.v}">${esc(s.verdict)}</span><span class="num">${esc(s.dates)}</span></div>
+    <h1>${esc(s.title)}</h1>
+    <p class="question">${esc(s.q)}</p>
+   </header>
+   <div class="dive-grid">
+    <div>
+     <div class="block"><h2>In short</h2><p>${esc(s.summary)}</p></div>
+     <div class="block"><h2>Why it was worth testing</h2><p>${esc(s.why)}</p></div>
+     <div class="block"><h2>How it was tested</h2><ol>${s.method.map(m=>`<li><span>${esc(m)}</span></li>`).join("")}</ol></div>
+     <div class="block"><h2>What ended it</h2><p>${esc(s.ended)}</p></div>
+     <div class="block"><h2>What it leaves behind</h2><p>${esc(s.next)}</p></div>
+    </div>
+    <aside class="side">
+     <article class="term">
+      <div class="term-bar"><i></i><i></i><i></i><span>${esc(s.slug)} — result</span></div>
+      <div class="term-body">
+       <div class="verdict"><b class="c-${s.v==="open"?"muted":s.v}">${esc(s.verdict.toUpperCase())}</b></div>
+       <div class="rows num">${s.results.map(r=>`<div class="row"><span>${esc(r[0])}</span><span>${esc(r[1])}</span></div>`).join("")}</div>
+       <div class="lesson">${esc(s.lesson)}</div>
+      </div>
+     </article>
+     <div class="block"><h2>Timeline</h2><ol class="tl">${s.timeline.map(t=>`<li><time>${esc(t[0])}</time><i></i><span>${esc(t[1])}</span></li>`).join("")}</ol></div>
+     <div class="block"><h2>In the repo</h2><ul class="files">${s.files.map(f=>`<li>${esc(f)}</li>`).join("")}</ul></div>
+    </aside>
+   </div>
+   <nav class="pager" aria-label="Other hypotheses">
+    ${prev?`<a href="#${prev.slug}"><small>← Earlier</small><b>${esc(prev.id)} · ${esc(prev.title)}</b></a>`:`<span class="empty"></span>`}
+    ${next?`<a class="nx" href="#${next.slug}"><small>Later →</small><b>${esc(next.id)} · ${esc(next.title)}</b></a>`:`<span class="empty"></span>`}
+   </nav>
+  </div>`;
+}
+function route(){
+  const h=location.hash.slice(1), i=STUDIES.findIndex(s=>s.slug===h);
+  if(i>=0){
+    renderDive(i); dive.hidden=false; main.hidden=true;
+    document.title=STUDIES[i].id+" · quantLab"; window.scrollTo(0,0);
+  }else{
+    const wasDive=!dive.hidden;
+    dive.hidden=true; main.hidden=false; document.title="quantLab";
+    if(wasDive&&h){const t=document.getElementById(h); if(t) t.scrollIntoView();}
+  }
+}
+window.addEventListener('hashchange',route); route();
 
 /* H3 diverging bar chart */
 (function(){
