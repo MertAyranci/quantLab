@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Preregistered Polymarket research: every hypothesis quantLab tested, and the number that ended it.">
+<meta property="og:title" content="quantLab">
+<meta property="og:description" content="Preregistered Polymarket research: every hypothesis quantLab tested, and the number that ended it.">
+<meta name="theme-color" content="#0e0d0c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230e0d0c'/%3E%3Cpath d='M6 22l6-7 5 4 9-11' stroke='%236ddc7f' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<title>quantLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: terminal-ledger. Status strip → hero with result card → study ledger → one chart → method → machine → outlined wordmark. Single dark world by design. */
+:root{
+  --bg:#0e0d0c; --surface:#151312; --raise:#1c1b19; --line:#2c2926; --line-2:#38342f;
+  --fg:#f4f5ea; --dim:#b0b0a3; --muted:#8d8b7f;
+  --go:#6ddc7f; --go-deep:#22e06a; --stop:#ff5a4c; --hold:#e0a73b; --probe:#9b8ae8;
+  --display:"Manrope",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--display);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+::selection{background:var(--go);color:var(--bg)}
+:focus-visible{outline:2px solid var(--go);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
+.mono{font-family:var(--mono)}
+.num{font-variant-numeric:tabular-nums}
+
+/* status strip */
+.strip{border-bottom:1px solid var(--line);background:var(--bg);font-family:var(--mono);text-align:center;padding-block:12px}
+.strip-main{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 14px;font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.strip-main b{color:var(--go);font-weight:500;letter-spacing:.06em;font-size:18px}
+.pip{width:8px;height:8px;border-radius:50%;background:var(--hold);box-shadow:0 0 0 4px color-mix(in srgb,var(--hold) 18%,transparent);display:inline-block}
+.strip-sub{margin-top:4px;font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px}
+.strip-sub .ok{color:var(--go)}
+
+/* nav */
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
+.logo{font-family:var(--mono);font-size:18px;text-decoration:none;letter-spacing:-.01em}
+.logo span{color:var(--go)}
+.links{display:flex;align-items:center;gap:22px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.links a{text-decoration:none;color:var(--muted)}
+.links a:hover{color:var(--fg)}
+.btn-ghost{border:1px solid color-mix(in srgb,var(--go) 45%,var(--line));color:var(--go)!important;padding:9px 14px;border-radius:4px}
+@media (max-width:640px){.links .hide-sm{display:none}}
+
+/* shared */
+section{padding-block:clamp(64px,9vw,112px)}
+.eyebrow{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--go)}
+.eyebrow::before{content:"";width:40px;height:1px;background:var(--go)}
+h1,h2,h3{text-wrap:balance;margin:0;letter-spacing:-.025em;line-height:1.05}
+h1{font-size:clamp(42px,6.4vw,72px);font-weight:700}
+h2{font-size:clamp(30px,4vw,46px);font-weight:700}
+.grey{color:var(--muted)}
+.lede{color:var(--dim);font-size:clamp(17px,1.6vw,19px);max-width:58ch;line-height:1.7}
+.lede strong{color:var(--fg);font-weight:600}
+.sec-head{display:grid;gap:18px;margin-bottom:44px;max-width:760px}
+.comment{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,72px);align-items:center;padding-block:clamp(56px,8vw,104px)}
+.hero-copy{display:grid;gap:26px;min-width:0}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.btn{font-family:var(--mono);font-size:15px;font-weight:600;letter-spacing:.04em;text-decoration:none;padding:15px 22px;border-radius:5px;border:1px solid var(--line-2);color:var(--fg);transition:transform .15s ease,border-color .15s}
+.btn:hover{transform:translateY(-1px);border-color:var(--dim)}
+.btn-go{background:var(--go);border-color:var(--go);color:var(--bg)}
+.btn-go:hover{border-color:var(--go)}
+.fine{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
+@media (max-width:880px){.hero{grid-template-columns:1fr}}
+
+/* terminal card */
+.term{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0;box-shadow:0 30px 60px -30px #000}
+.term-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--muted)}
+.term-bar i{width:9px;height:9px;border-radius:50%;background:var(--line-2);display:inline-block}
+.term-bar span{margin-left:8px}
+.term-body{padding:20px 22px 22px;display:grid;gap:16px}
+.term-meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.verdict{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.verdict b{font-family:var(--mono);font-weight:500;font-size:26px;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
+.verdict b::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor}
+.verdict small{color:var(--dim);font-size:13px}
+.rows{display:grid}
+.row{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-top:1px solid var(--line);font-size:14px;color:var(--dim)}
+.row span:last-child{font-family:var(--mono);color:var(--fg);text-align:right}
+.term-note{font-size:13px;color:var(--dim);line-height:1.6}
+.term-note b{color:var(--fg)}
+.c-go{color:var(--go)} .c-stop{color:var(--stop)} .c-hold{color:var(--hold)} .c-probe{color:var(--probe)}
+
+/* gauge inside card */
+.gauge{display:grid;gap:8px}
+.gauge-track{position:relative;height:8px;border-radius:4px;background:var(--raise);border:1px solid var(--line)}
+.gauge-fill{position:absolute;inset:0 auto 0 0;width:25%;background:var(--hold);border-radius:4px}
+.gauge-mark{position:absolute;top:-5px;bottom:-5px;left:100%;width:2px;background:var(--fg);transform:translateX(-2px)}
+.gauge-lbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* ledger */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chip{font-family:var(--mono);font-size:12px;letter-spacing:.06em;background:transparent;color:var(--muted);border:1px solid var(--line-2);border-radius:999px;padding:7px 14px;cursor:pointer}
+.chip:hover{color:var(--fg)}
+.chip[aria-pressed="true"]{color:var(--bg);background:var(--fg);border-color:var(--fg)}
+.chip .n{opacity:.6;margin-left:6px}
+.ledger{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.study{border-top:1px solid var(--line)}
+.study:first-child{border-top:0}
+.study-head{width:100%;display:grid;grid-template-columns:92px 1fr auto 20px;gap:18px;align-items:center;padding:18px 22px;background:none;border:0;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.study-head:hover{background:var(--raise)}
+.sid{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.stitle{min-width:0}
+.stitle strong{display:block;font-weight:600;font-size:16px;line-height:1.35}
+.stitle span{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:4px;border:1px solid currentColor;white-space:nowrap}
+.pill.stop{color:var(--stop);background:color-mix(in srgb,var(--stop) 9%,transparent)}
+.pill.hold{color:var(--hold);background:color-mix(in srgb,var(--hold) 9%,transparent)}
+.pill.probe{color:var(--probe);background:color-mix(in srgb,var(--probe) 9%,transparent)}
+.chev{font-family:var(--mono);color:var(--muted);transition:transform .2s}
+.study[data-open="true"] .chev{transform:rotate(90deg)}
+.study-body{padding:0 22px 22px calc(22px + 92px + 18px);display:grid;gap:14px;color:var(--dim);font-size:15px;max-width:none}
+.study-body p{margin:0;max-width:68ch}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.fact{font-family:var(--mono);font-size:12px;color:var(--fg);background:var(--raise);border:1px solid var(--line);border-radius:4px;padding:5px 9px}
+.fact em{font-style:normal;color:var(--muted);margin-right:6px}
+.lesson{font-family:var(--mono);font-size:13px;color:var(--go)}
+.lesson::before{content:"// "}
+@media (max-width:720px){
+  .study-head{grid-template-columns:1fr auto;gap:8px 12px;padding:16px}
+  .sid{grid-column:1/-1}
+  .chev{display:none}
+  .study-body{padding:0 16px 18px}
+}
+
+/* chart */
+.split{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(28px,5vw,64px);align-items:start}
+.split > *{min-width:0}
+@media (max-width:880px){.split{grid-template-columns:1fr}}
+.chart-card .term-body{gap:10px}
+.chart-wrap{overflow-x:auto}
+.chart-wrap svg{display:block;width:100%;min-width:420px;height:auto}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:2px;vertical-align:middle;margin-right:6px}
+
+/* method steps */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.steps li{padding:26px 24px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;gap:10px;align-content:start;background:var(--surface)}
+.steps li:nth-child(3n){border-right:0}
+.steps li:nth-last-child(-n+3){border-bottom:0}
+.steps .k{font-family:var(--mono);font-size:12px;color:var(--go);letter-spacing:.12em}
+.steps h3{font-size:19px;letter-spacing:-.01em}
+.steps p{margin:0;color:var(--dim);font-size:14px}
+@media (max-width:880px){
+  .steps{grid-template-columns:1fr}
+  .steps li{border-right:0;border-bottom:1px solid var(--line)!important}
+  .steps li:last-child{border-bottom:0!important}
+}
+
+/* machine */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stat{padding:26px 20px 26px 0;display:grid;gap:6px}
+.stat + .stat{padding-left:20px;border-left:1px solid var(--line)}
+.stat b{font-family:var(--mono);font-weight:500;font-size:clamp(26px,3vw,36px);letter-spacing:-.02em}
+.stat span{font-size:13px;color:var(--muted)}
+@media (max-width:880px){
+  .stats{grid-template-columns:1fr 1fr}
+  .stat{padding:20px 12px!important;border-left:0!important}
+  .stat:nth-child(odd){border-right:1px solid var(--line)}
+  .stat:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+.log{margin-top:36px;font-family:var(--mono);font-size:13px;line-height:1.9;color:var(--dim);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 22px;overflow-x:auto;white-space:pre}
+.log .t{color:var(--muted)} .log .g{color:var(--go)} .log .r{color:var(--stop)} .log .a{color:var(--hold)}
+
+/* next */
+.next{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{border:1px solid var(--line);border-radius:10px;padding:24px;display:grid;gap:12px;align-content:start;background:var(--surface)}
+.card .k{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.card h3{font-size:20px;letter-spacing:-.01em}
+.card p{margin:0;color:var(--dim);font-size:14px}
+.card.lead{border-color:color-mix(in srgb,var(--go) 40%,var(--line))}
+.card.lead .k{color:var(--go)}
+@media (max-width:880px){.next{grid-template-columns:1fr}}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding-block:56px 40px;overflow:hidden}
+.wordmark{font-family:var(--display);font-weight:800;font-size:clamp(56px,15vw,190px);letter-spacing:-.05em;line-height:.9;text-align:center;color:transparent;-webkit-text-stroke:1.5px var(--line-2);user-select:none}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;margin-top:36px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.foot p{margin:0;max-width:60ch;text-transform:none;letter-spacing:0;font-size:12px}
+
+@media (prefers-reduced-motion:no-preference){
+  .rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+  .rise.d2{animation-delay:.12s}
+  @keyframes rise{from{transform:translateY(10px)}to{transform:none}}
+  .gauge-fill{animation:grow 1.2s .3s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes grow{from{width:0}to{width:25%}}
+}
+</style>
+</head>
+<body style="margin:0">
+
+
+<div class="strip" role="status">
+  <div class="strip-main"><span class="pip" aria-hidden="true"></span> Snapshot · Studies closed = <b class="num">9 / 9</b></div>
+  <div class="strip-sub num"><span>As of 9 Oct 2026</span><span>·</span><span>Edges confirmed: 0</span><span>·</span><span>DB backup <span class="ok">verified 9 Oct</span></span></div>
+</div>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top">quant<span>Lab</span></a>
+    <div class="links">
+      <a href="#ledger" class="hide-sm">Ledger</a>
+      <a href="#method" class="hide-sm">Method</a>
+      <a href="#machine" class="hide-sm">Machine</a>
+      <a href="#next" class="btn-ghost">What's next</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <div class="wrap hero">
+    <div class="hero-copy rise">
+      <div class="eyebrow">Polymarket research, preregistered</div>
+      <h1>Hunting for an edge the market <span class="grey">hasn't</span> already priced.</h1>
+      <p class="lede">quantLab collects Polymarket order books around the clock, writes down every test before it sees the data, and reads each result <strong>exactly once</strong>. So far, nothing has survived. This page keeps score.</p>
+      <div class="ctas">
+        <a class="btn btn-go" href="#ledger">&gt; Read the ledger</a>
+        <a class="btn" href="#method">How a study runs</a>
+      </div>
+      <div class="fine"><span>Rules frozen in Git before readout</span><span>·</span><span>No rescues, no retuning</span></div>
+    </div>
+
+    <article class="term rise d2" aria-label="Latest study result">
+      <div class="term-bar"><i></i><i></i><i></i><span>rn1_f19 — authoritative readout</span></div>
+      <div class="term-body">
+        <div class="term-meta">RN1-F19 · adverse-flow signal · 100-market blind cohort · 30 Sep 2026</div>
+        <div class="verdict"><b class="c-hold">INCONCLUSIVE</b><small>breadth gate failed</small></div>
+        <div class="gauge">
+          <div class="gauge-track" role="img" aria-label="5 usable markets out of 20 required"><div class="gauge-fill"></div><div class="gauge-mark"></div></div>
+          <div class="gauge-lbl num"><span>5 usable markets</span><span>20 required</span></div>
+        </div>
+        <div class="rows num">
+          <div class="row"><span>Matched flagged events</span><span>250 <span class="grey">/ 50 min</span></span></div>
+          <div class="row"><span>Usable after +15s markout</span><span class="c-stop">5</span></div>
+          <div class="row"><span>Flagged − control markout</span><span>+0.0201</span></div>
+          <div class="row"><span>Bootstrap 95% CI</span><span>[−0.026, +0.066]</span></div>
+        </div>
+        <p class="term-note">The discovery study predicted a <b>negative</b> difference. The blind test came back positive, with an interval spanning zero. 245 of the 250 events had no qualifying print 15–25 seconds later, so they couldn't be scored.</p>
+      </div>
+    </article>
+  </div>
+
+  <section id="ledger" style="border-top:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">The ledger</div>
+        <h2>Every hypothesis, and what ended it.</h2>
+        <p class="lede">Each study had a kill rule before it had data. Open one to see what was tested and the number that closed it.</p>
+      </div>
+
+      <div class="filters" role="group" aria-label="Filter by verdict">
+        <button class="chip" id="f-all" data-f="all" aria-pressed="true">All<span class="n">9</span></button>
+        <button class="chip" id="f-stop" data-f="stop" aria-pressed="false">Rejected<span class="n">5</span></button>
+        <button class="chip" id="f-hold" data-f="hold" aria-pressed="false">Inconclusive<span class="n">3</span></button>
+        <button class="chip" id="f-probe" data-f="probe" aria-pressed="false">Discovery only<span class="n">1</span></button>
+      </div>
+
+      <div class="ledger" id="ledger-list"></div>
+    </div>
+  </section>
+
+  <section style="border-top:1px solid var(--line)">
+    <div class="wrap split">
+      <div class="sec-head" style="margin:0">
+        <div class="eyebrow">Case study · H3</div>
+        <h2>The longshot bias that turned out to be arithmetic.</h2>
+        <p class="lede">On 1.46M resolved markets, cheap contracts looked badly overpriced. Grouping coin-flip contracts by how many sibling outcomes their event had showed the real cause: in a 20-candidate race, most contracts lose by construction.</p>
+        <p class="comment">// activity filters also leaked the future: they added ~8pp of fake edge</p>
+      </div>
+
+      <figure class="term chart-card" style="margin:0">
+        <div class="term-bar"><i></i><i></i><i></i><span>h3 — contracts priced 44–56¢</span></div>
+        <div class="term-body">
+          <div class="chart-wrap" id="h3chart"></div>
+          <div class="legend"><span><i style="background:var(--go)"></i>won more than priced</span><span><i style="background:var(--stop)"></i>won less than priced</span></div>
+          <figcaption class="term-note">Realized win rate minus implied probability, by event size. n = 379 / 15,321 / 9,028 / 35,187.</figcaption>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="method" style="border-top:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Method</div>
+        <h2>How a study runs, in order.</h2>
+        <p class="lede">The order matters. Every step after the first is designed so the result can't be steered once it's visible.</p>
+      </div>
+      <ol class="steps">
+        <li><span class="k">01 · DISCOVER</span><h3>Find a candidate</h3><p>Explore development data freely. Anything found here is a lead, not evidence.</p></li>
+        <li><span class="k">02 · PREREGISTER</span><h3>Write the kill rule</h3><p>Fix the signal, horizon, controls, sample gates and decision table as a contract in Git.</p></li>
+        <li><span class="k">03 · FREEZE</span><h3>Lock the code</h3><p>Test the readout on synthetic data, then commit it with hashes. F19 shipped with 91 passing regression tests.</p></li>
+        <li><span class="k">04 · COLLECT BLIND</span><h3>Gather unseen markets</h3><p>New markets register forward in time. Trade content stays unread until the cohort is complete.</p></li>
+        <li><span class="k">05 · READ ONCE</span><h3>One invocation</h3><p>A create-only receipt binds the cohort, then the readout runs a single time. A crash is recorded, never retried.</p></li>
+        <li><span class="k">06 · ACCEPT</span><h3>Keep the verdict</h3><p>No rescue, no retune, no extending the cohort. A new idea means a new study on new markets.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="machine" style="border-top:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">The machine</div>
+        <h2>One small server in Helsinki, running since July.</h2>
+        <p class="lede">A WebSocket collector and loader stream books into Postgres, cron jobs harvest resolutions, and every night the database is dumped, verified and shipped to Azure.</p>
+      </div>
+      <div class="stats num">
+        <div class="stat"><b>1.46M</b><span>resolved markets in the backfill</span></div>
+        <div class="stat"><b>25.4M</b><span>historical price points</span></div>
+        <div class="stat"><b>~1,000</b><span>book updates per minute, live</span></div>
+        <div class="stat"><b>92d</b><span>server uptime at snapshot</span></div>
+      </div>
+<div class="log num" role="log" aria-label="Recent operations log"><span class="t">2026-10-09 22:18Z</span>  ws-collector     <span class="g">active</span>   1m stats: price_change 1086, best_bid_ask 313
+<span class="t">2026-10-09 22:18Z</span>  buffer-loader    <span class="g">active</span>   lag=0 files
+<span class="t">2026-10-09 22:24Z</span>  azure-backup     <span class="a">patched</span>  skip missing raw day, continue to pg_dump
+<span class="t">2026-10-09 22:31Z</span>  azure-backup     <span class="g">ok</span>       pg_2026-10-08.sql.gz 1.86 GB, remote gzip verified
+<span class="t">2026-09-20 → 10-09</span> azure-backup     <span class="r">failed</span>   20 nights, aborted before pg_dump</div>
+    </div>
+  </section>
+
+  <section id="next" style="border-top:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">What's next</div>
+        <h2>From research log to a trading system.</h2>
+        <p class="lede">The goal is a bot that trades live. The next study starts with a cheap density check, so the data is known to be dense enough before anything is frozen.</p>
+      </div>
+      <div class="next">
+        <article class="card lead"><span class="k">Candidate · up next</span><h3>5-minute crypto Up/Down</h3><p>Markets resolve every five minutes against an outside spot price. That gives hundreds of independent markets a day, and a clean test of whether the book lags Binance by more than the spread.</p></article>
+        <article class="card"><span class="k">Ops</span><h3>Grow the disk</h3><p>Postgres holds 23 GB on a 38 GB volume. Rescaling to 80 GB clears the backup guard and applies the pending kernel reboot.</p></article>
+        <article class="card"><span class="k">Gate</span><h3>Paper before money</h3><p>Any surviving signal runs through the existing risk, fill and ledger engine on paper first, then live with a hard cap.</p></article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="wordmark" aria-hidden="true">QUANTLAB</div>
+    <div class="foot">
+      <span>quantLab · Mert Ayrancı · 2026</span>
+      <p>Research shared as it happens. Nothing here is financial advice, and no strategy on this page is confirmed.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const studies=[
+ {id:"RN1-F19",v:"hold",verdict:"Inconclusive",title:"Prospective test of the F18 adverse-flow signal",sub:"100 blind markets · read once on 30 Sep",
+  body:"F19 took F18's frozen rule to 100 unseen markets. Events were plentiful, but the markout needed a same-side taker print 15–25 seconds later, and only 5 events in 5 markets had one. The breadth gate required 20 markets.",
+  facts:[["events","250"],["usable","5"],["markets","5 / 20"],["diff","+0.0201"]],lesson:"a strict trade-print markout quietly filters for busy markets"},
+ {id:"RN1-F18",v:"probe",verdict:"Discovery only",title:"Aggressive flow against a maker quote predicts adverse markout",sub:"30s flow window · −0.75 imbalance threshold",
+  body:"Strong one-sided taker flow against a proposed passive quote looked like it predicted a worse +15s markout, which would justify pulling quotes early. The discovery sample was small and F19 did not confirm it.",
+  facts:[["window","30s"],["threshold","−0.75"],["lead","5s"],["horizon","+15s"]],lesson:"interesting is not confirmed"},
+ {id:"RN1-F21",v:"stop",verdict:"Rejected",title:"Shadow market-making with flow protection",sub:"Queue-aware replay of passive fills",
+  body:"An optimistic replay showed passive fills. Once queue position was modelled conservatively, with every order resting behind existing size, the positive-fill path produced zero fills.",
+  facts:[["conservative fills","0"],["PnL stage","not authorized"]],lesson:"fills are the hardest part of a maker backtest"},
+ {id:"H6-M2",v:"hold",verdict:"Inconclusive",title:"Book repricing after identifiable events",sub:"30 markets · six horizons from 1s to 60s",
+  body:"Engineering was strong: 9,655 transitions with near-complete L1 coverage. The measured response was exactly zero at all six horizons, because midpoints barely moved, so the causal mechanism couldn't be identified.",
+  facts:[["transitions","9,655"],["markets","30"],["coverage","99.998%"],["response","0 at all horizons"]],lesson:"a clean pipeline can still measure nothing"},
+ {id:"H5-M1",v:"hold",verdict:"Inconclusive",title:"Polymarket response to external state changes",sub:"Closed 24 Aug after three attempts",
+  body:"Polymarket checkpoints were fully valid, but the external-state feed never reached its coverage thresholds. Under the rules, no response, signal or PnL analysis was run.",
+  facts:[["PM checkpoints","valid"],["external coverage","below gate"]],lesson:"half a dataset is no dataset"},
+ {id:"H4",v:"stop",verdict:"Conditional negative",title:"Last-mile underpricing of near-certain contracts",sub:"Execution replay + live paper soak · Aug",
+  body:"None of the 9 Grade-A sports markets reached 95¢ before resolving, so there was nothing to buy. The paper soak bought long-dated 95¢ markets instead: 19 positions and $332 tied up, drifting negative, with nothing resolved.",
+  facts:[["Grade-A markets","9"],["entries ≥95¢","0"],["paper capital","$332 locked"],["realized","$0"]],lesson:"capital lockup is a cost, even at 95¢"},
+ {id:"H3",v:"stop",verdict:"Killed",title:"Favourite–longshot bias",sub:"1.46M resolved markets · 24 Jul",
+  body:"The naive curve showed about 5.9% edge on mid-priced longshots. Two artifacts explained it: activity filters that leaked the outcome into the sample, and multi-outcome events that make most contracts lose mechanically.",
+  facts:[["markets","1,462,357"],["price points","25.4M"],["naive edge","5.9%"],["after controls","≈0"]],lesson:"filtering on activity leaks the future"},
+ {id:"H2-v2",v:"stop",verdict:"Not promising",title:"Sharp-book fair value vs Polymarket, executable",sub:"Development set · 9 games · 14 Aug",
+  body:"H2-v1 hinted that Polymarket converges toward sharp sportsbook prices. When the gap had to clear the actual Polymarket book at a 1% threshold, 0 of 9 markets qualified, against a gate of 3.",
+  facts:[["markets","9"],["cleared 1%","0 / 3 needed"],["tape rows","1,080"]],lesson:"a gap you can't execute isn't an edge"},
+ {id:"H2-v1",v:"stop",verdict:"Rejected",title:"Taker lag behind sharp odds and RN1 flow",sub:"Statistical + tradeability tests · 12 Aug",
+  body:"Neither the sharp-odds signal nor the RN1 flow signal was statistically supported, and the economic proxy was not positive. One secondary result survived: the sharp–Polymarket gap tended to close, which motivated H2-v2.",
+  facts:[["sharp signal","not supported"],["RN1 signal","not supported"],["economic proxy","negative"]],lesson:"keep the side result; drop the strategy"}
+];
+const list=document.getElementById('ledger-list');
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+list.innerHTML=studies.map((s,i)=>`
+ <div class="study" data-v="${s.v}" data-open="${i===0}">
+  <button class="study-head" id="s-${i}" aria-expanded="${i===0}" aria-controls="b-${i}">
+   <span class="sid">${s.id}</span>
+   <span class="stitle"><strong>${esc(s.title)}</strong><span>${esc(s.sub)}</span></span>
+   <span class="pill ${s.v}">${s.verdict}</span>
+   <span class="chev" aria-hidden="true">›</span>
+  </button>
+  <div class="study-body" id="b-${i}" ${i===0?"":"hidden"}>
+   <p>${esc(s.body)}</p>
+   <div class="facts num">${s.facts.map(f=>`<span class="fact"><em>${esc(f[0])}</em>${esc(f[1])}</span>`).join("")}</div>
+   <div class="lesson">${esc(s.lesson)}</div>
+  </div>
+ </div>`).join("");
+list.addEventListener('click',e=>{
+  const b=e.target.closest('.study-head'); if(!b) return;
+  const row=b.parentElement, open=row.dataset.open!=="true";
+  row.dataset.open=open; b.setAttribute('aria-expanded',open);
+  row.querySelector('.study-body').hidden=!open;
+});
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===c));
+  const f=c.dataset.f;
+  list.querySelectorAll('.study').forEach(r=>{r.hidden=!(f==="all"||r.dataset.v===f)});
+}));
+
+/* H3 diverging bar chart */
+(function(){
+  const data=[["1 market",6.6],["2–3",-6.4],["4–10",-2.9],["11+",-23.4]];
+  const W=560,H=250,L=86,R=56,T=24,B=34;
+  const min=-25,max=10, x=v=>L+(v-min)/(max-min)*(W-L-R);
+  const bh=30, gap=(H-T-B-bh*data.length)/(data.length-1);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Win rate gap by event size: 1 market +6.6pp, 2–3 −6.4pp, 4–10 −2.9pp, 11+ −23.4pp">`;
+  [-20,-10,0,10].forEach(t=>{
+    s+=`<line x1="${x(t)}" x2="${x(t)}" y1="${T-8}" y2="${H-B+4}" stroke="${t===0?'var(--dim)':'var(--line)'}" stroke-width="${t===0?1.5:1}" ${t===0?'':'stroke-dasharray="3 4"'}/>`;
+    s+=`<text x="${x(t)}" y="${H-10}" text-anchor="middle" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="11">${t>0?'+':''}${t}pp</text>`;
+  });
+  data.forEach(([k,v],i)=>{
+    const y=T+i*(bh+gap), x0=x(Math.min(0,v)), w=Math.abs(x(v)-x(0)), col=v>0?'var(--go)':'var(--stop)';
+    s+=`<text x="${L-12}" y="${y+bh/2+4}" text-anchor="end" fill="var(--dim)" font-family="Manrope, sans-serif" font-size="13">${k}</text>`;
+    s+=`<rect x="${x0}" y="${y}" width="${w}" height="${bh}" rx="3" fill="${col}" fill-opacity="${v<-20?1:.75}"/>`;
+    const inside=v<-15, lx=v>0?x(v)+8:(inside?x(v)+8:x(v)-8);
+    s+=`<text x="${lx}" y="${y+bh/2+4}" text-anchor="${v>0||inside?'start':'end'}" fill="${inside?'var(--bg)':'var(--fg)'}" font-family="IBM Plex Mono, monospace" font-size="12">${v>0?'+':'−'}${Math.abs(v)}</text>`;
+  });
+  document.getElementById('h3chart').innerHTML=s+'</svg>';
+})();
+</script>
+
+</body>
+</html>
